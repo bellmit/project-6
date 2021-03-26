@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.flow.mapper.AdvCodeMapper">
+
+    <select id="advCodeInfoList" resultType="com.miguan.flow.dto.AdvertCodeDto" parameterType="map">
+        select acode.id,acode.ad_id as adId,acode.material_key as material,acode.plat_key as plat,acode.render_key as render,acode.sdk_key as sdk,
+               acode.type_key as adType,acode.permission as permission,CASE acode.ladder WHEN ladder=1 then acode.ladder_price else 0 end ladderPrice,
+          <if test="isAbTest == 0 or (isAbTest == 1 and isHit == 0)">
+              aposition.id as positionId,aposition.position_type as positionType,aposition.mobile_type as mobileType,aposition.first_load_position as firstLoadPosition,
+              aposition.second_load_position as secondLoadPosition,aposition.max_show_num as maxShowNum,aposition.custom_rule1 as customRule1,
+              aposition.custom_rule1_name as customRule1Name,aposition.custom_rule2 as customRule2,aposition.custom_rule2_name as customRule2Name,aposition.ladder_delay_millis as ladderDelayMillis,aposition.common_delay_millis  as commonDelayMillis,
+              aposition.custom_rule3 as customRule3,aposition.custom_rule3_name as customRule3Name,
+          </if>
+        <if test="isAbTest == 1 and isHit == 1">
+              aposition.id as positionId,aposition.position_type as positionType,aposition.mobile_type as mobileType,test.ab_first_load_position as firstLoadPosition,
+              test.ab_second_load_position as secondLoadPosition,test.ab_max_show_num as maxShowNum,test.ab_custom_rule1 as customRule1,aposition.custom_rule1_name as customRule1Name,
+              test.ab_custom_rule2 as customRule2,aposition.custom_rule2_name as customRule2Name,test.ab_custom_rule3 as customRule3,aposition.custom_rule3_name as customRule3Name,test.ladder_delay_millis as ladderDelayMillis,test.common_delay_millis as commonDelayMillis,
+        </if>
+              CASE WHEN test.computer = 1 THEN rela.matching WHEN test.computer in (2,3,4) THEN rela.order_num ELSE 1 END optionValue, rela.number as sortNumber,
+              test.computer as computer, flow.test_state as testFlag
+        FROM ad_advert_position aposition
+        LEFT JOIN ad_advert_flow_config flow ON flow.position_id = aposition.id
+        LEFT JOIN ad_advert_test_config test on flow.id = test.flow_id
+        LEFT JOIN ad_test_code_relation rela on test.id = rela.config_id
+        LEFT JOIN ad_advert_code acode on acode.id = rela.code_id
+        where aposition.status = 1
+        and aposition.app_package = #{appPackage}
+        and aposition.mobile_type = #{mobileType}
+        and if(acode.channel_type=2,locate(concat(#{channelId},','), concat(acode.channel_ids, ','))>0,1=1 )
+        and if(acode.channel_type=3,locate(concat(#{channelId},','), concat(acode.channel_ids, ','))=0,1=1 )
+        <if test="isAbTest == 0">
+            and flow.type = 1
+            and flow.test_state = 0
+            AND concat( lpad( SUBSTRING_INDEX( #{appVersion}, '.', 1 ), 3, '0' ), lpad( SUBSTRING_INDEX( SUBSTRING_INDEX( #{appVersion}, '.',- 2 ), '.', 1 ), 3, '0' ), lpad( SUBSTRING_INDEX( #{appVersion}, '.',- 1 ), 3, '0' ) ) + 0
+                BETWEEN concat( lpad( SUBSTRING_INDEX( version1, '.', 1 ), 3, '0' ), lpad( SUBSTRING_INDEX( SUBSTRING_INDEX( version1, '.',- 2 ), '.', 1 ), 3, '0' ), lpad( SUBSTRING_INDEX( version1, '.',- 1 ), 3, '0' ) ) + 0
+                AND concat( lpad( SUBSTRING_INDEX( version2, '.', 1 ), 3, '0' ), lpad( SUBSTRING_INDEX( SUBSTRING_INDEX( version2, '.',- 2 ), '.', 1 ), 3, '0' ), lpad( SUBSTRING_INDEX( version2, '.',- 1 ), 3, '0' ) ) + 0
+        </if>
+        <if test="isAbTest == 1">
+            and flow.test_state = 1
+            and test.ab_test_id = #{abTestId}
+        </if>
+        <if test = 'permission== "0"'>
+            and acode.permission = #{permission}
+        </if>
+        <if test="positionType != null">
+            and aposition.position_type = #{positionType}
+        </if>
+        <if test="lockScreen != null">
+            and aposition.position_type in ('lockScreenDeblocking','lockH5ScreenDeblocking','lockAppScreenDeblocking')
+        </if>
+        <if test="game != null">
+            and aposition.position_type like concat('Game','%')
+        </if>
+    </select>
+
+    <select id="positionInfoList" resultType="com.miguan.flow.dto.AdvertCodeDto" parameterType="map">
+        select aposition.id as positionId,aposition.position_type as positionType
+        from ad_advert_position aposition
+        where 1=1
+        <if test="appPackage != null">
+            and aposition.app_package = #{appPackage}
+        </if>
+        <if test="mobileType != null">
+            and aposition.mobile_type = #{mobileType}
+        </if>
+        <if test="positionType != null">
+            and aposition.position_type = #{positionType}
+        </if>
+    </select>
+
+    <select id="countUsedPlat" resultType="int">
+      select count(1) from ad_plat where use_third=1
+    </select>
+
+    <select id="queryNearDate" resultType="string">
+        select max(date)
+        from (
+                select date
+                from banner_data
+                group by date
+                having count(DISTINCT plat_form) = #{platNum}
+        ) a
+    </select>
+
+    <select id="queryAdProfit" resultType="com.miguan.flow.vo.AdProfitVo" parameterType="list">
+        select ad_space_id adId, profit
+        from banner_data
+        where date = #{date}
+        and ad_space_id is not null
+    </select>
+
+    <select id="queryAd98Profit" resultType="com.miguan.flow.vo.AdProfitVo" parameterType="list">
+        select ad_id, sum(actual_consumption) profit
+        from idea_advert_report
+        where date = #{date}
+        and ad_id is not null
+        group by ad_id
+    </select>
+
+    <select id="queryAdMultiData" resultType="com.miguan.flow.vo.AdProfitVo" parameterType="map">
+        select ad_id, `show`, click, exposure, valid_click validClick
+        from ad_multi_dimensional_data
+        where date = #{date}
+        and ad_id in <foreach collection="adIds" item="adId" open="(" close=")" separator=",">#{adId}</foreach>
+        and package_name = #{appPackage}
+        and channel = #{channel}
+        and is_new = #{isNew}
+        and city = #{city}
+    </select>
+
+    <select id="queryAdData" resultType="com.miguan.flow.vo.AdProfitVo" parameterType="string">
+        select ad_id, `show`, click, exposure, valid_click validClick
+        from ad_multi_dimensional_data
+        where date = #{date}
+        and package_name = #{appPackage}
+        and channel = '-1'
+        and is_new = '-1'
+        and city = '-1'
+    </select>
+</mapper>

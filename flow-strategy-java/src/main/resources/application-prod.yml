@@ -1,0 +1,70 @@
+logging:
+  level:
+    com.miguan.flow: info
+    com.cgcg: info
+    com.baomidou.dynamic: info
+spring:
+  redis:
+    #host: 47.107.226.134 外网地址
+    host: 192.168.0.211
+    port: 6379
+    password: NapBMeZfTCLbdYFXspgK0XnQ7vCzCQ6n
+    database: 12
+    timeout: 15000
+    jedis:
+      pool:
+        max-active: 10000
+        max-idle: 300
+        min-idle: 100
+        max-wait: 3000
+    video:
+      host: 172.18.161.166
+      port: 6379
+      password: e8cFnj3CoWZdUFyXg8Dkv9Vp66c=
+      database: 4
+    advert:
+      host: 192.168.0.204
+      port: 6379
+      password: e8cFnj3CoWZdUFyXg8Dkv9Vp66c=
+      database: 12
+      timeout: 15000
+  datasource:
+    dynamic:
+      datasource:
+        adv:
+          url: jdbc:mysql://192.168.0.197:3306/ballvideoadv?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+          username: strategy_java
+          password: yLJoQFX8ckC3G0Qi
+          driverClassName: com.mysql.cj.jdbc.Driver
+        dsp:
+          url: jdbc:mysql://192.168.0.197:3306/dsp?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+          username: strategy_java
+          password: yLJoQFX8ckC3G0Qi
+          driver-class-name: com.mysql.cj.jdbc.Driver
+        report:
+          url: jdbc:mysql://192.168.0.192:3306/ballvideoreport?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+          username: strategy_java
+          password: yLJoQFX8ckC3G0Qi
+          driverClassName: com.mysql.cj.jdbc.Driver
+        mofang:
+          url: jdbc:mysql://rm-wz9r3k68fq34ck17n.mysql.rds.aliyuncs.com:3306/channel_tool_mofang?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+          username: strategy_java
+          password: yLJoQFX8ckC3G0Qi
+          driverClassName: com.mysql.cj.jdbc.Driver
+        ballvideo:
+          url: jdbc:mysql://192.168.0.197:3306/ballvideo?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+          username: strategy_java
+          password: yLJoQFX8ckC3G0Qi
+          driverClassName: com.mysql.cj.jdbc.Driver
+
+bigdata-server:
+  strategy:
+    inIncentiveVideo: http://bdserver-java.uheixia.com/api/flow/strategy/inIncentiveVideo
+    outIncentiveVideo: http://bdserver-java.uheixia.com/api/flow/strategy/outIncentiveVideo
+
+xy-server:
+  esFirstVideo:
+    addOrDelete: http://xy.uheixia.com/api/es/firstVideo/addOrDelete
+#推荐服务
+new-rec:
+  incentive-video: http://lan.nrec-java.98du.com/api/normative/video/incentive/recommend

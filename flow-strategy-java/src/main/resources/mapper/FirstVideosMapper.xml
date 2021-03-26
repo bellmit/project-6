@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.flow.mapper.FirstVideosMapper">
+
+    <select id="countIncentiveVideo" resultType="int">
+        select count(1) from first_videos fv
+        where fv.is_incentive = 1
+        and fv.state = 1
+    </select>
+
+    <update id="updateBatchIncentive" parameterType="map">
+        update first_videos
+        set is_incentive = #{isIncentive},updated_at = now()
+        where id in <foreach collection="idList" item="id" open="(" separator="," close=")">#{id}</foreach>
+    </update>
+
+</mapper>

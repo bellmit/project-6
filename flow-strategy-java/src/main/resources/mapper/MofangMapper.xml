@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.flow.mapper.MofangMapper">
+
+    <select id="countVersion" parameterType="map" resultType="int">
+        select count(1) from shield_version sv
+        inner join app_version_set v on v.id = sv.version_id
+        inner join channel_group g on g.s_id  = v.s_id AND sv.group_id = g.id
+        inner join shield_set ss on sv.shield_id = ss.id
+        where 1=1
+        <if test="appVersion != null">
+          and v.app_version = #{appVersion}
+        </if>
+        <if test="appPackage != null">
+          and g.app_type = #{appPackage}
+        </if>
+        <if test="positionType != null">
+            and ss.para_num = #{positionType}
+        </if>
+        <if test="tagType != null">
+            and g.tag_type = #{tagType}
+        </if>
+        and type = 1
+    </select>
+
+    <select id="countChannel" parameterType="map" resultType="int">
+        select count(1) from shield_channel sc
+        inner join channel_group g on g.id = sc.group_id
+        inner join shield_set ss on sc.shield_id = ss.id
+        inner join shield_version sv on sv.id = sc.v_id
+        inner join app_version_set v on v.id = sv.version_id
+        inner join agent_users aus on aus.channel_id = sc.channel_id
+        where 1=1
+        <if test="appVersion != null">
+          and v.app_version = #{appVersion}
+        </if>
+        <if test="appPackage != null">
+          and g.app_type = #{appPackage}
+        </if>
+        <if test="positionType != null">
+            and ss.para_num = #{positionType}
+        </if>
+        <if test="tagType != null">
+            and g.tag_type = #{tagType}
+        </if>
+        <if test="channelId != null">
+            and sc.channel_id = #{channelId}
+        </if>
+    </select>
+</mapper>

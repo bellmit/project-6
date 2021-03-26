@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.flow.mapper.AbTestRuleMapper">
+
+    <select id="getABTextAdversByRule" parameterType="map" resultType="com.miguan.flow.vo.AbTestRuleVo">
+        select aposition.id as positionId,aposition.position_type as positionType,flow.id as flowId,flow.ab_flow_id as abFlowId,flow.open_status AS openStatus
+        from ad_advert_position aposition
+        INNER JOIN ad_advert_flow_config flow ON flow.position_id = aposition.id
+        where 1=1
+        <if test="appPackage != null">
+            and aposition.app_package = #{appPackage}
+        </if>
+        <if test="mobileType != null">
+            and aposition.mobile_type = #{mobileType}
+        </if>
+        <if test="positionType != null">
+            and aposition.position_type = #{positionType}
+        </if>
+        and flow.test_state = 1
+        and flow.ab_flow_id is not null
+        order by type desc
+    </select>
+
+    <select id="queryOpenStatusByAbTestId" parameterType="map" resultType="int">
+        SELECT config.open_status
+        FROM ad_advert_flow_config config
+        LEFT JOIN ad_advert_test_config test ON config.id = test.flow_id
+        where 1=1
+        <if test="abTestId != null">
+            and test.ab_test_id = #{abTestId}
+        </if>
+        LIMIT 1
+    </select>
+</mapper>

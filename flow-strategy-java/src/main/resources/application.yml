@@ -1,0 +1,67 @@
+server:
+  port: 8382
+  max-post-size: -1
+  max-http-header-size: 402400
+spring:
+  profiles:
+    active: local
+  main:
+    allow-bean-definition-overriding: true
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 100MB
+  datasource:
+    dynamic:
+      primary: adv
+      hikari:
+        connection-test-query: SELECT 1
+        connectionTimeout: 180000
+        maxLifetime: 60000
+        validationTimeout: 8000
+        idleTimeout: 50000
+        min-idle: 20
+        max-pool-size: 1500
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+  mapper-locations: classpath:/mapper/*.xml
+logging:
+  level:
+    com.miguan.flow: debug
+    com.cgcg: debug
+cgcg:
+  rest:
+    read-timeout: 300000
+    connect-timeout: 300000
+    connection-request-timeout: 300000
+  swagger:
+    name: flow-strategy-java-在线文档
+    desc: Http Online Documentation
+    headers: token
+    contact-url: http://gitlab.miguan.com/business/flow-strategy-java.git
+    contact-name: zhangbinglin
+    version: 1.0.0
+  format:
+    response-data: true
+    response-data-ignore:  ##接口返回值不需要在包裹一层data的接口
+      - /api/advertCode/countMultiEcpm
+    des3: S5EXCbIx98nrWA7a
+swagger:
+  enable: false
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
+task:
+  scheduled:
+    cron:
+      inceVideo:
+        #激励视频出入库
+        storage: 0 10 0 * * ?
