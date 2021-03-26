@@ -1,0 +1,37 @@
+#本地测试域名
+#localdev.nrec-java.98du.com
+#正式域名
+#lan.nrec-java.98du.com (192.168.0.238, 192.168.0.239)
+server:
+  port: 8380
+  max-post-size: -1
+  max-http-header-size: 402400
+  tomcat:
+    uri-encoding: utf-8
+    max-threads: 5000
+    max-connections: 10000
+spring:
+  profiles:
+    active: local
+  datasource:
+    dynamic:
+      primary: xy-db
+      hikari:
+        connection-test-query: SELECT 1
+        connectionTimeout: 180000
+        maxLifetime: 60000
+        validationTimeout: 8000
+        idleTimeout: 50000
+        min-idle: 20
+        max-pool-size: 1500
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+  mapper-locations: classpath:/mapper/*.xml
+cgcg:
+  swagger:
+    name: Ballvideo-recommend-在线文档
+    desc: Http Online Documentation
+    version: 1.0.0
+swagger:
+  enable: true

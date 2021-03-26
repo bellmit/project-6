@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.recommend.mapper.ClInterestLabelMapper">
+
+    <select id="getCatIdsOfUserChoose" parameterType="java.util.Map" resultType="java.lang.String">
+        SELECT cat_id FROM cl_interest_label
+        where uuid = #{uuid} and cat_id != -1
+        order by created_at desc
+        limit 1
+    </select>
+</mapper>

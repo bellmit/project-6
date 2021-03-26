@@ -1,0 +1,95 @@
+spring:
+  service:
+    predict:
+      predictApi: http://192.168.100.10:8306/api/predict/playrate2
+      predictApi3: http://192.168.100.10:8306/api/predict/playrate3
+      predictTranApi: http://192.168.100.10:8306/api/predict/tranrate
+      lambda: 0.5
+  datasource:
+    dynamic:
+      datasource:
+        xy-db:
+          url: jdbc:mysql://192.168.100.10:3306/ballvideo?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+          username: nrec_java
+          password: iWEAFhlFKXUbxpEG
+          driverClassName: com.mysql.cj.jdbc.Driver
+        clickhouse:
+          url: jdbc:clickhouse://192.168.100.10:8123/default?socket_timeout=300000
+          username: nrec_r
+          password: maF3LDnqoIm2GAZs
+          driverClassName: ru.yandex.clickhouse.ClickHouseDriver
+        clickhouse-dw:
+          url: jdbc:clickhouse://192.168.100.10:8123/dw?socket_timeout=300000
+          username: nrec_r
+          password: maF3LDnqoIm2GAZs
+          driverClassName: ru.yandex.clickhouse.ClickHouseDriver
+  es:
+    host: 192.168.100.10
+    port: 19200
+#    host: 8.129.38.18
+#    port: 9200
+    scheme: http
+    video_embedding: video_embedding_test
+    user_embedding: user_embedding_test
+    video_title: video_title_test
+  data:
+    mongodb:
+      log:
+        uri: mongodb://nrec_java:W0VAoSzD8FiXfYT1@192.168.100.10:53333/log
+      feature:
+        uri: mongodb://nrec_java:W0VAoSzD8FiXfYT1@192.168.100.10:53333/feature
+#      vector:
+#        uri: mongodb://nrec_java:W0VAoSzD8FiXfYT1@192.168.100.10:53333/vector
+      drive:
+        uri: mongodb://zhangbinglin:5wMdNa45FS2xAMCj@192.168.100.10:53333/drive
+  redis:
+    rec:
+      host: 192.168.100.10
+      port: 6379
+      password: 2ZfVUQPaVmKwdKWj6ZBW8CfvQt5EvK4C
+    xy:
+      host: 192.168.100.10
+      port: 6379
+      password: 2ZfVUQPaVmKwdKWj6ZBW8CfvQt5EvK4C
+    timeout: 15000
+    jedis:
+      pool:
+        max-active: 10000
+        max-idle: 100
+        min-idle: 20
+        max-wait: 3000
+    bloom:
+      init-capacity: 10000000
+      error-rate: 0.0001
+      database: 9
+  rabbitmq:
+    addresses: 192.168.100.10
+    port: 5672
+    username: nrec
+    password: VJsHFEE4t484Dv3W
+    groupId: nrec
+    open: true
+  kafka:
+    bootstrap-servers: 192.168.100.10:19092
+    consumer:
+      group-id: ballvideo-new-rec
+      auto-commit-interval: 1S
+      auto-offset-reset: latest
+      enable-auto-commit: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    listener:
+      concurrency: 1
+      ack-mode: manual_immediate
+  abtest:
+    uri: http://localdev.abtest-go.98du.com/v1/api/getExpByKey
+  embedding:
+    video-embedding: http://8.129.14.167:9996/video_embedding
+    user-embedding: http://8.129.14.167:9995/user_embedding
+  #获取图片向量接口
+  python-img:
+    get-img-vector: http://localdev.bdvector-py.98du.com/api/getImgVector
+logging:
+  level:
+    root: info
+    com.miguan.recommend: debug

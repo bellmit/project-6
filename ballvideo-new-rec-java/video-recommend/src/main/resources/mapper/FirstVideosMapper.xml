@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.recommend.mapper.FirstVideosMapper">
+
+    <sql id="base_sql">
+        select id, title, cat_id catId, IFNULL(gather_id, 0) AS gatherId, `sensitive`, is_incentive incentiveVideo, state,
+        online_date as onlineDate, video_time as videoTime, videos_source, update_type, bsy_url videoUrl, bsy_img_url, video_size from first_videos
+    </sql>
+
+    <select id="count" resultType="java.lang.Integer">
+        select count(*) from first_videos
+    </select>
+
+    <select id="findById" parameterType="java.lang.Integer" resultType="com.miguan.recommend.vo.RecVideosVo">
+        <include refid="base_sql"/>
+        where id = #{videoId}
+    </select>
+
+    <select id="findByIds" parameterType="java.util.Map" resultType="com.miguan.recommend.vo.RecVideosVo">
+        <include refid="base_sql"/>
+        where id in (
+        <foreach collection="videoIds" item="id" separator=",">
+            #{id}
+        </foreach>
+        )
+    </select>
+
+    <select id="findIncentiveVideo" parameterType="java.util.Map" resultType="com.miguan.recommend.vo.RecVideosVo">
+        <include refid="base_sql"/>
+        where is_incentive = 1
+        order by id asc
+        <if test="skip != null and size != null">
+            limit ${skip}, ${size}
+        </if>
+    </select>
+
+    <select id="findInPage" parameterType="java.util.Map" resultType="com.miguan.recommend.vo.RecVideosVo">
+        <include refid="base_sql"/>
+        order by id asc
+        limit ${skip}, ${size}
+    </select>
+
+</mapper>

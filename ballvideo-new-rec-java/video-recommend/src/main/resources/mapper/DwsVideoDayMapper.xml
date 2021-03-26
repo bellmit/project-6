@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.miguan.recommend.mapper.DwsVideoDayMapper">
+    <select id="findTopVideoInOneDay" parameterType="java.util.Map" resultType="java.util.Map">
+    	SELECT
+			video_id ,
+			show_count ,
+			play_count ,
+			play_count / show_count as play_rate
+		from
+			dws_video_day_disb dvdd
+		where
+			dt = #{dt}
+			and `type` != 3
+			and show_count > #{lowestShow}
+		order by
+			show_count desc ,
+			play_count desc
+    </select>
+
+    <select id="findTopVideoWithCatId" parameterType="java.util.Map" resultType="java.util.Map">
+    	SELECT
+			video_id ,
+			show_count ,
+			play_count ,
+			play_count / show_count as play_rate
+		from
+			dws_video_day_disb dvdd
+		where
+			dt = #{dt}
+			and `type` != 3
+			and tag_category_id = #{catId}
+			and show_count > #{lowestShow}
+		order by
+			play_count desc
+    </select>
+</mapper>
