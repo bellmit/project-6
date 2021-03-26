@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.xuanyuan.mapper.IdentityMapper">
+
+    <select id="pageIdentityList" parameterType="map" resultType="com.miguan.xuanyuan.dto.IdentityListBackDto">
+        select u.id id,u.username, u.phone, u.created_at registerTime, x.id identity_id, x.name, role_type, ifnull(profit_rate,0) profit_rate, ifnull(plat_rate, 0) plat_rate,
+               ifnull(x.status,0) status
+        from xy_user u
+        left join xy_identity x on x.user_id = u.id
+        where u.user_type = 1
+        <if test="phone != null and phone != ''">
+            and u.phone = #{phone}
+        </if>
+        <if test="name != null and name != ''">
+            and x.name like concat('%',#{name},'%')
+        </if>
+        <if test="status != null">
+            and x.status = #{status}
+        </if>
+        order by u.created_at desc
+    </select>
+
+    <select id="getIdentityByUserId" parameterType="map" resultType="com.miguan.xuanyuan.entity.Identity">
+        SELECT * FROM xy_identity WHERE user_id = #{userId} LIMIT 1
+    </select>
+</mapper>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.xuanyuan.mapper.OriginalityMapper">
+
+    <select id="findDesignInfos" resultType="com.miguan.xuanyuan.vo.DesignInfoVo" parameterType="map">
+        SELECT acode.source_code_id code, plan.id planId,des.id designId,des.id designId,
+			app.id appId,plan.product_name productName,plan.brand_logo brandLogo,plan.advert_type advertType,
+			plan.put_time_type putTimeType,plan.start_date startDate,plan.end_date endDate,
+			plan.time_setting timeSetting,plan.times_config timesConfig,
+			des.title designTitle,des.button_text buttonText,des.describe_text ideaTitle,
+			des.material_type materialType,des.material_shape materialShape,des.material_url materialUrl,des.show_logo showLogo,
+			des.landing_page_type landingPageType,des.landing_page_url landingPageUrl,des.weight weight
+        FROM
+            xy_ad_code acode
+            INNER JOIN xy_ad_position pos ON acode.position_id = pos.id
+            INNER JOIN xy_app app ON pos.app_id = app.id
+            INNER JOIN xy_plan_position ppos ON ppos.position_id = pos.id
+            INNER JOIN xy_plan plan ON plan.id = ppos.plan_id
+            INNER JOIN xy_design des ON des.plan_id = plan.id
+            WHERE plan.status = 1 AND des.status = 1 AND des.is_del = 0
+            AND app.status = 0 AND app.is_del = 0 AND pos.status = 1 AND pos.is_del = 0
+            AND acode.status = 1 AND acode.is_del = 0
+            AND app.app_key = #{appKey}
+            AND acode.source_code_id = #{code}
+            AND pos.id = #{positionId}
+    </select>
+</mapper>

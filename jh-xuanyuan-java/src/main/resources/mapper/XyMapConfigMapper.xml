@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.xuanyuan.mapper.XyMapConfigMapper">
+
+    <resultMap id="XyMapConfigBaseMap" type="com.miguan.xuanyuan.entity.XyMapConfig" >
+        <id property="id" column="id" />
+        <result property="configName" column="config_name" />
+        <result property="configKey" column="config_key" />
+        <result property="configVal" column="config_val" />
+        <result property="orderNum" column="order_num" />
+        <result property="status" column="status" />
+        <result property="isDel" column="is_del" />
+        <result property="note" column="note" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAt" column="updated_at" />
+    </resultMap>
+
+    <resultMap id="XyMapConfigVoBaseMap" type="com.miguan.xuanyuan.vo.XyMapConfigVo" >
+        <id property="id" column="id" />
+        <result property="configName" column="config_name" />
+        <result property="configKey" column="config_key" />
+        <result property="configVal" column="config_val" />
+        <result property="orderNum" column="order_num" />
+        <result property="status" column="status" />
+        <result property="note" column="note" />
+    </resultMap>
+
+    <insert id="insert" parameterType="com.miguan.xuanyuan.entity.XyMapConfig" useGeneratedKeys="true" keyProperty="id" >
+        INSERT INTO xy_map_config(config_name, config_key, config_val,
+          status,note)
+        VALUES(#{configName}, #{configKey}, #{configVal},
+        #{status},#{note})
+    </insert>
+
+    <update id="update" parameterType="com.miguan.xuanyuan.entity.XyMapConfig">
+        update xy_map_config set config_name = #{configName}, config_key = #{configKey}, config_val = #{configVal},
+          status = #{status},note = #{note}
+        WHERE id = #{id}
+    </update>
+
+    <select id="findPageList" parameterType="map" resultMap="XyMapConfigVoBaseMap">
+        SELECT id,config_name,config_key,config_val,order_num,note,
+            (case when status=1 then '启用' else '禁用' end) status
+        FROM
+            xy_map_config config
+        WHERE is_del = 0
+        <if test="keyword != null and keyword != ''">
+            AND config_name like CONCAT('%',#{keyword},'%')
+        </if>
+        <if test="status != null">
+            AND status = #{status}
+        </if>
+        <if test="sort != null">
+            order by ${sort}
+        </if>
+    </select>
+
+    <select id="findOpenConfig" resultMap="XyMapConfigBaseMap">
+        SELECT *
+        FROM
+            xy_map_config config
+        WHERE 1 = 1 and status = 1 and is_del = 0
+    </select>
+
+    <select id="judgeExistCode" parameterType="map" resultType="int">
+        SELECT count(*) FROM
+            xy_map_config
+        WHERE config_key = #{configKey}  and is_del = 0
+        <if test="id != null">
+            and id != #{id}
+        </if>
+    </select>
+
+
+    <select id="findById" parameterType="long" resultMap="XyMapConfigBaseMap">
+        SELECT * FROM xy_map_config WHERE id =#{id} LIMIT 1
+    </select>
+
+</mapper>

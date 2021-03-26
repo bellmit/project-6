@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.xuanyuan.mapper.XyUserExtMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.miguan.xuanyuan.entity.XyUserExt">
+        <id column="id" property="id" />
+        <result column="user_id" property="userId" />
+        <result column="plan_report_share" property="planReportShare" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+    </resultMap>
+
+    <select id="getUserExtByUserId" parameterType="map" resultMap="BaseResultMap">
+        SELECT * FROM xy_user_ext WHERE user_id = #{userId}  limit 1
+    </select>
+
+</mapper>

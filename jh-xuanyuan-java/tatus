@@ -1,0 +1,189 @@
+diff --git a/pom.xml b/pom.xml
+index 826d74b..ca14b8a 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -8,7 +8,7 @@
+ 		<version>2.4.1</version>
+ 		<relativePath/> <!-- lookup parent from repository -->
+ 	</parent>
+-	<groupId>com.miguan.jh</groupId>
++	<groupId>com.miguan</groupId>
+ 	<artifactId>xuanyuan</artifactId>
+ 	<version>0.0.1-SNAPSHOT</version>
+ 	<name>xuanyuan</name>
+diff --git a/src/main/java/com/miguan/xuanyuan/XuanyuanApplication.java b/src/main/java/com/miguan/xuanyuan/XuanyuanApplication.java
+index be62ad6..19ee5cc 100644
+--- a/src/main/java/com/miguan/xuanyuan/XuanyuanApplication.java
++++ b/src/main/java/com/miguan/xuanyuan/XuanyuanApplication.java
+@@ -1,4 +1,4 @@
+-package com.miguan.jh.xuanyuan;
++package com.miguan.xuanyuan;
+ 
+ import org.mybatis.spring.annotation.MapperScan;
+ import org.springframework.boot.SpringApplication;
+diff --git a/src/main/java/com/miguan/xuanyuan/common/constant/XyConstant.java b/src/main/java/com/miguan/xuanyuan/common/constant/XyConstant.java
+index 5dc4c4f..217bf02 100644
+--- a/src/main/java/com/miguan/xuanyuan/common/constant/XyConstant.java
++++ b/src/main/java/com/miguan/xuanyuan/common/constant/XyConstant.java
+@@ -1,4 +1,4 @@
+-package com.miguan.jh.xuanyuan.common.constant;
++package com.miguan.xuanyuan.common.constant;
+ 
+ public class XyConstant {
+ 
+diff --git a/src/main/java/com/miguan/xuanyuan/common/enums/D.java b/src/main/java/com/miguan/xuanyuan/common/enums/D.java
+index dc9481f..769a51c 100644
+--- a/src/main/java/com/miguan/xuanyuan/common/enums/D.java
++++ b/src/main/java/com/miguan/xuanyuan/common/enums/D.java
+@@ -1,4 +1,4 @@
+-package com.miguan.jh.xuanyuan.common.enums;
++package com.miguan.xuanyuan.common.enums;
+ 
+ /**
+  * @Description TODO
+diff --git a/src/main/java/com/miguan/xuanyuan/common/util/NumCalculationUtil.java b/src/main/java/com/miguan/xuanyuan/common/util/NumCalculationUtil.java
+index 913b72e..50d4f77 100644
+--- a/src/main/java/com/miguan/xuanyuan/common/util/NumCalculationUtil.java
++++ b/src/main/java/com/miguan/xuanyuan/common/util/NumCalculationUtil.java
+@@ -1,4 +1,4 @@
+-package com.miguan.jh.xuanyuan.common.util;
++package com.miguan.xuanyuan.common.util;
+ 
+ import java.math.BigDecimal;
+ 
+diff --git a/src/main/java/com/miguan/xuanyuan/common/util/SerializeUtil.java b/src/main/java/com/miguan/xuanyuan/common/util/SerializeUtil.java
+index 6abee47..0c35c6a 100644
+--- a/src/main/java/com/miguan/xuanyuan/common/util/SerializeUtil.java
++++ b/src/main/java/com/miguan/xuanyuan/common/util/SerializeUtil.java
+@@ -1,4 +1,4 @@
+-package com.miguan.jh.xuanyuan.common.util;
++package com.miguan.xuanyuan.common.util;
+ 
+ import java.io.ByteArrayInputStream;
+ import java.io.ByteArrayOutputStream;
+diff --git a/src/main/java/com/miguan/xuanyuan/controller/back/DemoController.java b/src/main/java/com/miguan/xuanyuan/controller/back/DemoController.java
+index a463616..2aab7cf 100644
+--- a/src/main/java/com/miguan/xuanyuan/controller/back/DemoController.java
++++ b/src/main/java/com/miguan/xuanyuan/controller/back/DemoController.java
+@@ -1,7 +1,7 @@
+-package com.miguan.jh.xuanyuan.controller.back;
++package com.miguan.xuanyuan.controller.back;
+ 
+-import com.miguan.jh.xuanyuan.service.DemoService;
+-import com.miguan.jh.xuanyuan.service.common.RedisService;
++import com.miguan.xuanyuan.service.DemoService;
++import com.miguan.xuanyuan.service.common.RedisService;
+ import io.swagger.annotations.Api;
+ import io.swagger.annotations.ApiOperation;
+ import lombok.extern.slf4j.Slf4j;
+diff --git a/src/main/java/com/miguan/xuanyuan/controller/front/D.java b/src/main/java/com/miguan/xuanyuan/controller/front/D.java
+index 4766e48..1c008ba 100644
+--- a/src/main/java/com/miguan/xuanyuan/controller/front/D.java
++++ b/src/main/java/com/miguan/xuanyuan/controller/front/D.java
+@@ -1,4 +1,4 @@
+-package com.miguan.jh.xuanyuan.controller.front;
++package com.miguan.xuanyuan.controller.front;
+ 
+ /**
+  * @Description TODO
+diff --git a/src/main/java/com/miguan/xuanyuan/controller/sdk/D.java b/src/main/java/com/miguan/xuanyuan/controller/sdk/D.java
+index e93f304..33a8c95 100644
+--- a/src/main/java/com/miguan/xuanyuan/controller/sdk/D.java
++++ b/src/main/java/com/miguan/xuanyuan/controller/sdk/D.java
+@@ -1,4 +1,4 @@
+-package com.miguan.jh.xuanyuan.controller.sdk;
++package com.miguan.xuanyuan.controller.sdk;
+ 
+ /**
+  * @Description TODO
+diff --git a/src/main/java/com/miguan/xuanyuan/dto/D.java b/src/main/java/com/miguan/xuanyuan/dto/D.java
+index 24849a5..ff96d2f 100644
+--- a/src/main/java/com/miguan/xuanyuan/dto/D.java
++++ b/src/main/java/com/miguan/xuanyuan/dto/D.java
+@@ -1,4 +1,4 @@
+-package com.miguan.jh.xuanyuan.dto;
++package com.miguan.xuanyuan.dto;
+ 
+ /**
+  * @Description TODO
+diff --git a/src/main/java/com/miguan/xuanyuan/mapper/DemoMapper.java b/src/main/java/com/miguan/xuanyuan/mapper/DemoMapper.java
+index 29b0cf3..a246c38 100644
+--- a/src/main/java/com/miguan/xuanyuan/mapper/DemoMapper.java
++++ b/src/main/java/com/miguan/xuanyuan/mapper/DemoMapper.java
+@@ -1,4 +1,4 @@
+-package com.miguan.jh.xuanyuan.mapper;
++package com.miguan.xuanyuan.mapper;
+ 
+ /**
+  * @Description TODO
+diff --git a/src/main/java/com/miguan/xuanyuan/service/DemoService.java b/src/main/java/com/miguan/xuanyuan/service/DemoService.java
+index 9e1d6f9..650d74b 100644
+--- a/src/main/java/com/miguan/xuanyuan/service/DemoService.java
++++ b/src/main/java/com/miguan/xuanyuan/service/DemoService.java
+@@ -1,4 +1,4 @@
+-package com.miguan.jh.xuanyuan.service;
++package com.miguan.xuanyuan.service;
+ 
+ /**
+  * @Description TODO
+diff --git a/src/main/java/com/miguan/xuanyuan/service/common/RedisService.java b/src/main/java/com/miguan/xuanyuan/service/common/RedisService.java
+index 560d823..57f0916 100644
+--- a/src/main/java/com/miguan/xuanyuan/service/common/RedisService.java
++++ b/src/main/java/com/miguan/xuanyuan/service/common/RedisService.java
+@@ -1,7 +1,7 @@
+-package com.miguan.jh.xuanyuan.service.common;
++package com.miguan.xuanyuan.service.common;
+ 
+ import com.alibaba.fastjson.JSON;
+-import com.miguan.jh.xuanyuan.common.util.SerializeUtil;
++import com.miguan.xuanyuan.common.util.SerializeUtil;
+ import org.springframework.stereotype.Service;
+ import redis.clients.jedis.Jedis;
+ import redis.clients.jedis.JedisPool;
+diff --git a/src/main/java/com/miguan/xuanyuan/service/impl/DemoServiceImpl.java b/src/main/java/com/miguan/xuanyuan/service/impl/DemoServiceImpl.java
+index 0fb63a5..f10d23d 100644
+--- a/src/main/java/com/miguan/xuanyuan/service/impl/DemoServiceImpl.java
++++ b/src/main/java/com/miguan/xuanyuan/service/impl/DemoServiceImpl.java
+@@ -1,7 +1,7 @@
+-package com.miguan.jh.xuanyuan.service.impl;
++package com.miguan.xuanyuan.service.impl;
+ 
+-import com.miguan.jh.xuanyuan.mapper.DemoMapper;
+-import com.miguan.jh.xuanyuan.service.DemoService;
++import com.miguan.xuanyuan.mapper.DemoMapper;
++import com.miguan.xuanyuan.service.DemoService;
+ import org.springframework.stereotype.Service;
+ 
+ import javax.annotation.Resource;
+diff --git a/src/main/java/com/miguan/xuanyuan/task/D.java b/src/main/java/com/miguan/xuanyuan/task/D.java
+index 745d5f6..70e4109 100644
+--- a/src/main/java/com/miguan/xuanyuan/task/D.java
++++ b/src/main/java/com/miguan/xuanyuan/task/D.java
+@@ -1,4 +1,4 @@
+-package com.miguan.jh.xuanyuan.task;
++package com.miguan.xuanyuan.task;
+ 
+ /**
+  * @Description TODO
+diff --git a/src/main/java/com/miguan/xuanyuan/vo/D.java b/src/main/java/com/miguan/xuanyuan/vo/D.java
+index 6335d39..f8bd886 100644
+--- a/src/main/java/com/miguan/xuanyuan/vo/D.java
++++ b/src/main/java/com/miguan/xuanyuan/vo/D.java
+@@ -1,4 +1,4 @@
+-package com.miguan.jh.xuanyuan.vo;
++package com.miguan.xuanyuan.vo;
+ 
+ /**
+  * @Description TODO
+diff --git a/src/main/resources/mapper/DemoMapper.xml b/src/main/resources/mapper/DemoMapper.xml
+index ccf22cd..1399cd4 100644
+--- a/src/main/resources/mapper/DemoMapper.xml
++++ b/src/main/resources/mapper/DemoMapper.xml
+@@ -7,4 +7,4 @@
+         select count(1) from arc_sys_dict
+     </select>
+ 
+-</mapper>
+\ No newline at end of file
++</mapp
+\ No newline at end of file

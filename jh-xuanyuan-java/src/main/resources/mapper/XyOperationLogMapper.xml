@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.xuanyuan.mapper.XyOperationLogMapper">
+
+    <resultMap id="XyOperationLogBaseMap" type="com.miguan.xuanyuan.entity.XyOperationLog" >
+        <id property="id" column="id" />
+        <result property="userId" column="user_id" />
+        <result property="date" column="date" />
+        <result property="ip" column="ip" />
+        <result property="pathName" column="path_name" />
+        <result property="type" column="type" />
+        <result property="changeContent" column="change_content" />
+        <result property="operationPlat" column="operation_plat" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAt" column="updated_at" />
+    </resultMap>
+
+    <resultMap id="XyOperationLogVoBaseMap" type="com.miguan.xuanyuan.vo.XyOperationLogVo" >
+        <id property="id" column="id" />
+        <result property="date" column="date" />
+        <result property="operationUser" column="operation_user" />
+        <result property="ip" column="ip" />
+        <result property="pathName" column="path_name" />
+        <result property="type" column="type" />
+        <result property="typeName" column="type_name" />
+        <result property="changeContent" column="change_content" />
+        <result property="operationPlat" column="operation_plat" />
+    </resultMap>
+
+    <insert id="insert" parameterType="com.miguan.xuanyuan.entity.XyOperationLog" useGeneratedKeys="true" keyProperty="id" >
+        INSERT INTO xy_operate_log(user_id, date ,ip ,path_name ,
+          type,change_content,operation_plat)
+        VALUES(#{userId}, #{date} ,#{ip} ,#{pathName} ,
+        #{type},#{changeContent},#{operationPlat})
+    </insert>
+
+    <select id="findPageList" parameterType="map" resultMap="XyOperationLogVoBaseMap">
+        SELECT log.id,log.date,u.username operation_user,log.ip,log.path_name,log.type,log.change_content,log.operation_plat,
+            (case when log.type=1 then '新增' when log.type=2 then '修改' when log.type=3 then '删除' else '' end) type_name
+        FROM
+            xy_operate_log log
+            LEFT JOIN xy_user u ON log.user_id = u.id
+        WHERE 1 = 1
+        <if test="keyword != null and keyword != ''">
+            AND log.change_content like CONCAT('%',#{keyword},'%')
+        </if>
+        <if test="startDate != null and startDate != ''">
+            AND DATE(log.date) <![CDATA[>=]]> #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND DATE(log.date) <![CDATA[<=]]> #{endDate}
+        </if>
+        <if test="operationPlat != null">
+            AND log.operation_plat = #{operationPlat}
+        </if>
+        <if test="pathName != null and pathName != ''">
+            AND log.path_name like CONCAT('%',#{pathName},'%')
+        </if>
+        <if test="type != null and type != ''">
+            AND log.type = #{type}
+        </if>
+        order by log.id desc
+    </select>
+
+</mapper>

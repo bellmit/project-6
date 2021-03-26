@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.xuanyuan.mapper.XyAdCodeMapper">
+
+
+    <resultMap id="BaseResultMap" type="com.miguan.xuanyuan.entity.XyAdCode" >
+        <id property="id" column="id" />
+        <result property="codeName" column="code_name"/>
+        <result property="positionId" column="position_id" />
+        <result property="userId" column="user_id" />
+        <result property="sourcePlatKey" column="source_plat_key" />
+        <result property="sourcePlatAccountId" column="source_plat_account_id" />
+        <result property="sourceCodeId" column="source_code_id" />
+        <result property="renderType" column="render_type" />
+        <result property="isLadder" column="is_ladder" />
+        <result property="ladderPrice" column="ladder_price" />
+        <result property="showLimitHour" column="show_limit_hour" />
+        <result property="showLimitDay" column="show_limit_day" />
+        <result property="showIntervalSec" column="show_interval_sec" />
+        <result property="versionOperation" column="version_operation" />
+        <result property="versions" column="versions" />
+        <result property="channelOperation" column="channel_operation" />
+        <result property="channels" column="channels" />
+        <result property="note" column="note" />
+        <result property="status" column="status" />
+        <result property="isDel" column="is_del" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAt" column="updated_at" />
+    </resultMap>
+
+
+    <insert id="insert" parameterType="com.miguan.xuanyuan.dto.request.AdCodeRequest" useGeneratedKeys="true" keyProperty="id" >
+        INSERT INTO xy_ad_code(code_name, position_id,user_id, source_plat_key, source_plat_account_id, source_code_id, render_type
+        ,is_ladder, ladder_price, show_limit_hour, show_limit_day, show_interval_sec, version_operation, versions, channel_operation, channels, note, status, is_del)
+        VALUES(#{codeName}, #{positionId},#{userId}, #{sourcePlatKey}, #{sourcePlatAccountId}, #{sourceCodeId}, #{renderType}
+        ,#{isLadder}, #{ladderPrice}, #{showLimitHour}, #{showLimitDay}, #{showIntervalSec}, #{versionOperation}, #{versions}, #{channelOperation}, #{channels}, #{note}, #{status}, #{isDel})
+    </insert>
+
+    <update  id="update" parameterType="com.miguan.xuanyuan.dto.request.AdCodeRequest">
+         update xy_ad_code
+         <set>
+             <if test="codeName != null">code_name=#{codeName},</if>
+             <if test="positionId != null">position_id=#{positionId},</if>
+             <if test="sourcePlatKey != null">source_plat_key = #{sourcePlatKey},</if>
+             <if test="sourcePlatAccountId != null">source_plat_account_id = #{sourcePlatAccountId},</if>
+             <if test="sourceCodeId != null">source_code_id = #{sourceCodeId},</if>
+             <if test="renderType != null">render_type = #{renderType},</if>
+             <if test="isLadder != null">is_ladder = #{isLadder},</if>
+             <if test="ladderPrice != null">ladder_price = #{ladderPrice},</if>
+             <if test="versionOperation != null">version_operation = #{versionOperation},</if>
+             <if test="versions != null">versions = #{versions},</if>
+             <if test="channelOperation != null">channel_operation = #{channelOperation},</if>
+             <if test="channels != null">channels = #{channels},</if>
+             <if test="note != null">note = #{note},</if>
+             <if test="status != null">status = #{status},</if>
+             <if test="isDel != null">is_del = #{isDel},</if>
+             show_limit_hour = #{showLimitHour},
+             show_limit_day = #{showLimitDay},
+             show_interval_sec = #{showIntervalSec}
+         </set>
+         where id=#{id}
+    </update >
+
+
+
+    <select id="findById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT * FROM xy_ad_code WHERE id =#{id} LIMIT 1
+    </select>
+
+
+    <select id="getDataByPlatKeyAndCodeId" parameterType="map" resultMap="BaseResultMap">
+        SELECT * FROM xy_ad_code WHERE source_plat_key = #{sourcePlatKey}  and source_code_id= #{sourceCodeId}
+        <if test="id != null and id > 0">and id != #{id}</if>
+        and is_del = 0 LIMIT 1
+    </select>
+
+    <select id="getAdCodeBy" parameterType="map" resultMap="BaseResultMap">
+        SELECT * FROM xy_ad_code WHERE source_plat_key = #{sourcePlatKey}  and source_code_id= #{sourceCodeId}
+        <if test="id != null and id > 0">and id != #{id}</if>
+        and is_del = 0 LIMIT 1
+    </select>
+
+
+    <update  id="updateCodeNotPutIn" parameterType="java.lang.Long">
+        update xy_ad_code set status = 0
+        where position_id = #{positionId} and source_code_id not in (
+            select  sc.code_id  from xy_strategy sg
+            inner join xy_strategy_code sc on sg.id = sc.strategy_id and sc.status=1
+            inner join xy_strategy_group sgg on sgg.id = sg.strategy_group_id
+            where sgg.position_id = #{positionId}
+        )
+    </update >
+
+    <select  id="findCodeNotPutIn" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select * from xy_ad_code
+        where position_id = #{positionId} and source_code_id not in (
+            select  sc.code_id  from xy_strategy sg
+            inner join xy_strategy_code sc on sg.id = sc.strategy_id and sc.status=1
+            inner join xy_strategy_group sgg on sgg.id = sg.strategy_group_id
+            where sgg.position_id = #{positionId}
+        )
+    </select >
+
+    <update  id="deleteByPositionId" parameterType="long">
+        update xy_ad_code set is_del = 1 where position_id=#{value}
+    </update >
+
+    <select  id="findByPositionId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select * from xy_ad_code where position_id=#{value}
+    </select >
+
+    <update id="deleteByAppId" parameterType="long">
+        UPDATE xy_ad_code
+        SET is_del = 1
+        WHERE
+        position_id in (
+            select id from xy_ad_position where app_id = #{id}
+        )
+    </update>
+
+    <select  id="findByAppId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select * from xy_ad_code
+        WHERE
+        position_id in (
+            select id from xy_ad_position where app_id = #{id}
+        )
+    </select >
+
+    <select id="findByAppIdAndPlatKey" parameterType="map" resultMap="BaseResultMap">
+        SELECT co.* FROM xy_app app
+            INNER JOIN xy_ad_position pos ON app.id = pos.app_id
+            INNER JOIN xy_ad_code co ON co.position_id = pos.id
+        WHERE co.is_del = 0
+        AND app.id = #{appId}
+        AND co.source_plat_key = #{platKey}
+    </select>
+
+</mapper>

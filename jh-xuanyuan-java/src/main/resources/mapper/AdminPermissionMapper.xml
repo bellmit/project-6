@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.xuanyuan.mapper.AdminPermissionMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.miguan.xuanyuan.entity.AdminPermission">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="action_code" property="actionCode" />
+        <result column="url" property="url" />
+        <result column="project_id" property="projectId" />
+        <result column="parent_id" property="parentId" />
+        <result column="type" property="type" />
+        <result column="svg_name" property="svgName" />
+        <result column="is_show" property="isShow" />
+        <result column="order_num" property="orderNum" />
+        <result column="status" property="status" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+    </resultMap>
+
+    <select id="getPermissionExcludeId" parameterType="map" resultMap="BaseResultMap">
+        SELECT * FROM admin_permission WHERE action_code = #{actionCode}
+        <if test="id != null and id > 0"> and id != #{id} </if>
+        and status = 1 LIMIT 1
+    </select>
+
+    <select id="getPermissionListByParentId"  resultType="com.miguan.xuanyuan.vo.AdminPermissionVo" parameterType="map">
+        select *
+        from admin_permission
+        where parent_id=#{parentId} and status=1
+        order by order_num asc, id asc limit 1000
+    </select>
+
+    <select id="existChildren"  resultType="java.lang.Integer" parameterType="java.lang.Long">
+        select count(id) cnt
+        from admin_permission
+        where parent_id=#{parentId} and status=1
+        limit 1
+    </select>
+
+
+    <select id="projectHasChildren"  resultType="java.lang.Integer" parameterType="map">
+        select count(id) cnt
+        from admin_permission
+        where project_id=#{projectId} and parent_id=0 and status=1
+        limit 1
+    </select>
+
+    <select id="listPermissionByParentId"  resultType="com.miguan.xuanyuan.dto.PermissionListDto" parameterType="int">
+        select *
+        from admin_permission
+        where parent_id=#{parentId}
+        and project_id = #{projectId}
+        order by order_num asc
+    </select>
+</mapper>

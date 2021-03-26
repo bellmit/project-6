@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.xuanyuan.mapper.ThirdPlatApiMapper">
+
+    <select id="findPlatList" resultType="com.miguan.xuanyuan.vo.ThirdPlatVo">
+        select a.user_id, u.username, a.plat_id, p.plat_key, a.open_reportapi, p.plat_name, a.app_id, a.app_secret
+        from xy_plat_account a
+        inner join xy_plat p on a.plat_id = p.id
+        inner join xy_user u on a.user_id = u.id
+        and a.app_id != ''
+        and a.app_secret != ''
+        and a.app_id is not null
+        and a.app_secret is not null
+        and p.is_del = 0
+        and a.is_del = 0
+        and u.status = 1
+        order by username, plat_key
+    </select>
+
+
+    <insert id="batchInsertPlatData" parameterType="list">
+        REPLACE INTO third_plat_data(`date`, `name`, ad_source, app_name, app_id, ad_type, ad_name, ad_id, revenue, `show`, click, click_rate, ecpm,
+                                     request_count, return_count, ad_request_count, ad_return_count, fill_rate, exposure_rate, ad_fill_rate, ad_exposure_rate, cpc)
+        VALUES
+        <foreach collection="list" item="data" separator=",">
+            (#{data.date},#{data.name},#{data.adSource},#{data.appName},#{data.appId},#{data.adType},#{data.adName},#{data.adId},#{data.revenue},#{data.show},
+            #{data.click},#{data.clickRate},#{data.ecpm},#{data.requestCount},#{data.returnCount},#{data.adRequestCount},#{data.adReturnCount},#{data.fillRate},
+            #{data.exposureRate},#{data.adFillRate},#{data.adExposureRate},#{data.cpc})
+        </foreach>
+    </insert>
+
+    <select id="findOldAdvConfigPackage" resultType="string">
+        select app_package from ad_advert_position group by app_package
+    </select>
+
+    <select id="findOldAdvConfigApp" parameterType="list" resultType="map">
+        select distinct package_name, client_type
+        from xy_app
+        where is_del = 0
+        and package_name in <foreach collection="list" item="packageName" separator="," open="(" close=")">#{packageName}</foreach>
+    </select>
+
+    <insert id="saveXyThirdPlatDataTotal" parameterType="map">
+        REPLACE INTO third_plat_data_total(`date`, ad_source, app_type_code, app_type_name, app_key, cut_app_name, client_id, package_name, total_name, ad_id,
+                                          price, request_count, return_count, ad_request_count, ad_return_count, `show`, click, revenue, ad_type_code, ad_type_name)
+        select d.date, d.ad_source, b.app_type_id, b.app_type_name, b.app_key,b.app_name cut_app_name, b.client_type,  b.package_name,
+               l.total_name, d.ad_id, l.price, d.request_count, d.return_count, d.ad_request_count, d.ad_return_count,
+               d.`show`, d.click, d.revenue, l.ad_type_code, l.ad_type_name
+        from third_plat_data d
+        inner join (
+                      select a.app_name, a.app_key, a.category_type app_type_id, c.item_val app_type_name, a.package_name,
+                             a.client_type,t.plat_key, p.source_app_id
+                      from xy_app a
+                      inner join xy_source_app p on a.id=p.app_id
+                      inner join xy_plat t on p.plat_id = t.id
+                      left join xy_option_item_config c on c.item_key = a.category_type and c.config_code = 'app_type' and c.is_del = 0
+                      where 1=1
+                      <if test="oldAppList != null" >
+                          and (a.package_name, a.client_type) not in
+                          <foreach collection="oldAppList" item="app" open="(" close=")" separator=",">
+                              (#{app.package_name}, #{app.client_type})
+                          </foreach>
+                      </if>
+                   ) b on d.app_id = b.source_app_id and d.ad_source = b.plat_key
+        left join ad_config_log l on d.date=l.date and d.ad_source=l.plat_key and d.ad_id=l.ad_id and l.adv_config_type=1
+        where d.date = #{date}
+        and d.app_id != '0'
+    </insert>
+
+    <select id="findOldAdIdAndTotalName" resultType="com.miguan.xuanyuan.vo.ThirdAdPostionVo">
+        select ad_id, total_name,price,ad_type_code,ad_type_name,plat_key
+        from ad_config_log
+        where date =#{date}
+        and adv_config_type=0
+    </select>
+
+    <select id="findXyThirdPlatDataTotal" parameterType="map" resultType="com.miguan.xuanyuan.vo.ThirdPlatDataTotalVo">
+        select d.date, d.ad_source, b.app_type_code, b.app_type_name, b.app_key,b.app_name cut_app_name, b.client_type client_id,  b.package_name,
+               d.ad_id, d.request_count, d.return_count, d.ad_request_count, d.ad_return_count, d.`show`, d.click, d.revenue, 0 adv_config_type
+        from third_plat_data d
+        inner join (
+                      select a.app_name, a.app_key, a.category_type app_type_code, c.item_val app_type_name, a.package_name,
+                             a.client_type,t.plat_key, p.source_app_id
+                      from xy_app a
+                      inner join xy_source_app p on a.id=p.app_id
+                      inner join xy_plat t on p.plat_id = t.id
+                      left join xy_option_item_config c on c.item_key = a.category_type and c.config_code = 'app_type' and c.is_del = 0
+                      where 1=1
+                      <if test="oldAppList != null" >
+                          and (a.package_name, a.client_type) in
+                          <foreach collection="oldAppList" item="app" open="(" close=")" separator=",">
+                              (#{app.package_name}, #{app.client_type})
+                          </foreach>
+                      </if>
+                   ) b on d.app_id = b.source_app_id and d.ad_source = b.plat_key
+        where date = #{date}
+        and d.app_id != '0'
+    </select>
+
+    <insert id="saveOldThirdPlatDataTotal" parameterType="list">
+        REPLACE INTO third_plat_data_total(`date`, ad_source, app_type_code, app_type_name, app_key, cut_app_name, client_id, package_name, total_name, ad_id,
+                                            price, request_count, return_count, ad_request_count, ad_return_count, `show`, click, revenue, ad_type_code, ad_type_name, adv_config_type)
+        VALUES
+        <foreach collection="list" item="data" separator=",">
+            (#{data.date},#{data.adSource},#{data.appTypeCode},#{data.appTypeName},#{data.appKey},#{data.cutAppName},#{data.clientId},
+            #{data.packageName},#{data.totalName},#{data.adId},#{data.price},#{data.requestCount},#{data.returnCount},#{data.adRequestCount},
+            #{data.adReturnCount},#{data.show},#{data.click},#{data.revenue},#{data.adTypeCode},#{data.adTypeName},#{data.advConfigType})
+        </foreach>
+    </insert>
+
+    <select id="findOldAdvConfigList" parameterType="string" resultType="com.miguan.xuanyuan.vo.AdConfigLogVo">
+        select #{date} `date`, c.plat_key, p.id position_id, p.position_type position_key, p.app_package package_name, p.mobile_type client_type,  p.total_name, c.ad_id, c.ladder_price price, f.test_state is_test,
+               concat(f.ab_flow_id, '-', t.ab_test_id) ab_exp , r.order_num ad_list, y.type_key ad_type_code, y.type_name ad_type_name, 0 advConfigType
+        from ad_advert_position p
+        inner join ad_advert_flow_config f on p.id = f.position_id and f.state = 1
+        inner join ad_advert_test_config t on f.id = t.flow_id and t.state = 1
+        inner join ad_test_code_relation r on t.id = r.config_id and r.state = 1
+        inner join ad_advert_code c on c.id = r.code_id
+        left join ad_type y on y.type_key = c.type_key and y.plat_key = c.plat_key and y.state = 1
+        where p.status = 1
+    </select>
+
+    <insert id="saveAdConfigLog" parameterType="list">
+        REPLACE INTO ad_config_log(`date`, plat_key,package_name,client_type, position_id, position_key, total_name, ad_id, price, is_test, ab_exp, ad_list, ad_type_code, ad_type_name, adv_config_type)
+        VALUES
+        <foreach collection="list" item="data" separator=",">
+            (#{data.date},#{data.platKey},#{data.packageName},#{data.clientType},#{data.positionId},#{data.positionKey},#{data.totalName},#{data.adId},#{data.price},#{data.isTest},#{data.abExp},#{data.adList},#{data.adTypeCode},
+             #{data.adTypeName},#{data.advConfigType})
+        </foreach>
+    </insert>
+
+    <insert id="saveXyAdConfigLog" parameterType="string">
+        REPLACE INTO ad_config_log(`date`, plat_key,package_name,client_type, position_id,position_key, total_name, ad_id, price, is_test, ab_exp, ad_list, ad_type_code, ad_type_name, adv_config_type)
+        select #{date},o.source_plat_key plat_key,ap.package_name,ap.client_type, p.id,p.position_key, p.position_name, o.source_code_id, o.ladder_price, if(g.ab_id=0,0,1) is_test,
+               if(g.ab_id=0,null,concat(g.ab_id, '-', y.ab_item_id)) ab_exp, c.order_num ad_list, cg.item_key, cg.item_val, 1
+        from xy_ad_position p
+        inner join xy_strategy_group g on p.id = g.position_id
+        inner join xy_strategy y on y.strategy_group_id = g.id and y.status = 1
+        inner join xy_strategy_code c on c.strategy_id = y.id and c.status = 1
+        inner join xy_ad_code o on o.source_code_id = c.code_id and o.status = 1 and o.is_del = 0
+        inner join xy_app ap on p.app_id= ap.id
+        left join xy_option_item_config cg on cg.item_key = p.ad_type and cg.config_code = 'ad_type' and cg.is_del = 0
+        where p.is_del = 0
+        and p.status = 1
+    </insert>
+
+    <select id="countDataTotal" parameterType="map" resultType="int">
+        select count(1)
+        from (
+            select ad_source
+            from third_plat_data_total
+            where date=#{date}
+            group by ad_source
+        ) a
+    </select>
+
+    <select id="countGetReady" parameterType="map" resultType="int">
+        select count(1)
+        from get_ready
+        where dt=#{dt}
+        and status= 1
+        and content='data_profit'
+    </select>
+
+    <insert id="insertGetReady" parameterType="map">
+        INSERT INTO `get_ready`( `content`, `status`, `dt`) VALUES ( 'data_profit', 1, #{dh});
+    </insert>
+</mapper>

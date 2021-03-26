@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.xuanyuan.mapper.XyProductMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.miguan.xuanyuan.entity.XyProduct">
+        <id column="id" property="id" />
+        <result column="product_name" property="productName" />
+        <result column="user_id" property="userId" />
+        <result column="status" property="status" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+    </resultMap>
+
+
+    <select id="getProductByNameExcludeId" parameterType="map" resultMap="BaseResultMap">
+        SELECT * FROM xy_product WHERE product_name = #{productName}
+        <if test="id != null and id > 0"> and id != #{id} </if>
+        and status = 1 LIMIT 1
+    </select>
+
+
+    <select id="getProductList"  resultType="com.miguan.xuanyuan.vo.ProductVo" parameterType="map">
+        select id,product_name
+        from xy_product
+        where user_id=#{userId} and status=1
+        order by id desc
+        limit #{offset},#{limit}
+    </select>
+
+    <select id="getProductCount"  resultType="java.lang.Integer" parameterType="java.lang.Long">
+        select count(id) cnt
+        from xy_product
+        where user_id=#{userId} and status=1
+        limit 1
+    </select>
+
+
+</mapper>

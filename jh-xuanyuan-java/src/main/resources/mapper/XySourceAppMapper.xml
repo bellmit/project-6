@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.xuanyuan.mapper.XySourceAppMapper">
+
+
+    <resultMap id="BaseResultMap" type="com.miguan.xuanyuan.entity.XySourceApp" >
+        <id property="id" column="id" />
+        <result property="appId" column="app_id"/>
+        <result property="platId" column="plat_id" />
+        <result property="sourceAppId" column="source_app_id" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAt" column="updated_at" />
+    </resultMap>
+
+
+    <insert id="insert" parameterType="com.miguan.xuanyuan.dto.request.SourceAppRequest" useGeneratedKeys="true" keyProperty="id" >
+        INSERT INTO xy_source_app(app_id, plat_id,source_app_id)
+        VALUES(#{appId}, #{platId},#{sourceAppId})
+    </insert>
+
+    <update  id="update" parameterType="com.miguan.xuanyuan.dto.request.SourceAppRequest">
+         update xy_source_app
+         <set>
+             <if test="appId != null">app_id=#{appId},</if>
+             <if test="platId != null">plat_id=#{platId},</if>
+             <if test="sourceAppId != null">source_app_id = #{sourceAppId}</if>
+         </set>
+         where id=#{id}
+    </update >
+
+    <select id="findAll" resultMap="BaseResultMap">
+        SELECT * FROM xy_source_app
+    </select>
+
+    <select id="findById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT * FROM xy_source_app WHERE id =#{id} LIMIT 1
+    </select>
+
+
+    <select id="getDataByAppIdAndPlatId" parameterType="map" resultMap="BaseResultMap">
+        SELECT * FROM xy_source_app WHERE app_id = #{appId}  and plat_id= #{platId}
+        LIMIT 1
+    </select>
+
+
+    <resultMap id="RelateAppInfoResultMap" type="com.miguan.xuanyuan.vo.RelateAppInfoVo" >
+        <id property="id" column="id" />
+        <result property="appId" column="app_id"/>
+        <result property="platId" column="plat_id" />
+        <result property="platKey" column="plat_key" />
+        <result property="platName" column="plat_name" />
+        <result property="sourceAppId" column="source_app_id" />
+    </resultMap>
+
+    <select id="findRelateApp" parameterType="map" resultMap="RelateAppInfoResultMap">
+        SELECT sa.id,#{appId} app_id,p.id plat_id,p.plat_key,p.plat_name,sa.source_app_id FROM xy_plat p
+        LEFT JOIN xy_source_app sa ON p.id = sa.plat_id AND sa.app_id = #{appId}
+        WHERE p.use_third = 1
+        order by p.id desc
+    </select>
+
+    <insert id="saveRelateApp" parameterType="map" useGeneratedKeys="true" keyProperty="id" >
+        INSERT INTO
+            xy_source_app(id,app_id, plat_id ,source_app_id)
+        VALUES
+        <foreach collection ="relationInfoList" item="item" separator =",">
+            (#{item.id},#{item.appId}, #{item.platId}, #{item.sourceAppId})
+        </foreach >
+        ON DUPLICATE KEY UPDATE
+            id = VALUES(id),
+            app_id = VALUES(app_id),
+            plat_id = VALUES(plat_id),
+            source_app_id = VALUES(source_app_id)
+    </insert>
+
+    <select id="findSourceAppId" parameterType="map" resultType="string">
+        SELECT sa.source_app_id FROM xy_plat p
+        INNER JOIN xy_source_app sa ON p.id = sa.plat_id
+        WHERE sa.app_id = #{appId}
+        AND p.is_del = 0
+        AND p.plat_key = #{platKey}
+        LIMIT 1
+    </select>
+
+    <select id="findInnerApp" parameterType="java.lang.Long" resultType="com.miguan.xuanyuan.entity.XyPlat">
+        select * from xy_plat plat
+        where id not in (
+            select plat.id from xy_source_app sa
+            INNER JOIN xy_plat plat ON plat.id = sa.plat_id
+            where app_id=#{appId}
+        )
+        and plat.use_third = 0 and plat.is_del = 0
+    </select>
+
+    <select id="findSourceAppByPositionIdAndPlatKey" parameterType="map" resultType="string">
+        SELECT sa.source_app_id FROM xy_app app
+            INNER JOIN xy_ad_position pos ON app.id = pos.app_id
+            INNER JOIN xy_source_app sa ON app.id = sa.app_id
+            INNER JOIN xy_plat p ON p.id = sa.plat_id
+        WHERE pos.id = #{positionId}
+        AND p.is_del = 0
+        AND p.plat_key = #{platKey}
+        LIMIT 1
+    </select>
+
+    <select id="judgeExistSourceApp" parameterType="com.miguan.xuanyuan.dto.request.SourceAppRequest" resultType="int">
+        SELECT count(*) FROM xy_source_app
+        WHERE app_id != #{appId}
+        AND plat_id = #{platId}
+        AND source_app_id = #{sourceAppId}
+    </select>
+
+    <resultMap id="SourceAppInfoResultMap" type="com.miguan.xuanyuan.vo.sdk.SourceAppInfoVo" >
+        <result property="platKey" column="plat_key"/>
+        <result property="platName" column="plat_name" />
+        <result property="sourceAppId" column="source_app_id" />
+    </resultMap>
+    <select id="findAppInfo" parameterType="long" resultMap="SourceAppInfoResultMap">
+        SELECT
+            plat.plat_key,
+            plat.plat_name,
+            sapp.source_app_id
+        FROM
+            xy_source_app sapp
+        LEFT JOIN xy_plat plat ON sapp.plat_id = plat.id
+        WHERE sapp.app_id = #{appId}
+    </select>
+
+</mapper>

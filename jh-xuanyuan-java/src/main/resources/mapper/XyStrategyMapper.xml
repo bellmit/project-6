@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.xuanyuan.mapper.XyStrategyMapper">
+
+    <resultMap id="XyStrategyBaseMap" type="com.miguan.xuanyuan.entity.XyStrategy" >
+        <id property="id" column="id" />
+        <result property="strategyGroupId" column="strategy_group_id" />
+        <result property="type" column="type" />
+        <result property="abItemId" column="ab_item_id" />
+        <result property="abRate" column="ab_rate" />
+        <result property="sortType" column="sort_type" />
+        <result property="customField" column="custom_field" />
+        <result property="status" column="status" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAt" column="updated_at" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, strategy_group_id, type, ab_item_id ,ab_rate ,sort_type, custom_field,status
+    </sql>
+
+    <select id="getStrategyList"  resultType="com.miguan.xuanyuan.dto.XyStrategyDto" parameterType="map">
+        select <include refid="Base_Column_List" />
+        from xy_strategy
+        where strategy_group_id=#{strategyGroupId} and status=1
+    </select>
+
+    <select id="getDataById"  resultType="com.miguan.xuanyuan.dto.XyStrategyDto" parameterType="map">
+        select <include refid="Base_Column_List" />
+        from xy_strategy
+        where id=#{id}
+    </select>
+
+    <select id="findById"  resultType="com.miguan.xuanyuan.dto.XyStrategyDto" parameterType="map">
+        select <include refid="Base_Column_List" />
+        from xy_strategy
+        where id=#{id}
+    </select>
+
+    <select id="getDataByAbItemId"  resultType="com.miguan.xuanyuan.dto.XyStrategyDto" parameterType="map">
+        select <include refid="Base_Column_List" />
+        from xy_strategy
+        where strategy_group_id = #{strategyGroupId} and ab_item_id=#{abItemId}
+    </select>
+
+
+    <insert id="insert" parameterType="com.miguan.xuanyuan.entity.XyStrategy" useGeneratedKeys="true" keyProperty="id" >
+        INSERT INTO xy_strategy(strategy_group_id, type, ab_item_id ,ab_rate ,sort_type, custom_field,status)
+        VALUES(#{strategyGroupId}, #{type}, #{abItemId}, #{abRate}, #{sortType},  #{customField}, #{status})
+    </insert>
+
+    <update  id="update" parameterType="com.miguan.xuanyuan.entity.XyStrategy">
+        update xy_strategy
+        <set>
+            <if test="abRate != null">ab_rate = #{abRate},</if>
+            <if test="sortType != null">sort_type = #{sortType},</if>
+            <if test="customField != null">custom_field = #{customField},</if>
+            <if test="status != null">status = #{status}</if>
+        </set>
+        where id=#{id}
+    </update >
+
+
+    <update  id="updateStrategyClose" parameterType="map">
+        update xy_strategy set status = 0
+        where strategy_group_id=#{strategyGroupId} and ab_item_id not in
+        <foreach collection="abItemIdList" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </update >
+
+    <select id="findStrategyClose"  resultType="com.miguan.xuanyuan.dto.XyStrategyDto" parameterType="map">
+        select <include refid="Base_Column_List" />
+        from xy_strategy
+        where strategy_group_id=#{strategyGroupId} and ab_item_id not in
+        <foreach collection="abItemIdList" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+
+
+    <select id="getDefaultStrategyByPositionId"  resultType="com.miguan.xuanyuan.entity.XyStrategy" parameterType="map">
+        select s.*
+        from xy_strategy s
+        inner join xy_strategy_group sg on sg.id = s.strategy_group_id and sg.position_id = #{positionId}
+        where s.type=0 limit 1
+    </select>
+
+</mapper>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.xuanyuan.mapper.XyRenderMapper">
+
+    <resultMap id="XyRenderBaseMap" type="com.miguan.xuanyuan.entity.XyRender" >
+        <id property="id" column="id" />
+        <result property="platKey" column="plat_key" />
+        <result property="platName" column="plat_name" />
+        <result property="rKey" column="r_key" />
+        <result property="rName" column="r_name" />
+        <result property="isDel" column="is_del" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAt" column="updated_at" />
+    </resultMap>
+
+    <insert id="insert" parameterType="com.miguan.xuanyuan.entity.XyRender" useGeneratedKeys="true" keyProperty="id" >
+        INSERT INTO xy_render(plat_key, plat_name,r_key, r_name)
+        VALUES(#{platKey}, #{platName},#{rKey}, #{rName})
+    </insert>
+
+    <update id="update" parameterType="com.miguan.xuanyuan.entity.XyRender">
+        update xy_render set plat_key = #{platKey},plat_name = #{platName},r_key = #{rKey},r_name = #{rName}
+        WHERE id = #{id}
+    </update>
+
+    <select id="judgeExistKey" parameterType="map" resultType="int">
+        SELECT count(*) FROM
+            xy_render
+        WHERE r_key = #{rKey}  and status = 1
+        <if test="id != null">
+            and id != #{id}
+        </if>
+    </select>
+
+    <select id="findById" parameterType="long" resultMap="XyRenderBaseMap">
+        SELECT * FROM xy_render WHERE id =#{id}
+        LIMIT 1
+    </select>
+
+    <select id="findList" parameterType="string" resultMap="XyRenderBaseMap">
+        SELECT * FROM xy_render WHERE status = 1
+        and plat_key = #{platKey}
+        <if test="adType != null and adType != ''">
+            and ad_type like CONCAT('%',#{adType},'%')
+        </if>
+        order by id desc
+    </select>
+
+</mapper>

@@ -1,0 +1,134 @@
+server:
+  port: 8384
+  max-post-size: -1
+  max-http-header-size: 402400
+#  servlet:
+#    session:
+#      cookie:
+#        domain: xymoby.com
+spring:
+  profiles:
+    active: local
+  main:
+    allow-bean-definition-overriding: true
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 100MB
+  datasource:
+    dynamic:
+      primary: xuanyuan
+      hikari:
+        connection-test-query: SELECT 1
+        connectionTimeout: 180000
+        maxLifetime: 60000
+        validationTimeout: 8000
+        idleTimeout: 50000
+        min-idle: 20
+        max-pool-size: 1500
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: false
+  mapper-locations: classpath:/mapper/*.xml
+logging:
+  level:
+    com.miguan.flow: debug
+    com.cgcg: debug
+cgcg:
+  rest:
+    read-timeout: 300000
+    connect-timeout: 300000
+    connection-request-timeout: 300000
+  swagger:
+    name: jh-xuanyuan-java-在线文档
+    desc: Http Online Documentation
+    headers: token
+    contact-url: http://gitlab.miguan.com/business/jh-xuanyuan-java.git
+    contact-name: zhangbinglin
+    version: 1.0.0
+#  format:
+#    response-data: true
+#    response-data-ignore:  ##接口返回值不需要在包裹一层data的接口
+#      - /api/skypay/payoutQueuePayout
+#    des3: S5EXCbIx98nrWA7a
+swagger:
+  enable: false
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+# JWT
+jwt:
+  header: Authorization
+  secret: sWl8ZuVEpGpC4IXhtB3LZtgFW8lRj1GU
+  #token有效期一天
+  expires: 86400
+  tokenPrefix: "Bearer "
+
+security:
+  allowAccessList: #跳过登录验证的url
+    - /
+    - /index
+    - /api/front/login
+    - /api/front/captcha
+    - /api/front/checkValidateCode
+    - /api/back/**
+    - /api/sdk/**
+    - /api/common/**
+    - /api/front/user/getVerifiCode
+    - /api/front/user/resetPassword
+    - /api/front/user/register
+    - /api/front/reportShare/** #报表分享
+
+#白山云
+aws:
+  #客户端上传文件请求地址
+  appPoint: http://ss.bscstorage.com
+  #服务端端上传文件请求地址
+  endPoint: http://xiyou.sc.diyixin.com
+  accessKey: k98oumchga6z5l42j0fe
+  secretKey: fFiLIjjvg5Q2qcMGa/kEGi6Xi9on3uj7Mp8TRKfB
+  bucketName: xuanyuan
+  #devs 二级目录
+  prefix_dev: dev-img-xuanyuan
+  video_prefix_dev: dev-video-xuanyuan
+  #prod 二级目录
+  prefix_prod: pro-img-xuanyuan
+  video_prefix_prod: pro-video-xuanyuan
+#接口是否需要token验证
+tokenCheck: true
+#接口是否需要登录验证
+loginCheck: true
+ding:
+  robot:
+    #第三方平台广告数据自动导入预警
+    third-import:
+      secret: SEC097f24907f93e0e34ee9e39c67fb26924de587300f65bd9e4d85379d95314978
+      accessToken: 3758a7b84140c1453cb6e98332d3244f520ab1e042da576df94aa13e640911ab
+sms:
+  url: http://47.101.31.211
+  sendSMApi: /msg/HttpBatchSendSM
+  account: ylwlyzm
+  password: IVnMKeBi1b
+
+ehr:
+  login:
+    redis:
+      database: 15 #默认采用库 15
+      host: 192.168.100.10
+      password: 2ZfVUQPaVmKwdKWj6ZBW8CfvQt5EvK4C
+      port: 6379
+      timeout: 10000
+      pool:
+        max-idle: 100
+        min-idle: 20
+        max-active: 10000
+        max-wait: 3000
+  authUrl: /xxx    #备用字段 在非redis环境下使用 目前不支持
+  pathPatterns: /XXXX    #配置需要拦截的地址    如果不需要可以配置一段随机字母
+  excludePathPatterns: /xxx  #配置不需要拦截的地址  如果不需要可以配置一段随机字母

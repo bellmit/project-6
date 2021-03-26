@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.xuanyuan.mapper.XyStrategyGroupMapper">
+
+    <resultMap id="BaseResultMap" type="com.miguan.xuanyuan.entity.XyStrategyGroup" >
+        <id property="id" column="id" />
+        <result property="positionId" column="position_id" />
+        <result property="groupName" column="group_name" />
+        <result property="abId" column="ab_id" />
+        <result property="abExpCode" column="ab_exp_code" />
+        <result property="beginTime" column="begin_time" />
+        <result property="status" column="status" />
+        <result property="isDel" column="is_del" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAt" column="updated_at" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, group_name, position_id, ab_id ,ab_exp_code ,begin_time,status
+    </sql>
+
+    <select id="getGroupList"  resultType="com.miguan.xuanyuan.dto.StrategyGroupDto" parameterType="map">
+        select <include refid="Base_Column_List" />
+        from xy_strategy_group
+        where position_id=#{adPosId} and is_del=0
+        order by id asc
+        limit #{offset},#{limit}
+    </select>
+
+    <insert id="insert" parameterType="com.miguan.xuanyuan.entity.XyStrategyGroup" useGeneratedKeys="true" keyProperty="id" >
+        INSERT INTO xy_strategy_group(group_name, position_id, ab_id, ab_exp_code, begin_time, status, is_del)
+        VALUES(#{groupName}, #{positionId}, #{abId}, #{abExpCode}, #{beginTime},  #{status}, #{isDel})
+    </insert>
+
+    <select id="findById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT * FROM xy_strategy_group WHERE id =#{id} LIMIT 1
+    </select>
+
+    <select id="getDataById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT * FROM xy_strategy_group WHERE id =#{strategyGroupId} and is_del = 0 LIMIT 1
+    </select>
+
+    <select id="getDataByPositionAndGroupName" parameterType="map" resultMap="BaseResultMap">
+        SELECT * FROM xy_strategy_group WHERE position_id = #{positionId}  and group_name= #{groupName}
+        <if test="strategyGroupId != null and strategyGroupId > 0">and id != #{strategyGroupId}</if>
+        and is_del = 0 LIMIT 1
+    </select>
+
+    <update  id="update" parameterType="com.miguan.xuanyuan.entity.XyStrategyGroup">
+        update xy_strategy_group
+        <set>
+            <if test="beginTime != null">begin_time = #{beginTime},</if>
+            <if test="customSwitch != null">custom_switch = #{customSwitch},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="isDel != null">is_del = #{isDel},</if>
+            <if test="groupName != null">group_name = #{groupName}</if>
+        </set>
+        where id=#{id}
+    </update >
+
+    <update  id="updateStrategyGroupByAbId" parameterType="map">
+        update xy_strategy_group set status = #{status}
+        where ab_id=#{abId}
+    </update >
+
+    <select id="findStrategyGroupByAbId" parameterType="map" resultMap="BaseResultMap">
+        SELECT * FROM xy_strategy_group
+        where ab_id=#{abId}
+    </select>
+
+    <update  id="deleteByAppId" parameterType="long">
+        update xy_strategy_group set is_del = 1
+        where position_id in (
+			select p.id
+				from xy_ad_position p
+            where p.app_id = #{value}
+        )
+    </update >
+
+    <select  id="findByAppId" parameterType="long" resultMap="BaseResultMap">
+        SELECT * FROM xy_strategy_group
+        where position_id in (
+			select p.id
+				from xy_ad_position p
+            where p.app_id = #{value}
+        )
+    </select >
+
+    <update  id="deleteByPositionId" parameterType="long">
+        update xy_strategy_group set is_del = 1 where position_id=#{value}
+    </update >
+
+    <select  id="findByPositionId" parameterType="long" resultMap="BaseResultMap">
+        SELECT * FROM xy_strategy_group
+        where position_id=#{value}
+    </select >
+
+</mapper>

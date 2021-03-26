@@ -1,0 +1,18 @@
+package com.miguan.xuanyuan.vo;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+@ApiModel("轩辕应用(简易版)")
+@Data
+public class XyAppSimpleVo {
+    @ApiModelProperty("应用id")
+    private Long id;
+    @ApiModelProperty("应用名称")
+    private String appName;
+    @ApiModelProperty("app图标")
+    private String icon;
+    @ApiModelProperty("客户端类型，1安卓，2ios")
+    private Integer clientType;
+}

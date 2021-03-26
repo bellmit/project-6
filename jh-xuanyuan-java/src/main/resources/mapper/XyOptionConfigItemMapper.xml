@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.xuanyuan.mapper.XyOptionItemConfigMapper">
+
+    <resultMap id="XyOptionItemConfigBaseMap" type="com.miguan.xuanyuan.entity.XyOptionItemConfig" >
+        <id property="id" column="id" />
+        <result property="configCode" column="config_code" />
+        <result property="itemKey" column="item_key" />
+        <result property="itemVal" column="item_val" />
+        <result property="orderNum" column="order_num" />
+        <result property="isDel" column="is_del" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAt" column="updated_at" />
+    </resultMap>
+
+    <insert id="saveBatch" parameterType="java.util.List">
+        INSERT INTO
+            xy_option_item_config(id,config_code, item_key ,item_val)
+        VALUES
+        <foreach collection ="list" item="item" separator =",">
+            (#{item.id},#{item.configCode}, #{item.itemKey}, #{item.itemVal})
+        </foreach >
+        ON DUPLICATE KEY UPDATE
+            config_code = VALUES(config_code),
+            item_key = VALUES(item_key),
+            item_val = VALUES(item_val),
+            is_del = 0
+    </insert>
+
+    <delete id="deleteBatch" parameterType="map">
+        UPDATE xy_option_item_config SET is_del = 1
+        WHERE config_code = #{configCode}
+        <if test="idList != null and idList.size > 0">
+            and id not in
+            <foreach collection ="idList" item="id" separator ="," open="(" close=")">
+                #{id}
+            </foreach >
+        </if>
+    </delete>
+
+    <select id="findBatch" parameterType="map" resultMap="XyOptionItemConfigBaseMap">
+        SELECT *
+        FROM xy_option_item_config
+        WHERE config_code = #{configCode} AND is_del = 0
+        <if test="idList != null and idList.size > 0">
+            and id not in
+            <foreach collection ="idList" item="id" separator ="," open="(" close=")">
+                #{id}
+            </foreach >
+        </if>
+    </select>
+
+    <select id="findAll" resultMap="XyOptionItemConfigBaseMap">
+        SELECT *
+        FROM
+            xy_option_item_config
+    </select>
+
+    <select id="findDeleteIds" parameterType="map" resultType="java.lang.Long">
+        SELECT id FROM xy_option_item_config
+        WHERE config_code = #{configCode}
+        <if test="idList != null and idList.size > 0">
+            and id not in
+            <foreach collection ="idList" item="id" separator ="," open="(" close=")">
+                #{id}
+            </foreach >
+        </if>
+    </select>
+
+
+    <select id="findByConfigCode" parameterType="string" resultMap="XyOptionItemConfigBaseMap">
+        SELECT *
+        FROM
+            xy_option_item_config
+        WHERE is_del = 0 and config_code = #{value}
+        order by id
+    </select>
+
+    <select id="findByCodeAndKey" parameterType="map" resultMap="XyOptionItemConfigBaseMap">
+        SELECT *
+        FROM
+            xy_option_item_config
+        WHERE is_del = 0 and config_code = #{configCode}
+        and item_key = #{itemKey}
+        order by id
+    </select>
+
+    <select id="judgeExistItem" parameterType="map" resultType="int">
+        SELECT count(*) FROM
+            xy_option_item_config
+        WHERE config_code = #{configCode} and is_del = 0
+            AND item_key = #{itemKey}
+    </select>
+
+    <select id="findById" parameterType="long" resultMap="XyOptionItemConfigBaseMap">
+        SELECT * FROM xy_option_item_config WHERE id =#{id} LIMIT 1
+    </select>
+
+    <select id="findOperationPlatType" parameterType="map" resultMap="XyOptionItemConfigBaseMap">
+        SELECT id,config_code,item_key,CONCAT((case when config_code='frontPlat' then '前台-' when config_code='backPlat' then '后台-' else '' end),item_val) item_val,
+            order_num,is_del,created_at,updated_at
+        FROM
+            xy_option_item_config
+        WHERE is_del = 0
+        <if test="configCode != null and configCode !=''">
+            and config_code = #{configCode}
+        </if>
+        and config_code in
+        <foreach collection ="configCodes" item="config" separator ="," open="(" close=")">
+            #{config}
+        </foreach >
+        order by id
+    </select>
+</mapper>

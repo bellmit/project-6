@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.xuanyuan.mapper.AdCodeMapper">
+
+    <select id="adCodeInfoList" resultType="com.miguan.xuanyuan.dto.AdCodeDto" parameterType="map">
+        select xcode.id codeId,xcode.source_code_id sourceCodeId,xcode.source_plat_key sourcePlatKey,xcode.render_type renderType,
+                IFNULL(xcode.show_limit_hour, -1)  showLimitHour,IFNULL(xcode.show_limit_day, -1) showLimitDay,
+                IFNULL(xcode.show_interval_sec, -1) showIntervalSec,
+                xcode.version_operation versionOperation,xcode.versions,channel_operation channelOperation,channels,
+                xposition.ad_type adType,CASE WHEN xcode.is_ladder = 1 THEN xcode.ladder_price ELSE 0 END ladderPrice,
+            <if test="isAbTest == 0 or (isAbTest == 1 and isHit == 0)">
+                xposition.id as positionId,xposition.position_key as positionKey,xposition.custom_field customField,
+            </if>
+            <if test="isAbTest == 1 and isHit == 1">
+                xposition.id as positionId,xposition.position_key as positionKey,xstrategy.custom_field customField,
+            </if>
+            xscode.priority optionValue,
+            xscode.rate_num as rateNum,xstrategy.sort_type as sortType, CASE WHEN xgroup.ab_id = 0 THEN 0 ELSE 1 END testFlag
+        from xy_app xapp
+        LEFT JOIN xy_ad_position xposition ON xapp.id = xposition.app_id
+        LEFT JOIN xy_strategy_group xgroup ON xposition.id = xgroup.position_id
+        LEFT JOIN xy_strategy xstrategy ON xgroup.id = xstrategy.strategy_group_id
+        LEFT JOIN xy_strategy_code xscode ON xscode.strategy_id = xstrategy.id
+        LEFT JOIN xy_ad_code xcode ON xcode.id = xscode.ad_code_id
+        where xapp.status = 0 and xapp.is_del = 0
+        and xposition.status = 1 and xposition.is_del = 0
+        and xcode.status = 1 and xcode.is_del = 0
+        and xgroup.status = 1 and xgroup.is_del = 0
+        and xstrategy.status = 1
+        and xscode.status = 1
+        and xapp.app_key = #{appKey}
+        and xposition.position_key = #{positionKey}
+        and xgroup.is_del = 0
+        <if test="isAbTest == 0">
+            and xgroup.ab_id = 0
+        </if>
+        <if test="isAbTest == 1">
+            and xstrategy.ab_item_id = #{abTestId}
+        </if>
+    </select>
+
+    <select id="findPositionRule" resultType="string" parameterType="map">
+        select
+        <if test="isAbTest == 0 or (isAbTest == 1 and isHit == 0)">
+            xposition.custom_field customField
+        </if>
+        <if test="isAbTest == 1 and isHit == 1">
+            xstrategy.custom_field customField
+        </if>
+        from xy_app xapp
+        LEFT JOIN xy_ad_position xposition ON xapp.id = xposition.app_id
+        LEFT JOIN xy_strategy_group xgroup ON xposition.id = xgroup.position_id
+        LEFT JOIN xy_strategy xstrategy ON xgroup.id = xstrategy.strategy_group_id
+        LEFT JOIN xy_strategy_code xscode ON xscode.strategy_id = xstrategy.id
+        LEFT JOIN xy_ad_code xcode ON xcode.id = xscode.ad_code_id
+        where xapp.status = 0 and xapp.is_del = 0
+        and xposition.status = 1 and xposition.is_del = 0
+        and xapp.app_key = #{appKey}
+        and xposition.position_key = #{positionKey}
+        and xgroup.is_del = 0
+        <if test="isAbTest == 0">
+            and xgroup.ab_id = 0
+        </if>
+        <if test="isAbTest == 1">
+            and xstrategy.ab_item_id = #{abTestId}
+        </if>
+        Limit 1
+    </select>
+
+    <select id="findPositionInfo" resultType="com.miguan.xuanyuan.dto.AdDataDto" parameterType="map">
+        select IFNULL(xposition.show_limit_hour, -1) showLimitHour,IFNULL(xposition.show_limit_day, -1) showLimitDay,
+            IFNULL(xposition.show_interval_sec, -1) showIntervalSec
+            from xy_app xapp
+            LEFT JOIN xy_ad_position xposition ON xapp.id = xposition.app_id
+        where xapp.status = 0 and xapp.is_del = 0
+        and xposition.status = 1 and xposition.is_del = 0
+        and xapp.app_key = #{appKey}
+        and xposition.position_key = #{positionKey}
+    </select>
+
+    <select id="countUsedPlat" resultType="int">
+      select count(1) from xy_plat where use_third = 1
+    </select>
+
+    <select id="queryNearDate" resultType="string">
+        select max(date)
+        from (
+                select date
+                from banner_data
+                group by date
+                having count(DISTINCT plat_form) = #{platNum}
+        ) a
+    </select>
+
+    <select id="queryAdProfit" resultType="com.miguan.xuanyuan.vo.sdk.AdProfitVo" parameterType="list">
+        select ad_space_id adId, profit
+        from banner_data
+        where date = #{date}
+        and ad_space_id is not null
+    </select>
+
+    <select id="queryAd98Profit" resultType="com.miguan.xuanyuan.vo.sdk.AdProfitVo" parameterType="list">
+        select ad_id, sum(actual_consumption) profit
+        from idea_advert_report
+        where date = #{date}
+        and ad_id is not null
+        group by ad_id
+    </select>
+
+    <select id="queryAdMultiData" resultType="com.miguan.xuanyuan.vo.sdk.AdProfitVo" parameterType="map">
+        select ad_code ad_id, `show`, click, exposure, valid_click validClick
+        from multi_dimensional_data
+        where date = #{date}
+        and ad_code in <foreach collection="adIds" item="adId" open="(" close=")" separator=",">#{adId}</foreach>
+        and app_key = #{appKey}
+        and channel = #{channel}
+        and is_new = #{isNew}
+        and city = #{city}
+    </select>
+
+    <select id="queryAdData" resultType="com.miguan.xuanyuan.vo.sdk.AdProfitVo" parameterType="string">
+        select ad_code ad_id, `show`, click, exposure, valid_click validClick
+        from multi_dimensional_data
+        where date = #{date}
+        and app_key = #{appKey}
+        and channel = '-1'
+        and is_new = '-1'
+        and city = '-1'
+    </select>
+</mapper>

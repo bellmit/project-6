@@ -1,0 +1,83 @@
+logging:
+  level:
+    com.miguan.flow: info
+    com.cgcg: info
+    com.baomidou.dynamic: info
+spring:
+  redis:
+    #host: 47.107.226.134 外网地址
+    host: 192.168.0.211
+    port: 6379
+    password: NapBMeZfTCLbdYFXspgK0XnQ7vCzCQ6n
+    database: 3
+    timeout: 15000
+    jedis:
+      pool:
+        max-active: 10000
+        max-idle: 300
+        min-idle: 100
+        max-wait: 3000
+  datasource:
+    dynamic:
+      datasource:
+        xuanyuan:
+          url: jdbc:mysql://192.168.0.192:3306/jh_xuanyuan?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+          username: jh_xuanyuan_java
+          password: 1bRPA6L7vNNYsWrp
+          driverClassName: com.mysql.cj.jdbc.Driver
+        mofang:
+          url: jdbc:mysql://rm-wz9r3k68fq34ck17n.mysql.rds.aliyuncs.com:3306/channel_tool_mofang?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+          username: jh_xuanyuan_java
+          password: 1bRPA6L7vNNYsWrp
+          driverClassName: com.mysql.cj.jdbc.Driver
+        report:
+          url: jdbc:mysql://192.168.0.192:3306/ballvideoreport?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+          username: jh_xuanyuan_java
+          password: 1bRPA6L7vNNYsWrp
+          driverClassName: com.mysql.cj.jdbc.Driver
+        xy_report:
+          url: jdbc:mysql://192.168.0.192:3306/jh_xuanyuan_report?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+          username: jh_xuanyuan_java
+          password: 1bRPA6L7vNNYsWrp
+          driverClassName: com.mysql.cj.jdbc.Driver
+        adv:
+          url: jdbc:mysql://192.168.0.197:3306/ballvideoadv?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+          username: jh_xuanyuan_java
+          password: 1bRPA6L7vNNYsWrp
+          driverClassName: com.mysql.cj.jdbc.Driver
+        data-server:
+          url: jdbc:mysql://192.168.0.245:3306/data_server?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+          username: jh_xuanyuan_java
+          password: 1bRPA6L7vNNYsWrp
+          driverClassName: com.mysql.cj.jdbc.Driver
+api:
+  abtest:
+    url: http://abtest-go.98du.com
+  abtest-php:
+    userName: ad
+    password: ad123456
+    url: http://lan.abtest-php.98du.com
+
+allowedOrigin: http://app.xymoby.98du.com
+frontEndHost: http://app.xymoby.98du.com
+task:
+  scheduled:
+    cron:
+      syncThirdPlatData: 0 15,45 9-20 * * ?
+
+ehr:
+  login:
+    redis:
+      database: 13 #默认采用库 15
+      host: 192.168.0.204
+      password: e8cFnj3CoWZdUFyXg8Dkv9Vp66c=
+      port: 6379
+      timeout: 30000
+      pool:
+        max-idle: 100
+        min-idle: 20
+        max-active: 10000
+        max-wait: 3000
+  authUrl: /xxx    #备用字段 在非redis环境下使用 目前不支持
+  pathPatterns: /api/back/**    #配置需要拦截的地址    如果不需要可以配置一段随机字母
+  excludePathPatterns: /api/back/third/**  #配置不需要拦截的地址  如果不需要可以配置一段随机字母

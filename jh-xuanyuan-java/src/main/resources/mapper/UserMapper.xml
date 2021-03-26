@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.xuanyuan.mapper.UserMapper">
+
+    <select id="getUserInfo"  resultType="com.miguan.xuanyuan.entity.User" parameterType="java.lang.String">
+        select * from xy_user where username=#{username}
+    </select>
+
+    <select id="listValidUser"  resultType="com.miguan.xuanyuan.entity.User" parameterType="map">
+        select u.* from xy_user u
+        <if test="plat == 2">
+            INNER JOIN xy_identity iden ON iden.user_id = u.id
+        </if>
+        where u.status = #{status}
+        <if test="plat == 2">
+            AND (iden.status = 1 or iden.status = 2)
+        </if>
+        order by u.created_at desc
+    </select>
+
+</mapper>

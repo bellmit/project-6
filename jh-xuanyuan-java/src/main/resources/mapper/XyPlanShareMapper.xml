@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.xuanyuan.mapper.XyPlanShareMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.miguan.xuanyuan.entity.XyPlanShare">
+        <id column="id" property="id" />
+        <result column="plan_id" property="planId" />
+        <result column="expired_at" property="expiredAt" />
+        <result column="operate_user_id" property="operateUserId" />
+        <result column="created_at" property="createdAt" />
+    </resultMap>
+
+</mapper>

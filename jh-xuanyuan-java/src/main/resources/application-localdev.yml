@@ -1,0 +1,68 @@
+logging:
+  level:
+    com.miguan: debug
+    com.cgcg: debug
+    com.baomidou.dynamic: debug
+spring:
+  redis:
+    host: 192.168.100.10
+    port: 6379
+    password: 2ZfVUQPaVmKwdKWj6ZBW8CfvQt5EvK4C
+    timeout: 15000
+    database: 13
+    jedis:
+      pool:
+        max-active: 10000
+        max-idle: 100
+        min-idle: 20
+        max-wait: 3000
+  datasource:
+    dynamic:
+      datasource:
+        xuanyuan:
+          url: jdbc:mysql://192.168.100.10:3306/jh_xuanyuan?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+          username: xuanyuan_java
+          password: VQklAGUgJ31newn3
+          driverClassName: com.mysql.cj.jdbc.Driver
+        mofang:
+          url: jdbc:mysql://192.168.100.10:3306/channel_tool_mofang?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+          username: xuanyuan_java
+          password: VQklAGUgJ31newn3
+          driverClassName: com.mysql.cj.jdbc.Driver
+        report:
+          url: jdbc:mysql://192.168.100.10:3306/ballvideoreport?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+          username: zhangbinglin
+          password: 5wMdNa45FS2xAMCj
+          driverClassName: com.mysql.cj.jdbc.Driver
+        xy_report:
+          url: jdbc:mysql://192.168.100.10:3306/jh_xuanyuan_report?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+          username: datawork_ali_xuanyuan
+          password: BjjbExWxbhuPDl6m
+          driverClassName: com.mysql.cj.jdbc.Driver
+        adv:
+          url: jdbc:mysql://192.168.100.10:3306/ballvideoadv?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+          username: xuanyuan_java
+          password: VQklAGUgJ31newn3
+          driverClassName: com.mysql.cj.jdbc.Driver
+        data-server:
+          url: jdbc:mysql://192.168.100.10:3306/data_server?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+          username: xuanyuan_java
+          password: VQklAGUgJ31newn3
+          driverClassName: com.mysql.cj.jdbc.Driver
+swagger:
+  enable: true
+
+api:
+  abtest:
+    url: http://localdev.abtest-go.98du.com
+  abtest-php:
+    userName: admin
+    password: 123456
+    url: http://localdev.abtest-php.98du.com
+
+allowedOrigin: http://localdev.app.xymoby.com
+frontEndHost: http://localdev.app.xymoby.com
+task:
+  scheduled:
+    cron:
+      syncThirdPlatData: 0 45 11 * * ?

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.xuanyuan.mapper.PlanMapper">
+
+    <select id="pagePlanList" parameterType="map" resultType="com.miguan.xuanyuan.dto.PlanListDto">
+        select p.id, status, name, total_price, advert_type, start_date, end_date,put_time_type,
+               (case put_time_type
+                when 0 then concat(date(start_date),'开始长期投放')
+                when 1 then concat(date(start_date),'至',date(end_date))
+                end) putInTimeSlot,
+               t.putInApp, t.positionName,
+               (select count(1) from xy_design d where p.id=d.plan_id) designCount
+        from xy_plan p
+        left join (
+                    select a.plan_id,
+                           group_concat(DISTINCT b.position_name order by a.id) positionName,
+                           group_concat(DISTINCT concat(c.app_name, '(',if(c.client_type=1,'android', 'ios'), ')')  order by a.id) putInApp
+                    from xy_plan_position a
+                    inner join xy_ad_position b on a.position_id=b.id
+                    inner join xy_app c on b.app_id = c.id and b.user_id = c.user_id
+                    where 1=1
+                    group by plan_id
+                  ) t on p.id = t.plan_id
+        where 1=1
+        <if test="userId != null">
+            and p.user_id = #{userId}
+        </if>
+        <if test="status != null">
+            and p.status = #{status}
+        </if>
+        <if test="keyword != null and keyword != ''">
+            and (p.id = #{keyword} or p.name like concat('%',#{keyword},'%'))
+        </if>
+    </select>
+
+    <select id="staPlanData" parameterType="map" resultType="com.miguan.xuanyuan.vo.PlanDesignDataVo">
+        select plan_id, sum(click_num) click, sum(show_num) `show`
+        from ad_plan_day
+        where 1=1
+        and design_id = -99
+        <if test="planIds != null">
+            and plan_id in <foreach collection="planIds" item="planId" separator="," open="(" close=")">${planId}</foreach>
+        </if>
+        <if test="startDate != null and startDate != ''">
+            and dt >= #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            and dt &lt;= #{endDate}
+        </if>
+        group by plan_id
+    </select>
+
+    <delete id="deletePlanPosition" parameterType="int">
+        delete from xy_plan_position where plan_id = #{planId}
+    </delete>
+
+    <insert id="savePlanPosition" parameterType="map">
+        INSERT INTO `xy_plan_position`(`plan_id`, `position_id`)
+        VALUES
+        <foreach collection="list" item="data" separator=",">
+            (#{data.planId},#{data.positionId})
+        </foreach>
+    </insert>
+
+    <select id="queryPlanPositionId" parameterType="int" resultType="int">
+        select position_id
+        from xy_plan_position
+        where plan_id = #{planId}
+    </select>
+
+    <select id="listAppPositionByAdType" resultType="com.miguan.xuanyuan.dto.AppPositionDto" parameterType="map">
+        select p.id position_id,
+        concat(a.app_name, '(',if(client_type=1,'android', 'ios'), ')') app_name,
+        p.position_name
+        from xy_ad_position p
+        inner join xy_app a on p.app_id = a.id and p.user_id = a.user_id
+        where p.is_del = 0
+        and a.is_del = 0
+        and p.status = 1
+        and a.status = 0
+        <if test="userId != null">
+            and p.user_id = #{userId}
+        </if>
+        <if test="adType != null and ad_type != ''">
+            and ad_type = #{adType}
+        </if>
+    </select>
+
+    <update id="updatePlanStatus" parameterType="map">
+        update xy_plan
+        set status = #{type}
+        where id in <foreach collection="planIds" item="planId" separator="," open="(" close=")">${planId}</foreach>
+    </update>
+
+    <select id="findIds" parameterType="Long" resultType="Long">
+        select id
+        from xy_plan
+        where user_id = #{userId}
+    </select>
+
+
+    <select id="getPlanByPositionId" resultType="com.miguan.xuanyuan.entity.Plan" parameterType="map">
+        select xp.* from xy_plan xp
+        inner join xy_plan_position xpp on xpp.plan_id=xp.id
+        where xp.status=1 and xpp.position_id = #{positionId} limit 1
+    </select>
+</mapper>

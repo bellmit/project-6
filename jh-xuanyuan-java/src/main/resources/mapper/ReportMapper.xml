@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.xuanyuan.mapper.ReportMapper">
+
+    <sql id="whereSql">
+        <if test="type != null and type == 1">
+            and r.design_id = #{noDesign}
+            and r.plan_id in <foreach collection="ids" item="itemId" open="(" close=")" separator=",">#{itemId}</foreach>
+        </if>
+        <if test="type != null and type == 2">
+            and r.design_id != #{noDesign}
+            and r.design_id in <foreach collection="ids" item="itemId" open="(" close=")" separator=",">#{itemId}</foreach>
+        </if>
+        <if test="type != null and type == 1 and id != null">
+            and r.plan_id =#{id}
+        </if>
+        <if test="type != null and type == 2 and id != null">
+            and r.design_id =#{id}
+        </if>
+        <if test="startDay != null">
+            and DATE(CAST(r.dt AS datetime)) >= #{startDay}
+        </if>
+        <if test="endDay != null">
+            and DATE(CAST(r.dt AS datetime)) &lt;= #{endDay}
+        </if>
+    </sql>
+
+    <sql id="havingSql">
+        <if test="showNum != null">
+            and sum(show_num) ${showNum}
+        </if>
+        <if test="clickNum != null">
+            and sum(click_num) ${clickNum}
+        </if>
+    </sql>
+
+    <!-- 折线类型:1-点击量,2-曝光量,3-曝光用户量,4-点击用户,5-点击率 -->
+    <select id="getReportLineData" parameterType="com.miguan.xuanyuan.vo.ReportParamVo" resultType="com.miguan.xuanyuan.vo.LineChartVo">
+        select
+        <if test="lineType == 1">
+            '点击量' type,
+            sum(click_num) value,
+        </if>
+        <if test="lineType == 2">
+            '曝光量' type,
+            sum(show_num) value,
+        </if>
+        <if test="lineType == 3">
+            '曝光用户量' type,
+            sum(show_users) value,
+        </if>
+        <if test="lineType == 4">
+            '点击用户' type,
+            sum(click_users) value, /*点击用户*/
+        </if>
+        <if test="lineType == 5">
+            '点击率' type,
+            if(sum(show_num)=0,0,round(sum(click_num)/sum(show_num)*100,2)) value, /*点击率=点击数/展现数*/
+        </if>
+            DATE_FORMAT(CAST(r.dt AS datetime),'%Y-%m-%d') as date
+        from ad_plan_day r
+        where 1=1
+        <include refid="whereSql" />
+        group by r.dt
+        order by r.dt asc
+    </select>
+
+
+    <select id="pageReportTableList" resultType="com.miguan.xuanyuan.vo.ReportTableVo" parameterType="com.miguan.xuanyuan.vo.ReportParamVo">
+        select DATE_FORMAT(CAST(r.dt AS datetime),'%Y-%m-%d') as date,
+                <if test="type != null and type == 1">
+                    r.plan_id id,
+                </if>
+                <if test="type != null and type == 2">
+                    r.design_id id,
+                </if>
+               sum(show_num) showNum,   /*曝光量*/
+               sum(click_num) clickNum,  /*点击量*/
+               IFNULL(sum(show_users),0) showUser,  /*曝光用户数*/
+               IFNULL(sum(click_users),0) clickUser,  /*点击用户数*/
+               if(sum(show_num)=0,0,round(sum(click_num)/sum(show_num)*100,2)) clickRate
+        from ad_plan_day r
+        where 1=1
+        <include refid="whereSql" />
+        group by r.dt
+        having 1=1
+        <include refid="havingSql" />
+        <if test="sort != null">
+            order by ${sort}
+        </if>
+    </select>
+
+    <select id="findTimeDivisionList" resultType="com.miguan.xuanyuan.vo.ReportTimeDivisionVo" parameterType="map">
+        select r.hf as date,
+            #{name} AS name,
+            IFNULL(showNum,'-') showNum,
+            IFNULL(clickNum,'-') clickNum,
+            IFNULL(showUser,'-') showUser,
+            IFNULL(clickUser,'-') clickUser,
+            IFNULL(clickRate,'-') clickRate
+        from ad_hour_ref r
+        LEFT JOIN (select h.hh,
+            sum(show_num) showNum, /*曝光量*/
+            sum(click_num) clickNum, /*点击量*/
+            IFNULL(sum(show_users),0) showUser, /*曝光用户数*/
+            IFNULL(sum(click_users),0) clickUser, /*点击用户数*/
+            if(sum(show_num)=0,0,round(sum(click_num)/sum(show_num)*100,2)) clickRate
+            from ad_plan_hour h
+            where h.dt = DATE_FORMAT(CAST(#{date} AS datetime),'%Y%m%d')
+            <if test="type != null and type == 1">
+                and h.design_id = #{noDesign}
+            </if>
+            <if test="type != null and type == 2">
+                and h.design_id != #{noDesign}
+            </if>
+            <if test="type != null and type == 1 and id != null">
+                and h.plan_id =#{id}
+            </if>
+            <if test="type != null and type == 2 and id != null">
+                and h.design_id =#{id}
+            </if>
+            group by h.hh
+        ) t ON r.hh = t.hh
+        order by r.hh desc
+    </select>
+</mapper>

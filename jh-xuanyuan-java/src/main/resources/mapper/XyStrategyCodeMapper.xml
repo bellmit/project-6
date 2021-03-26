@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.xuanyuan.mapper.XyStrategyCodeMapper">
+
+    <resultMap id="XyStrategyCodeBaseMap" type="com.miguan.xuanyuan.entity.XyStrategyCode" >
+        <id property="id" column="id" />
+        <result property="strategyId" column="strategy_id" />
+        <result property="codeId" column="code_id" />
+        <result property="orderNum" column="order_num" />
+        <result property="priority" column="priority" />
+        <result property="rateNum" column="rate_num" />
+        <result property="status" column="status" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAt" column="updated_at" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, strategy_id, code_id, order_num ,priority ,rate_num, status
+    </sql>
+
+    <insert id="insert" parameterType="com.miguan.xuanyuan.entity.XyStrategyCode" useGeneratedKeys="true" keyProperty="id" >
+        INSERT INTO xy_strategy_code(strategy_id,ad_code_id, code_id, order_num ,priority ,rate_num, status)
+        VALUES(#{strategyId},#{adCodeId}, #{codeId}, #{orderNum}, #{priority}, #{rateNum}, #{status})
+    </insert>
+
+    <update  id="update" parameterType="com.miguan.xuanyuan.entity.XyStrategyCode">
+        update xy_strategy_code
+        <set>
+            <if test="strategyId != null">strategy_id = #{strategyId},</if>
+            <if test="adCodeId != null">ad_code_id = #{adCodeId},</if>
+            <if test="codeId != null">code_id = #{codeId},</if>
+            <if test="orderNum != null">order_num = #{orderNum},</if>
+            <if test="priority != null">priority = #{priority},</if>
+            <if test="rateNum != null">rate_num = #{rateNum},</if>
+            <if test="status != null">status = #{status},</if>
+        </set>
+        where id=#{id}
+    </update >
+
+    <select id="getStrategyCodeList"  resultType="com.miguan.xuanyuan.dto.XyStrategyCodeDto" parameterType="map">
+        select sc.id strategyCodeId, sc.strategy_id, sc.code_id sourceCodeId, ac.source_plat_key sourcePlatKey, ac.id codeId, sc.order_num ,sc.priority ,sc.rate_num, sc.status, ac.status as codeStatus,
+         ac.is_ladder as isLadder, ac.ladder_price ladderPrice, ac.code_name codeName
+        from xy_strategy_code sc inner join xy_ad_code ac on sc.ad_code_id = ac.id and ac.is_del=0
+        where strategy_id=#{strategyId} and sc.status=1 order by sc.priority, sc.rate_num desc
+    </select>
+
+    <!--
+    <select id="getAllStrategyCodeList"  resultType="com.miguan.xuanyuan.dto.XyStrategyCodeDto" parameterType="map">
+        select ifnull(sc.id, 0) strategyCodeId, ac.source_code_id sourceCodeId, ac.id codeId, ifnull(sc.order_num, 0) as order_num, ifnull(sc.priority, 0) priority,ifnull(sc.rate_num, 0) rate_num, ifnull(sc.status, 0) status, ac.status as codeStatus,
+        ac.is_ladder as isLadder, ac.ladder_price ladderPrice, ac.code_name codeName
+        from xy_ad_code ac left join xy_strategy_code sc on sc.ad_code_id = ac.id
+        where ac.position_id=#{positionId} and ac.is_del=0
+    </select>
+    -->
+
+    <select id="getAllStrategyCodeList"  resultType="com.miguan.xuanyuan.dto.XyStrategyCodeDto" parameterType="map">
+        select ifnull(sc.id, 0) strategyCodeId, ac.source_code_id sourceCodeId, ac.source_plat_key sourcePlatKey, ac.id codeId, ifnull(sc.order_num, 0) as order_num, ifnull(sc.priority, 0) priority,ifnull(sc.rate_num, 0) rate_num, ifnull(sc.status, 0) status, ac.status as codeStatus,
+        ac.is_ladder as isLadder, ac.ladder_price ladderPrice, ac.code_name codeName
+        from xy_ad_code ac
+		left join (
+		select sc.* from xy_strategy_code sc
+            INNER JOIN xy_strategy sg on sg.id=sc.strategy_id and sg.strategy_group_id=124) as sc on sc.ad_code_id = ac.id
+        where ac.position_id=#{positionId} and ac.is_del=0
+    </select>
+
+
+    <select id="getStrategyCodeInfo"  resultType="com.miguan.xuanyuan.dto.XyStrategyCodeDto" parameterType="map">
+        select ifnull(sc.id, 0) strategyCodeId, IFNULL(sc.strategy_id, 0) as strategy_id, ac.source_code_id sourceCodeId, ac.id codeId, ifnull(sc.order_num, 0) as order_num, ifnull(sc.priority, 0) priority,ifnull(sc.rate_num, 0) rate_num, ifnull(sc.status, 0) status, ac.status as codeStatus,
+        ac.is_ladder as isLadder, ac.ladder_price ladderPrice, ac.code_name codeName
+        from xy_ad_code ac left join xy_strategy_code sc on sc.ad_code_id = ac.id
+        where ac.id=#{adCodeId} and ac.is_del=0 limit 1;
+    </select>
+
+
+    <select id="getStrategyCodeListByAdCodeId" resultType="com.miguan.xuanyuan.entity.XyStrategyCode" parameterType="map">
+        select <include refid="Base_Column_List" />
+        from xy_strategy_code
+        where strategy_id=#{strategyId} and ad_code_id=#{adCodeId} limit 1
+    </select>
+
+    <select id="findById" parameterType="java.lang.Long" resultType="com.miguan.xuanyuan.entity.XyStrategyCode">
+        SELECT * FROM xy_strategy_code WHERE id =#{id} LIMIT 1
+    </select>
+
+    <update  id="updateStrategyCodeClose" parameterType="java.lang.Long">
+        update xy_strategy_code set status = 0
+        where strategy_id=#{strategyId}
+    </update >
+
+    <select  id="findStrategyCodeClose" parameterType="java.lang.Long" resultType="com.miguan.xuanyuan.entity.XyStrategyCode">
+        select <include refid="Base_Column_List" />
+        from xy_strategy_code
+        where strategy_id=#{strategyId}
+    </select >
+
+    <select id="getCodePutInStatus" parameterType="map">
+        select id
+        from xy_strategy_code
+        where code_id=#{codeId} and status=1 limit;
+    </select>
+
+
+
+</mapper>

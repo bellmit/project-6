@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.xuanyuan.mapper.XyAppMapper">
+
+    <resultMap id="XyAppBaseMap" type="com.miguan.xuanyuan.entity.XyApp" >
+        <id property="id" column="id" />
+        <result property="userId" column="user_id" />
+        <result property="appName" column="app_name" />
+        <result property="appKey" column="app_key" />
+        <result property="appSecret" column="app_secret" />
+        <result property="sha" column="sha" />
+        <result property="productId" column="product_id" />
+        <result property="categoryType" column="category_type" />
+        <result property="packageName" column="package_name" />
+        <result property="downloadUrl" column="download_url" />
+        <result property="icon" column="icon" />
+        <result property="clientType" column="client_type" />
+        <result property="status" column="status" />
+        <result property="isDel" column="is_del" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAt" column="updated_at" />
+    </resultMap>
+
+    <resultMap id="XyAppVoBaseMap" type="com.miguan.xuanyuan.vo.XyAppVo" >
+        <id property="id" column="id" />
+        <result property="username" column="username" />
+        <result property="appKey" column="app_key" />
+        <result property="appSecret" column="app_secret" />
+        <result property="sha" column="sha" />
+        <result property="productName" column="product_name" />
+        <result property="appName" column="app_name" />
+        <result property="icon" column="icon" />
+        <result property="clientType" column="client_type" />
+        <result property="packageName" column="package_name" />
+        <result property="downloadUrl" column="download_url" />
+        <result property="status" column="status" />
+    </resultMap>
+
+
+    <resultMap id="XyAppSimpleVoBaseMap" type="com.miguan.xuanyuan.vo.XyAppSimpleVo" >
+        <id property="id" column="id" />
+        <result property="appName" column="app_name" />
+        <result property="icon" column="icon" />
+        <result property="clientType" column="client_type" />
+    </resultMap>
+
+    <insert id="insert" parameterType="com.miguan.xuanyuan.entity.XyApp" useGeneratedKeys="true" keyProperty="id" >
+        INSERT INTO xy_app(user_id, app_name, app_key,app_secret,sha,product_id,
+            category_type,package_name,download_url,
+            icon,client_type,status)
+        VALUES(#{userId}, #{appName}, #{appKey},#{appSecret},#{sha},#{productId},
+        #{categoryType},#{packageName},#{downloadUrl},
+        #{icon},#{clientType},#{status})
+    </insert>
+
+    <update id="update" parameterType="com.miguan.xuanyuan.entity.XyApp">
+        update xy_app set app_name = #{appName},sha = #{sha},product_id = #{productId}
+          category_type = #{categoryType},download_url = #{downloadUrl},
+          icon = #{icon},client_type = #{clientType},status = #{status}
+        WHERE id = #{id}
+    </update>
+
+    <select id="findPageList" parameterType="map" resultMap="XyAppVoBaseMap">
+        SELECT u.username,app.id,app.app_key,app.app_secret,app.sha,IFNULL(xp.product_name,'') product_name,app.app_name,app.icon,app.client_type,app.package_name,app.download_url,
+        (case when app.status=0 then '已启用' when app.status=1 then '待审核' when app.status=2 then '已禁用'  else '' end) status
+        FROM
+            xy_app app
+            INNER JOIN xy_user u ON u.id = app.user_id
+            LEFT JOIN xy_product xp ON xp.id = app.product_id
+        <if test="plat == 2">
+            INNER JOIN xy_identity iden ON iden.user_id = u.id
+        </if>
+        WHERE app.is_del = 0
+        <if test="userId != null">
+            AND u.id = #{userId}
+        </if>
+        <if test="userName != null and userName != ''">
+            AND u.username like CONCAT('%',#{userName},'%')
+        </if>
+        <if test="type != null and type == 1 and keyword != null and keyword != ''">
+            AND app.app_name like CONCAT('%',#{keyword},'%')
+        </if>
+        <if test="type != null and type == 2 and keyword != null and keyword != ''">
+            AND app.app_key = #{keyword}
+        </if>
+        <if test="clientType != null">
+            AND app.client_type = #{clientType}
+        </if>
+        <if test="status != null">
+            AND app.status = #{status}
+        </if>
+        <if test="plat == 2">
+            AND (iden.status = 1 or iden.status = 2)
+        </if>
+        order by app.status asc,app.id desc
+    </select>
+
+    <select id="judgeExistPackage" parameterType="map" resultType="int">
+        SELECT count(*) FROM
+            xy_app
+        WHERE package_name = #{packageName}  and is_del = 0
+        <if test="id != null">
+            and id != #{id}
+        </if>
+    </select>
+
+    <update id="deleteById" parameterType="long">
+        update xy_app set is_del = 1 where id = #{id}
+    </update>
+
+    <update id="updateStatus" parameterType="map">
+        update xy_app set status = #{status} where id = #{id}
+    </update>
+
+    <select id="findStatus" parameterType="map" resultMap="XyAppBaseMap">
+        SELECT * FROM  xy_app where id = #{id}
+    </select>
+
+    <select id="findById" parameterType="long" resultMap="XyAppBaseMap">
+        SELECT * FROM xy_app WHERE id =#{id}
+        LIMIT 1
+    </select>
+
+    <select id="findDetailById" parameterType="long" resultType="com.miguan.xuanyuan.vo.XyAppDetailVo">
+        SELECT app.*,u.id userId,u.username userName,ident.name identityName FROM xy_app app
+        LEFT JOIN xy_user u ON app.user_id = u.id
+        LEFT JOIN xy_identity ident ON ident.user_id = u.id
+        WHERE app.id =#{id}
+        LIMIT 1
+    </select>
+
+    <select id="findList" parameterType="map" resultMap="XyAppSimpleVoBaseMap">
+        SELECT app.* FROM xy_app app
+        <if test="plat == 2">
+            INNER JOIN xy_identity iden ON iden.user_id = app.user_id
+        </if>
+        WHERE app.is_del = 0
+        <if test="userId != null">
+            and app.user_id = #{userId}
+        </if>
+        <if test="plat == 2">
+            AND (iden.status = 1 or iden.status = 2)
+        </if>
+        order by app.id desc
+    </select>
+
+    <select id="existAppInfo" parameterType="map" resultType="int">
+        SELECT count(*) FROM xy_app app
+        INNER JOIN xy_user u on u.id = app.user_id
+        INNER JOIN xy_identity ident ON ident.user_id = u.id
+        WHERE app_key =#{appKey}
+        <if test="secretKey != null and secretKey != ''">
+            AND app_secret =#{secretKey}
+        </if>
+        <if test="sha != null and sha != ''">
+            AND sha =#{sha}
+        </if>
+        AND app.status =#{status} AND app.is_del = 0
+        AND u.status = 1 and ident.status = 1
+    </select>
+
+    <select id="findByAppKeyAndSecret" parameterType="map" resultMap="XyAppBaseMap">
+        SELECT app.* FROM xy_app app
+        INNER JOIN xy_user u on u.id = app.user_id
+        INNER JOIN xy_identity ident ON ident.user_id = u.id
+        WHERE app_key =#{appKey} AND app_secret =#{secretKey} AND app.status =#{status} AND app.is_del = 0
+        AND u.status = 1 and ident.status = 1 LIMIT 1
+    </select>
+
+</mapper>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.xuanyuan.mapper.DesignMapper">
+
+    <select id="staDesignData" parameterType="map" resultType="com.miguan.xuanyuan.vo.PlanDesignDataVo">
+        select design_id designId, sum(click_num) click, sum(show_num) `show`
+        from ad_plan_day
+        where 1=1
+        <if test="designIds != null">
+            and design_id in <foreach collection="designIds" item="designId" separator="," open="(" close=")">${designId}</foreach>
+        </if>
+        <if test="startDate != null and startDate != ''">
+            and dt >= #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            and dt &lt;= #{endDate}
+        </if>
+        group by design_id
+    </select>
+
+    <select id="findIds" parameterType="Long" resultType="Long">
+        select id
+        from xy_design
+        where user_id = #{userId}
+    </select>
+</mapper>

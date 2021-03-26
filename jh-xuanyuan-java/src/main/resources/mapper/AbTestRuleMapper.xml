@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.xuanyuan.mapper.AbTestRuleMapper">
+
+    <select id="getABTextAdversByRule" parameterType="map" resultType="com.miguan.xuanyuan.vo.sdk.AbTestRuleVo">
+        select xposition.position_key as positionKey,
+        xgroup.id as groupId,xgroup.ab_id abId,xgroup.custom_switch AS customSwitch
+        from xy_app app
+        INNER JOIN xy_ad_position xposition ON app.id = xposition.app_id
+        INNER JOIN xy_strategy_group xgroup ON xgroup.position_id = xposition.id
+        where app.app_key = #{appKey}
+        AND xposition.position_key = #{positionKey}
+        AND app.status = 0 AND app.is_del = 0
+        AND xposition.status = 1 AND xposition.is_del = 0
+        AND xgroup.status = 1 AND xgroup.is_del = 0
+        <if test="clientType != null">
+            and app.client_type = #{clientType}
+        </if>
+        and xgroup.ab_id != 0
+        order by xgroup.id desc
+    </select>
+</mapper>
