@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.ballvideo.mapper.PushArticleMapper">
+
+    <!-- 新增用户意见反馈信息 -->
+    <insert id="savePushArticle" parameterType="com.miguan.ballvideo.vo.PushArticleVo" keyProperty="id" useGeneratedKeys="true">
+		 INSERT INTO push_article
+ 		(title,notecontent,push_type,state,type,type_value,user_type,device_tokens,huawei_tokens,vivo_tokens,oppo_tokens,xiaomi_tokens,expire_time,video_title,app_package)
+		 VALUES
+ 		(#{title},#{noteContent},#{pushType},#{state},#{type},#{typeValue},#{userType},#{deviceTokens},#{huaweiTokens},#{vivoTokens},#{oppoTokens},#{xiaomiTokens},#{expireTime},#{videoTitle},#{appPackage})
+	</insert>
+</mapper>

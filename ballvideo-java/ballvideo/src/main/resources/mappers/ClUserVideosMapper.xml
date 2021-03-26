@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.ballvideo.mapper.ClUserVideosMapper">
+
+    <resultMap type="com.miguan.ballvideo.vo.ClUserVideosVo" id="clUserVideosMap">
+        <id property="id" column="id" javaType="java.lang.Long"></id>
+        <result property="userId" column="user_id" javaType="java.lang.Long"></result>
+        <result property="videoId" column="video_id" javaType="java.lang.Long"></result>
+        <result property="videoType" column="video_type" javaType="java.lang.Integer"></result>
+        <result property="collection" column="collection" javaType="java.lang.String"></result>
+        <result property="love" column="love" javaType="java.lang.String"></result>
+        <result property="interest" column="interest" javaType="java.lang.String"></result>
+        <result property="loveCnt" column="love_cnt" javaType="java.lang.Long"></result>
+    </resultMap>
+
+    <!-- 通用查询结果列-->
+    <sql id="Base_Column_List">
+		id, user_id, video_id, video_type, collection, love, interest
+	</sql>
+
+    <!-- 基本用户信息的sql查询条件公共引用-->
+    <sql id="searchBaseBy">
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="id != null and id != ''">
+                AND id = #{id}
+            </if>
+            <if test="userId != null and userId != ''">
+                AND user_id = #{userId}
+            </if>
+            <if test="videoId != null and videoId != ''">
+                AND video_id = #{videoId}
+            </if>
+            <if test="videoType != null and videoType != ''">
+                AND video_type = #{videoType}
+            </if>
+            <if test="collection != null and collection != ''">
+                AND collection = #{collection}
+            </if>
+            <if test="love != null and love != ''">
+                AND love = #{love}
+            </if>
+            <if test="interest != null and interest != ''">
+                AND interest = #{interest}
+            </if>
+        </trim>
+    </sql>
+
+    <!-- 通过条件查询用户视频关联列表 -->
+    <select id="findClUserVideosList" resultMap="clUserVideosMap" parameterType="java.util.HashMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM cl_user_videos
+        <include refid="searchBaseBy"/>
+    </select>
+
+    <!-- 通过条件查询用户收藏数 -->
+    <select id="findVideoCollectionSum" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+        SELECT COUNT(1) FROM cl_user_videos
+        <include refid="searchBaseBy"/>
+    </select>
+
+    <!-- 新增用户视频关联信息 -->
+    <insert id="saveClUserVideos" parameterType="com.miguan.ballvideo.vo.ClUserVideosVo">
+		 INSERT INTO cl_user_videos
+ 		(user_id,video_id,video_type,collection,love,interest,collection_time,create_time)
+		 VALUES 
+ 		(#{userId},#{videoId},#{videoType},#{collection},#{love},#{interest},#{collectionTime},now())
+	</insert>
+
+    <!-- 修改用户视频关联信息 -->
+    <update id="updateClUserVideos" parameterType="com.miguan.ballvideo.vo.ClUserVideosVo">
+        UPDATE cl_user_videos
+        <set>
+            <trim suffixOverrides=",">
+                <if test="opType == 10">
+                    collection = 1,
+                </if>
+                <if test="opType == 20">
+                    love = 1,
+                </if>
+                <if test="opType == 40">
+                    collection = 0,
+                </if>
+                <if test="opType == 50">
+                    love = 0,
+                </if>
+                <if test="opType == 60">
+                    interest = 1,
+                </if>
+                <if test="collectionTime != null">
+                    collection_time = #{collectionTime},
+                </if>
+            </trim>
+        </set>
+        WHERE user_id = #{userId} AND video_id = #{videoId} AND video_type = #{videoType}
+    </update>
+    <!--更新收藏状态-->
+    <update id="batchDelCollections">
+        update cl_user_videos set collection = 0 where id in
+        <foreach collection="collectionIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+    <!--查询批量删除收藏的相关信息-->
+    <select id="findCollectionsList" resultMap="clUserVideosMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM cl_user_videos where id in
+        <foreach collection="collectionIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+    <!--更新首页视频收藏数-->
+    <update id="batchUpdateFirstvideos">
+        update first_videos set collection_count = (if(collection_count>1,collection_count-1,0)) where id in
+        <foreach collection="firstIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+    <!--更新小视频收藏数-->
+    <update id="batchUpdateSmallvideos">
+        update small_videos set collection_count = (if(collection_count>1,collection_count-1,0)) where id in
+        <foreach collection="smallIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <!--查询批量删除收藏的相关信息-->
+    <select id="countLoveNum" resultMap="clUserVideosMap">
+        SELECT video_id,count(video_id) AS love_cnt
+        FROM cl_user_videos
+        WHERE video_type = #{videoType} AND love = '1' AND video_id in
+        <foreach collection="videoIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+    <!--查询用户已收藏的视频ID-->
+    <select id="queryCollection" resultType="java.lang.Long">
+        SELECT video_id
+        FROM cl_user_videos
+        WHERE user_id = #{userId} AND video_type = 10 AND  collection = '1' AND video_id in
+        <foreach collection="videoIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="queryUserVideoInfo" resultType="com.miguan.ballvideo.vo.ClUserVideoInfoVo" parameterType="java.util.HashMap">
+        SELECT video_id,collection,love,interest
+        FROM cl_user_videos
+        WHERE user_id = #{userId} AND video_id in
+        <foreach collection="videoIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        AND video_type = 10
+    </select>
+</mapper>

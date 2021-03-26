@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.ballvideo.mapper.PushVideoMapper">
+
+    <resultMap id="BaseResultMap" type="com.miguan.ballvideo.vo.PushVideo" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="video_id" property="videoId" jdbcType="BIGINT" />
+        <result column="play_num" property="playNum" jdbcType="BIGINT" />
+        <result column="vplay_num" property="vplayNum" jdbcType="BIGINT" />
+        <result column="play_end_num" property="playEndNum" jdbcType="BIGINT" />
+        <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+        <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, video_id, play_num, vplay_num, play_end_num,created_at ,updated_at
+    </sql>
+    <select id="queryById" resultType="com.miguan.ballvideo.vo.PushVideo" parameterType="java.lang.Long">
+        select  <include refid="Base_Column_List" />
+        from push_videos
+        where   id = #{id}
+        limit 1
+    </select>
+    <update id="updateSenNumByVideoId" parameterType="java.util.Map">
+        update push_videos set play_end_num = play_end_num + #{playEndNum} where video_id=#{videoId}
+    </update>
+</mapper>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.ballvideo.mapper.VideoAlbumMapper">
+    <!-- 查询视频专辑列表 -->
+    <select id="findVideoAlbumList" resultType="com.miguan.ballvideo.vo.VideoAlbumVo">
+        SELECT  a.id, a.title, a.intro, a.cover_image_url, a.sort,ifnull(a.need_unlock,-1) as need_unlock,
+        (SELECT first_videos_id FROM video_album_detail n INNER JOIN first_videos v ON v.id = n.first_videos_id and v.state = 1
+        WHERE n.video_album_id = a.id ORDER BY n.sort DESC,n.created_time DESC,(v.base_weight+v.real_weight) DESC limit 1) as videoId,
+        d.videosCount FROM video_album  a INNER JOIN (SELECT b.sort,b.video_album_id,count(b.video_album_id) as videosCount
+        FROM (SELECT c.sort,c.video_album_id FROM video_album_detail c INNER JOIN first_videos v ON v.id = c.first_videos_id and v.state = 1) b
+        GROUP BY b.video_album_id ) d ON d.video_album_id = a.id
+        WHERE status = 1  ORDER BY a.sort DESC,a.created_time DESC
+	</select>
+
+    <select id="findVideoAlbumListById" resultType="com.miguan.ballvideo.vo.VideoAlbumVo" parameterType="java.lang.String">
+        SELECT  a.id, a.title, a.intro, a.cover_image_url, a.sort,ifnull(a.need_unlock,-1) as need_unlock,
+        (SELECT first_videos_id FROM video_album_detail n INNER JOIN first_videos v ON v.id = n.first_videos_id and v.state = 1
+        WHERE n.video_album_id = a.id ORDER BY n.sort DESC,n.created_time DESC,(v.base_weight+v.real_weight) DESC limit 1) as videoId,
+        d.videosCount FROM video_album  a INNER JOIN (SELECT b.sort,b.video_album_id,count(b.video_album_id) as videosCount
+        FROM (SELECT c.sort,c.video_album_id FROM video_album_detail c INNER JOIN first_videos v ON v.id = c.first_videos_id and v.state = 1) b
+        GROUP BY b.video_album_id ) d ON d.video_album_id = a.id
+        WHERE status = 1  and a.id in (${albumIds})
+        order by FIELD(a.id,${albumIds})
+	</select>
+    <!-- 通过专辑ID查询视频专辑詳情列表(无用户ID) -->
+    <select id="findVideoAlbumDetailList" resultType="com.miguan.ballvideo.vo.video.Videos161Vo" parameterType="java.lang.Long">
+        SELECT
+		v.id, v.cat_id, v.title,v.bsy_url, v.bsy_audio_url, v.bsy_img_url,v.collection_count,(v.love_count + v.love_count_real) as love_count,
+		v.comment_count,v.base_weight,(v.watch_count + v.watch_count_real) as watch_count,v.state,v.bsy_head_url,v.video_author,v.video_time,
+		'0' collection,'0' love,v.video_size as videoSize,va.title as albumTitle,c.name as catName,v.user_id,ifnull(va.need_unlock,-1) as need_unlock,
+		v.gather_id,v.encryption_android_url,v.encryption_ios_url,v.videos_source,v.xcx_share_img,v.created_at AS createdAt,
+		UNIX_TIMESTAMP(v.created_at) as createDate,v.is_incentive as incentiveVideo,v.share_count,v.fake_share_count
+		FROM video_album_detail d
+		INNER JOIN first_videos v ON v.id = d.first_videos_id
+		LEFT JOIN videos_cat c on v.cat_id = c.id
+		LEFT JOIN video_album va on d.video_album_id = va.id
+		WHERE d.video_album_id = #{videoAlbumId} and v.state = 1
+		ORDER BY d.sort DESC,d.created_time DESC,(v.base_weight+v.real_weight) DESC,d.id DESC
+    </select>
+    <!-- 通过专辑ID和用户ID查询视频专辑詳情列表(有用户ID) -->
+    <select id="findVideoAlbumDetailListByUserId" resultType="com.miguan.ballvideo.vo.video.Videos161Vo" parameterType="java.util.HashMap">
+        SELECT
+        v.id, v.cat_id, v.title,v.bsy_url, v.bsy_audio_url, v.bsy_img_url,v.collection_count,(v.love_count + v.love_count_real) as love_count,
+        v.comment_count,v.base_weight,(v.watch_count + v.watch_count_real) as watch_count,v.state,v.bsy_head_url,v.video_author,v.video_time,
+        v.video_size as videoSize,va.title as albumTitle,c.name as catName,(case when cv.collection='1' then '1' else '0' end)  collection,
+        (case when cv.love='1' then '1' else '0' end)  love,v.user_id,ifnull(va.need_unlock,-1) as need_unlock,v.gather_id,
+        v.bsy_m3u8,v.encryption_android_url,v.encryption_ios_url,v.videos_source,v.xcx_share_img,v.created_at AS createdAt,
+        UNIX_TIMESTAMP(v.created_at) as createDate,v.is_incentive as incentiveVideo,v.share_count,v.fake_share_count
+        FROM video_album_detail d
+        INNER JOIN first_videos v ON v.id = d.first_videos_id
+        LEFT JOIN videos_cat c on v.cat_id = c.id
+        LEFT JOIN cl_user_videos cv on v.id = cv.video_id and cv.video_type = 10 and cv.user_id = #{userId}
+        LEFT JOIN video_album va on d.video_album_id = va.id
+        WHERE d.video_album_id = #{videoAlbumId}  and v.state = 1
+        ORDER BY d.sort DESC,d.created_time DESC,(v.base_weight+v.real_weight) DESC,d.id DESC
+    </select>
+    <!-- 根据专辑ID和视频ID查询视频专辑标题 -->
+    <select id="findVideoAlbumDetail" resultType="com.miguan.ballvideo.vo.video.PackagingAlbumVo"  parameterType="java.util.HashMap">
+        SELECT d.title,ifnull(va.need_unlock,-1) as need_unlock FROM  video_album_detail d
+        LEFT JOIN video_album va on d.video_album_id = va.id
+        WHERE  d.video_album_id = #{videoAlbumId}  AND  d.first_videos_id =  #{firstVideosId}
+    </select>
+    <!-- 查询全部专辑ID和视频ID及权重 -->
+    <select id="findVideoAlbumDetailAll" resultType="com.miguan.ballvideo.vo.video.VideoAlbumDetailVo" parameterType="java.util.HashMap">
+        SELECT
+		d.first_videos_id, d.video_album_id, v.base_weight+v.real_weight as totalWeight,va.sort
+		FROM video_album_detail d
+		LEFT JOIN first_videos v ON v.id = d.first_videos_id
+		LEFT JOIN video_album va on d.video_album_id = va.id
+		WHERE  v.state = 1 and va.status = 1
+        <if test="albumId != null">
+            and va.id = #{albumId}
+        </if>
+		ORDER BY va.id, d.sort DESC,d.created_time DESC, (v.base_weight+v.real_weight) DESC,d.id DESC
+    </select>
+    <!-- 分页查询视频专辑列表 -->
+    <select id="findVideoAlbumAll" resultType="com.miguan.ballvideo.vo.VideoAlbumVo" parameterType="java.util.HashMap">
+        select va.* from video_album va
+        where va.status = 1
+        <if test="queryAlbumIds == null or queryAlbumIds == ''">
+            and va.search_show = 1
+        </if>
+        <if test="queryAlbumIds != null and queryAlbumIds != ''">
+            and va.id in (${queryAlbumIds})
+            order by FIELD(va.id,${queryAlbumIds})
+        </if>
+        <if test="excludeIds != null">
+            and va.id NOT in
+            <foreach collection="excludeIds" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="queryAlbumIds == null or queryAlbumIds == ''">
+            ORDER BY va.search_weight desc,va.updated_time desc
+        </if>
+	</select>
+    <!-- 根据视频Id查询所属专辑 -->
+    <select id="findVideoAlbumByVideoId" resultType="java.lang.Long" parameterType="java.lang.Long">
+        select va.id from video_album va
+        LEFT JOIN video_album_detail d on d.video_album_id = va.id
+        where va.status = 1 and d.first_videos_id = #{videoId}
+        ORDER BY va.sort desc,va.updated_time desc
+		limit 1
+    </select>
+
+    <select id="findById" resultType="com.miguan.ballvideo.vo.VideoAlbumVo"  parameterType="java.lang.Long">
+        select va.* from video_album va
+        where va.status = 1 AND  va.id = #{albumId}
+    </select>
+
+    <select id="findAlbumTitleByAll" resultType="com.miguan.ballvideo.vo.VideoAlbumVo">
+        select va.id,va.title from video_album va
+        where va.status = 1
+    </select>
+</mapper>

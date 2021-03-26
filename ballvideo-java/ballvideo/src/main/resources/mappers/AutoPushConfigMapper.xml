@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.ballvideo.mapper.AutoPushConfigMapper">
+
+    <resultMap id="BaseResultMap" type="com.miguan.ballvideo.entity.AutoPushConfig" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="app_package" property="appPackage" jdbcType="VARCHAR" />
+        <result column="title" property="title" jdbcType="VARCHAR" />
+        <result column="type" property="type" jdbcType="INTEGER" />
+        <result column="content" property="content" jdbcType="VARCHAR" />
+        <result column="activity_type" property="activityType" jdbcType="INTEGER" />
+        <result column="activity_type_days" property="activityTypeDays" jdbcType="VARCHAR" />
+        <result column="trigger_type" property="triggerType" jdbcType="INTEGER" />
+        <result column="trigger_time" property="triggerTime" jdbcType="VARCHAR" />
+        <result column="trigger_event" property="triggerEvent" jdbcType="INTEGER" />
+        <result column="fall_type" property="fallType" jdbcType="INTEGER" />
+        <result column="status" property="status" jdbcType="INTEGER" />
+        <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+        <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, app_package, title, type, content, activity_type, activity_type_days, trigger_type, trigger_time,
+        trigger_event,fall_type,status,created_at ,updated_at
+    </sql>
+
+    <select id="queryAllByStatus" resultType="com.miguan.ballvideo.entity.AutoPushConfig" parameterType="java.util.Map">
+        select  <include refid="Base_Column_List" />
+        from auto_push_config
+        where  status = #{status}
+    </select>
+
+    <select id="queryById" resultType="com.miguan.ballvideo.entity.AutoPushConfig" parameterType="java.lang.Long">
+        select  <include refid="Base_Column_List" />
+        from auto_push_config
+        where   id = #{id}
+        limit 1
+    </select>
+</mapper>

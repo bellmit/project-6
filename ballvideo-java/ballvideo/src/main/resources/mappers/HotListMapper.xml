@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.ballvideo.mapper.HotListMapper">
+    <!-- 根据热榜类型查询对应热榜数据 -->
+    <select id="queryHotListByType" resultType="com.miguan.ballvideo.vo.video.HotListVo" parameterType="java.lang.String">
+        SELECT
+            fv.id,
+            fv.title,
+            fv.cat_id,
+            fv.bsy_url,
+            fv.bsy_img_url,
+            fv.collection_count,
+            ( fv.love_count + fv.love_count_real ) AS love_count,
+            fv.comment_count,
+            ( fv.watch_count + fv.watch_count_real ) AS watch_count,
+            fv.bsy_head_url,
+            fv.video_author,
+            fv.video_time,
+            '0' collection,
+            '0' love,
+            fv.video_size,
+            fv.user_id,
+            fv.bsy_m3u8,
+            fv.share_count,
+            fv.fake_share_count,
+            fv.encryption_android_url,
+            fv.encryption_ios_url,
+            is_incentive AS incentiveVideo,
+            hl.id hotId,
+            (
+            CASE
+                WHEN ( hl.views_num + hl.fake_views_num ) * 101 >= 10000 THEN
+                concat( round( ( hl.views_num + hl.fake_views_num ) * 101 / 10000, 2 ), '万' ) ELSE ( hl.views_num + hl.fake_views_num ) * 101
+                END
+                ) viewsNum,
+            hl.sort as hotSort
+        FROM
+            hot_list hl
+        LEFT JOIN first_videos fv ON fv.id = hl.video_id
+        WHERE
+            hl.state = 1
+            <if test="type != null">
+                AND type = #{type}
+            </if>
+        ORDER BY
+            hl.sort ASC
+    </select>
+    <!-- 根据热榜类型查询对应热榜数据 -->
+    <select id="getHotListConf" resultType="com.miguan.ballvideo.vo.HotListConfVo">
+        SELECT
+          img_link
+        FROM
+          hot_list_conf
+    </select>
+</mapper>

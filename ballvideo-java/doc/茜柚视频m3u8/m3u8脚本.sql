@@ -1,0 +1,1 @@
+INSERT INTO `arc_sys_config`(`type`, `name`, `code`, `value`, `status`, `remark`, `creator`, `created_at`, `updated_at`) VALUES (10, 'm3u8视频开关', 'm3u8_video_switch', '10', 1, '10开 20关', 0, '2020-07-22 17:32:41', '2020-07-22 17:32:43');

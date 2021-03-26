@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.ballvideo.mapper.VideosCatMapper">
+
+    <resultMap type="com.miguan.ballvideo.vo.VideosCatVo" id="firstVideosCatMap">
+        <id property="id" column="id" javaType="java.lang.Long"></id>
+        <result property="name" column="name" javaType="java.lang.String"></result>
+        <result property="type" column="type" javaType="java.lang.String"></result>
+        <result property="state" column="state" javaType="java.lang.String"></result>
+    </resultMap>
+
+    <!-- 通用查询结果列-->
+    <sql id="Base_Column_List">
+		id, name, type, state, weight
+	</sql>
+
+    <!-- 基本用户信息的sql查询条件公共引用-->
+    <sql id="searchBaseBy">
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="id != null and id != ''">
+                AND id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                AND name = #{name}
+            </if>
+            <if test="type != null and type != ''">
+                AND type = #{type}
+            </if>
+            <if test="state != null and state != ''">
+                AND state = #{state}
+            </if>
+            <if test="excludeIds != null">
+                AND id not in (3,251)
+            </if>
+            <if test="appPackage != null">
+                AND ascription_application like concat('%',#{appPackage},'%')
+            </if>
+            <if test="excludeCatIds != null">
+                AND id NOT in
+                <foreach collection="excludeCatIds" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <choose>
+                <when test="sorts != null">
+                    AND id in (${sorts})
+                    ORDER BY FIELD(id,${sorts})
+                </when>
+                <otherwise>
+                    ORDER BY weight desc,id desc
+                </otherwise>
+            </choose>
+        </trim>
+    </sql>
+
+    <!-- 通过条件查询首页视频分类列表 -->
+    <select id="findFirstVideosCatList" resultMap="firstVideosCatMap" parameterType="java.util.HashMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM videos_cat
+        <include refid="searchBaseBy"/>
+    </select>
+
+    <!-- 通过条件查询首页视频分类列表 -->
+    <select id="existByCatIdAndApp" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+        SELECT count(1)
+        FROM videos_cat
+        where id = #{id}
+        and ascription_application like concat('%',#{appPackage},'%')
+    </select>
+
+
+    <!-- 通过条件查询首页视频分类列表 -->
+    <select id="findCatIdsNotIn" resultType="java.lang.String" parameterType="java.util.HashMap">
+        SELECT id FROM videos_cat where state = 1 and type = '10'
+        <if test="appPackage != null">
+            AND ascription_application like concat('%',#{appPackage},'%')
+        </if>
+        <if test="otherCatIds != null">
+            and id NOT in
+            <foreach collection="otherCatIds" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+    <select id="findCatIdsByState" resultType="java.lang.String" parameterType="java.lang.Integer">
+        SELECT id FROM videos_cat where state = #{state}
+    </select>
+
+    <select id="getCatIdsByStateAndType" resultType="java.lang.String">
+        SELECT id FROM videos_cat where state = #{state} and type = #{type}
+    </select>
+
+    <!-- 通过条件查询首页视频分类列表 -->
+    <select id="firstVideosCatList" resultMap="firstVideosCatMap" parameterType="java.lang.String">
+        SELECT id,name FROM videos_cat WHERE type = #{type}
+    </select>
+
+    <!-- 通过条件查询合集分类列表 -->
+    <select id="findGatherIdsNotIn" resultType="com.miguan.ballvideo.entity.VideoGather">
+        select * from video_gather where state = 1 and recommend_state = 1
+        <if test="excludeIds != null">
+            and id NOT in
+            <foreach collection="excludeIds" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        order by base_weight desc
+    </select>
+
+    <!-- 查询不生效分类-->
+    <select id= "queryCatIdsList" resultType="java.lang.String" parameterType="java.lang.String">
+        SELECT id FROM videos_cat WHERE type = '10'AND (ascription_application not like concat('%',#{appPackage},'%') OR state = 2)
+    </select>
+</mapper>

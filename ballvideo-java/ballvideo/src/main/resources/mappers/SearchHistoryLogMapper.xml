@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.ballvideo.mapper.SearchHistoryLogMapper">
+
+	<select id="findSearchInfo" resultType="java.lang.Integer" parameterType="com.miguan.ballvideo.vo.SearchHistoryLogVo">
+		select count(1) as num
+		from search_history_log
+		where device_id = #{deviceId}
+		and search_content = #{searchContent}
+	</select>
+
+    <insert id="saveSearchInfo" parameterType="com.miguan.ballvideo.vo.SearchHistoryLogVo">
+		 INSERT INTO search_history_log
+ 		(device_id,user_id,search_content,created_at,updated_at)
+		 VALUES
+ 		(#{deviceId},#{userId},#{searchContent},now(),now())
+	</insert>
+
+</mapper>

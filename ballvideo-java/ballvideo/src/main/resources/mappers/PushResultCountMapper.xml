@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.ballvideo.mapper.PushResultCountMapper">
+
+    <select id="getPushResultCountInfo" resultType="com.miguan.ballvideo.vo.push.PushResultCountVo" parameterType="com.miguan.ballvideo.vo.push.PushResultCountVo">
+        SELECT * FROM push_result_count
+        WHERE push_article_id = #{pushArticleId} and push_channel = #{pushChannel} and app_package = #{appPackage}
+        limit 1
+    </select>
+
+    <insert id="savePushResultCountInfo" parameterType="com.miguan.ballvideo.vo.push.PushResultCountVo">
+		 INSERT INTO push_result_count
+ 		(push_article_id,push_channel,send_num,app_package,created_at,updated_at)
+		 VALUES
+ 		(#{pushArticleId},#{pushChannel},#{sendNum},#{appPackage},now(),now())
+	</insert>
+
+    <update id="updatePushResultCountInfo" parameterType="com.miguan.ballvideo.vo.push.PushResultCountVo">
+        UPDATE push_result_count set send_num = send_num + #{sendNum},updated_at = now()
+        where push_article_id = #{pushArticleId}
+        and push_channel = #{pushChannel}
+        and app_package = #{appPackage}
+        <if test="id != null">
+            and id = #{id}
+        </if>
+    </update>
+
+</mapper>

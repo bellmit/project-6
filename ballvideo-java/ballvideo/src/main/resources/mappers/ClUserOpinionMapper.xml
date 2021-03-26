@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.ballvideo.mapper.ClUserOpinionMapper">
+
+	<resultMap type="com.miguan.ballvideo.vo.ClUserOpinionVo" id="clUserOpinionMap">
+		<id property="id" column="id" javaType="java.lang.Long"></id>
+		<result property="userId" column="user_id" javaType="java.lang.Long"></result>
+		<result property="title" column="title" javaType="java.lang.String"></result>
+		<result property="type" column="type" javaType="java.lang.Integer"></result>
+		<result property="link" column="link" javaType="java.lang.String"></result>
+		<result property="content" column="content" javaType="java.lang.String"></result>
+		<result property="type_value" column="typeValue" javaType="java.lang.String"></result>
+		<result property="imageUrl" column="image_url" javaType="java.lang.String"></result>
+		<result property="state" column="state" javaType="java.lang.String"></result>
+		<result property="reply" column="reply" javaType="java.lang.String"></result>
+		<result property="createTime" column="create_time" javaType="java.util.Date"></result>
+		<result property="updateTime" column="update_time" javaType="java.util.Date"></result>
+		<result property="reply_state" column="replyState" javaType="java.lang.String"></result>
+	</resultMap>
+
+	<!-- 通用查询结果列-->
+	<sql id="Base_Column_List">
+		id, user_id, title, type, link, type_value, content, image_url, state, reply, create_time, update_time,reply_state
+	</sql>
+
+	<!-- 基本用户信息的sql查询条件公共引用-->
+	<sql id="searchBaseBy">
+		<trim prefix="where" prefixOverrides="and|or">
+			<if test="id != null and id != ''">
+				AND id = #{id}
+			</if>
+			<if test="userId != null and userId != ''">
+				AND user_id = #{userId}
+			</if>
+			<if test="content != null and content != ''">
+				AND content = #{content}
+			</if>
+			<if test="imageUrl != null and imageUrl != ''">
+				AND image_url = #{imageUrl}
+			</if>
+			<if test="state != null and state != ''">
+				AND state = #{state}
+			</if>
+			<if test="reply != null and reply != ''">
+				AND reply = #{reply}
+			</if>
+			<if test="createTime != null and createTime != ''">
+				AND create_time = #{createTime}
+			</if>
+			<if test="updateTime != null and updateTime != ''">
+				AND update_time = #{updateTime}
+			</if>
+			<if test="replyState != null and replyState != ''">
+				AND reply_state = #{replyState}
+			</if>
+            <if test="appPackage != null and appPackage != ''">
+                AND app_package = #{appPackage}
+            </if>
+		</trim>
+	</sql>
+
+	<!-- 通过ID查询用户意见反馈信息 -->
+	<select id="getClUserOpinionById" resultMap="clUserOpinionMap" parameterType="java.lang.String">
+		 SELECT
+		 <include refid="Base_Column_List" />
+		 FROM cl_user_opinion
+		 WHERE id = #{id}
+	</select>
+
+	<!-- 通过条件查询用户意见反馈列表 -->
+	<select id="findClUserOpinionList" resultMap="clUserOpinionMap" parameterType="java.util.HashMap">
+		 SELECT
+		 <include refid="Base_Column_List" />
+		 FROM cl_user_opinion
+		 <include refid="searchBaseBy" />
+		 Order by update_time Desc
+	</select>
+
+	<!-- 新增用户意见反馈信息 -->
+	<insert id="saveClUserOpinion" parameterType="com.miguan.ballvideo.vo.ClUserOpinionVo">
+		 INSERT INTO cl_user_opinion
+ 		(user_id,content,image_url,state,reply,create_time,update_time,reply_state,app_package)
+		 VALUES 
+ 		(#{userId},#{content},#{imageUrl},#{state},#{reply},now(),now(),0,#{appPackage})
+	</insert>
+
+	<!-- 新增从魔方审核通过或者推送的系统消息 -->
+	<insert id="saveClUserOpinionPlus" parameterType="com.miguan.ballvideo.vo.ClUserOpinionVo">
+		 INSERT INTO cl_user_opinion
+ 		(user_id,title,type,link,type_value,content,image_url,state,reply,create_time,update_time,reply_state,app_package)
+		 VALUES
+ 		(#{userId},#{title},#{type},#{link},#{typeValue},#{content},#{imageUrl},#{state},#{reply},now(),now(),0,#{appPackage})
+	</insert>
+
+	<update id="updateUserOpinionState" parameterType="java.lang.String">
+		UPDATE cl_user_opinion SET reply_state = 1 WHERE id = #{id}
+	</update>
+
+
+	<update id="updateUserOpinionStateByUserId" parameterType="java.lang.String">
+		UPDATE cl_user_opinion SET reply_state = 1 WHERE reply_state=0 and user_id = #{userId}
+	</update>
+
+	<!-- 通过条件查询用户意见反馈列表 -->
+	<select id="findClUserOpinionNumber" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+		SELECT
+			count(*)
+		FROM cl_user_opinion
+		where user_id = #{userId} and reply_state = #{replyState} and state = 1
+	</select>
+
+</mapper>

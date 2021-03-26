@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <properties>
+        <!--全局变量设置，自己项目维护自己目录和名字 add laiyd-->
+        <property name="LOG_HOME">E:/logs</property>
+        <Property name="SERVICE_NAME">ballvideo</Property>
+        <Property name="SERVICE_PACKAGE">com.miguan.ballvideo</Property>
+    </properties>
+    <Appenders>
+        <Console name="consoleAppender" target="SYSTEM_OUT">
+            <!--设置日志格式及颜色-->
+            <PatternLayout
+                    pattern="[%style{%d}{bright,green}][%highlight{%p}][%style{%t}{bright,blue}][%style{%C}{bright,yellow}]: %msg%n%style{%throwable}{red}"
+                    disableAnsi="false" noConsoleNoAnsi="false"/>
+        </Console>
+        <RollingFile name="fileAppender"
+                     fileName="${LOG_HOME}/log4j2-ballvideo.log"
+                     filePattern="${LOG_HOME}/log4j2-ballvideo-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout>
+                <pattern>[%d][%p][%t][%C] %m%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="100 MB"/>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy max="100"/>
+        </RollingFile>
+
+        <RollingFile name="errorAppender" fileName="${LOG_HOME}/log4j2-${SERVICE_NAME}-error.log"
+                     filePattern="${LOG_HOME}/log4j2-${SERVICE_NAME}-error-%d{yyyy-MM-dd}_%i.log">
+            <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy modulate="true" interval="12"/>
+                <SizeBasedTriggeringPolicy size="100M" />
+            </Policies>
+            <DefaultRolloverStrategy max="100" />
+        </RollingFile>-->
+    </Appenders>
+
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="consoleAppender" level="debug"/>
+        </Root>
+        <Logger name="org.springframework" level="info"/>
+        <Logger name="${SERVICE_PACKAGE}" level="info" />
+        <logger name="com.miguan.ballvideo.mapper" level="debug"></logger>
+        <logger name="org.mybatis" level="debug"></logger>
+    </Loggers>
+
+</Configuration>

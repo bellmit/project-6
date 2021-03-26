@@ -1,0 +1,696 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.ballvideo.mapper.FirstVideosMapper">
+
+
+	<sql id="Base_Column_List" >
+		sv.id, sv.cat_id, sv.title, sv.url, sv.url_audio, sv.url_img, sv.local_url, sv.local_audio_url, sv.local_img_url,
+		sv.bsy_url, sv.bsy_audio_url, sv.bsy_img_url, sv.collection_count, sv.love_count, sv.comment_count,
+		sv.watch_count, sv.created_at, sv.updated_at, sv.state, sv.video_time,sv.url_headimg,sv.bsy_head_url,sv.video_author
+	</sql>
+
+	<sql id="Base_Column_List_FistVideo" >
+		fv.id, fv.cat_id, fv.title, fv.url, fv.url_audio, fv.url_img, fv.local_url, fv.local_audio_url, fv.local_img_url,
+		fv.bsy_url, fv.bsy_audio_url, fv.bsy_img_url, fv.collection_count, fv.love_count, fv.comment_count,
+		fv.watch_count, fv.created_at, fv.updated_at, fv.state, fv.video_time,fv.url_headimg,fv.bsy_head_url,fv.video_author
+	</sql>
+
+	<!-- 通过条件查询首页视频列表(无用户ID) -->
+	<select id="findFirstVideosList" resultType="com.miguan.ballvideo.vo.FirstVideos" parameterType="java.util.HashMap">
+		SELECT
+		v.id, v.cat_id, v.title, v.url, v.url_audio, v.url_img, v.local_url, v.local_audio_url, v.local_img_url,v.bsy_url, v.bsy_audio_url, v.bsy_img_url,IFNULL(g.id, 0) AS gatherId,
+		v.collection_count,(v.love_count + v.love_count_real) as love_count,v.comment_count,v.base_weight,(v.watch_count + v.watch_count_real) as watch_count,v.created_at,v.updated_at,
+		v.state,v.bsy_head_url,v.video_author,v.video_time,'0' collection,'0' love,v.video_size as videoSize,v.user_id,bsy_m3u8,v.share_count,v.fake_share_count,v.encryption_android_url,
+		v.encryption_ios_url,is_incentive as incentiveVideo,v.videos_source,v.xcx_share_img
+		FROM first_videos v
+		left join video_gather g on g.id = v.gather_id and g.state = 1
+		<trim prefix="where" prefixOverrides="and|or">
+			v.bsy_url!='' and v.bsy_img_url!=''
+			<if test="catId != null">
+				AND v.cat_id = #{catId}
+			</if>
+			<if test="otherCatIds != null">
+				AND v.cat_id NOT in
+				<foreach collection="otherCatIds" index="index" item="item" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="state != null">
+				AND v.state = #{state}
+			</if>
+			<if test="gatherId != null">
+				AND v.gather_Id = #{gatherId}
+			</if>
+			<if test="id != null">
+				AND v.id = #{id}
+			</if>
+			<if test="id == null">
+				and v.gather_id = 0  <!-- 屏蔽合集视频 -->
+			</if>
+			<if test="excludeId != null">
+				AND v.id != #{excludeId}
+			</if>
+			<if test="gatherIds != null">
+				AND v.gather_id not in  (${gatherIds})
+			</if>
+			<if test="incentive != null">
+				AND v.is_incentive = #{incentive}
+			</if>
+			<choose>
+				<when test="queryNumber != null">
+					ORDER BY RAND() limit ${queryNumber}
+				</when>
+				<otherwise>
+					<if test="videoType == '10'">
+						ORDER BY v.base_weight DESC
+					</if>
+					<if test="videoType == '20'">
+						ORDER BY v.created_at DESC
+					</if>
+				</otherwise>
+			</choose>
+		</trim>
+	</select>
+
+	<!-- 通过条件查询首页视频列表(有用户ID) -->
+	<select id="findFirstVideosListByUserId" resultType="com.miguan.ballvideo.vo.FirstVideos"
+			parameterType="java.util.HashMap">
+		SELECT
+		v.id, v.cat_id, v.title, v.url, v.url_audio, v.url_img, v.local_url, v.local_audio_url, v.local_img_url,v.bsy_url, v.bsy_audio_url, v.bsy_img_url,
+		v.collection_count,(v.love_count + v.love_count_real) as love_count,v.base_weight,v.comment_count,(v.watch_count + v.watch_count_real) as watch_count,
+		v.created_at,v.updated_at,v.video_size as videoSize,IFNULL(g.id, 0) AS gatherId,v.user_id,v.share_count,v.fake_share_count,
+		v.state,v.bsy_head_url,v.video_author,v.video_time,(case when cv.collection='1' then '1' else '0' end)  collection,
+		(case when cv.love='1' then '1' else '0' end)  love,bsy_m3u8,v.encryption_android_url,v.encryption_ios_url,is_incentive as incentiveVideo,
+		v.videos_source,v.xcx_share_img
+		FROM first_videos v
+		left join video_gather g on g.id = v.gather_id and g.state = 1
+		LEFT JOIN cl_user_videos cv on v.id = cv.video_id and cv.video_type = 10
+		and cv.user_id = #{userId}
+		<trim prefix="where" prefixOverrides="and|or">
+			v.bsy_url!='' and v.bsy_img_url!=''
+			<if test="userId != null">
+				AND  (cv.interest != '1' OR cv.interest is NULL)
+			</if>
+			<if test="catId != null">
+				AND v.cat_id = #{catId}
+			</if>
+			<if test="otherCatIds != null">
+				AND v.cat_id NOT in
+				<foreach collection="otherCatIds" index="index" item="item" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="state != null">
+				AND v.state = #{state}
+			</if>
+			<if test="id != null">
+				AND v.id = #{id}
+			</if>
+			<if test="excludeId != null">
+				AND v.id != #{excludeId}
+			</if>
+			<if test="incentive != null">
+				AND v.is_incentive = #{incentive}
+			</if>
+			<choose>
+				<when test="queryNumber != null">
+					ORDER BY RAND() limit ${queryNumber}
+				</when>
+				<otherwise>
+					<if test="videoType == '10'">
+						ORDER BY v.base_weight DESC
+					</if>
+					<if test="videoType == '20'">
+						ORDER BY v.created_at DESC
+					</if>
+				</otherwise>
+			</choose>
+		</trim>
+	</select>
+
+	<!-- 通过条件查询首页视频列表(无用户ID) -->
+	<select id="findFirstVideosDetailList" resultType="com.miguan.ballvideo.vo.FirstVideos" parameterType="java.util.HashMap">
+		SELECT
+		v.id, v.cat_id, v.title, v.url, v.url_audio, v.url_img, v.local_url, v.local_audio_url, v.local_img_url,v.bsy_url, v.bsy_audio_url, v.bsy_img_url,IFNULL(g.id, 0) AS gatherId,
+		v.collection_count,(v.love_count + v.love_count_real) as love_count,v.comment_count,v.base_weight,(v.watch_count + v.watch_count_real) as watch_count,v.created_at,v.updated_at,
+		v.state,v.bsy_head_url,v.video_author,v.video_time,'0' collection,'0' love,v.video_size as videoSize,v.user_id,v.bsy_m3u8,v.share_count,v.fake_share_count,v.encryption_android_url,
+		v.encryption_ios_url,v.videos_source,v.xcx_share_img
+		FROM first_videos v
+		left join video_gather g on g.id = v.gather_id and g.state = 1
+		<trim prefix="where" prefixOverrides="and|or">
+			v.bsy_url!='' and v.bsy_img_url!=''
+			<if test="catId != null">
+				AND v.cat_id = #{catId}
+			</if>
+			<if test="otherCatIds != null">
+				AND v.cat_id NOT in
+				<foreach collection="otherCatIds" index="index" item="item" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="state != null">
+				AND v.state = #{state}
+			</if>
+			<if test="gatherId != null">
+				AND v.gather_Id = #{gatherId}
+			</if>
+			<if test="id != null">
+				AND v.id = #{id}
+			</if>
+			<if test="excludeId != null">
+				AND v.id != #{excludeId}
+			</if>
+			<if test="gatherIds != null">
+				AND v.gather_id not in  (${gatherIds})
+			</if>
+			<if test="incentive != null">
+				AND v.is_incentive = #{incentive}
+			</if>
+			<choose>
+				<when test="queryNumber != null">
+					ORDER BY RAND() limit ${queryNumber}
+				</when>
+				<otherwise>
+					<if test="videoType == '10'">
+						ORDER BY v.base_weight DESC
+					</if>
+					<if test="videoType == '20'">
+						ORDER BY v.created_at DESC
+					</if>
+				</otherwise>
+			</choose>
+		</trim>
+	</select>
+	<!-- 通过条件查询首页视频详情(有用户ID) -->
+	<select id="findFirstVideosDetailByUserId" resultType="com.miguan.ballvideo.vo.FirstVideos"
+			parameterType="java.util.HashMap">
+		SELECT
+		v.id, v.cat_id, v.title, v.url, v.url_audio, v.url_img, v.local_url, v.local_audio_url, v.local_img_url,v.bsy_url, v.bsy_audio_url, v.bsy_img_url,
+		v.collection_count,(v.love_count + v.love_count_real) as love_count,v.base_weight,v.comment_count,(v.watch_count + v.watch_count_real) as watch_count,
+		v.created_at,v.updated_at,v.video_size as videoSize,IFNULL(g.id, 0) AS gatherId,v.share_count,v.fake_share_count,
+		v.state,v.bsy_head_url,v.video_author,v.video_time,(case when cv.collection='1' then '1' else '0' end)  collection,
+        (case when cv.love='1' then '1' else '0' end)  love,v.user_id,v.bsy_m3u8,v.encryption_android_url,v.encryption_ios_url,
+		v.videos_source,v.xcx_share_img
+		FROM first_videos v
+		left join video_gather g on g.id = v.gather_id and g.state = 1
+		LEFT JOIN cl_user_videos cv on v.id = cv.video_id and cv.video_type = 10
+		and cv.user_id = #{userId}
+		<trim prefix="where" prefixOverrides="and|or">
+			v.bsy_url!='' and v.bsy_img_url!=''
+			<!--<if test="userId != null">
+				AND  (cv.interest != '1' OR cv.interest is NULL)
+			</if>-->
+			<if test="catId != null">
+				AND v.cat_id = #{catId}
+			</if>
+			<if test="otherCatIds != null">
+				AND v.cat_id NOT in
+				<foreach collection="otherCatIds" index="index" item="item" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="state != null">
+				AND v.state = #{state}
+			</if>
+			<if test="id != null">
+				AND v.id = #{id}
+			</if>
+			<if test="excludeId != null">
+				AND v.id != #{excludeId}
+			</if>
+			<if test="incentive != null">
+				AND v.is_incentive = #{incentive}
+			</if>
+			<choose>
+				<when test="queryNumber != null">
+					ORDER BY RAND() limit ${queryNumber}
+				</when>
+				<otherwise>
+					<if test="videoType == '10'">
+						ORDER BY v.base_weight DESC
+					</if>
+					<if test="videoType == '20'">
+						ORDER BY v.created_at DESC
+					</if>
+				</otherwise>
+			</choose>
+		</trim>
+	</select>
+
+	<select id="getFirstVideosById" resultType="com.miguan.ballvideo.vo.FirstVideos"  parameterType="java.lang.Long">
+		select share_count,fake_share_count,play_all_count,play_count,real_weight, bsy_url, bsy_img_url
+		from first_videos
+		where id = #{id}
+	</select>
+
+	<select id="findFirstVideosById" resultType="com.miguan.ballvideo.vo.FirstVideos"  parameterType="java.lang.Long">
+		select <include refid="Base_Column_List_FistVideo" />
+		from first_videos fv
+		where id = #{id} limit 1
+	</select>
+
+	<select id="getFirstVideosTitleById" resultType="com.miguan.ballvideo.vo.FirstVideos"  parameterType="java.lang.Long">
+		select title,share_count,fake_share_count,play_all_count,play_count,real_weight, bsy_url, bsy_img_url
+		from first_videos
+		where id = #{id}
+	</select>
+
+	<select id="getFirstVideosByIds" resultType="com.miguan.ballvideo.vo.FirstVideos"  parameterType="java.lang.String">
+		select v.id,v.share_count,v.fake_share_count,v.play_all_count,v.play_count,v.real_weight,count(c.id) as collection_count
+		from first_videos v
+		left join cl_user_videos c on c.video_id = v.id and c.video_type = 10 and c.collection='1'
+		where v.id in (${ids})
+		group by v.id,v.share_count,v.play_all_count,v.play_count,v.real_weight
+	</select>
+
+	<!-- 更新首页视频收藏数、点赞数、评论数、观看数 -->
+	<update id="updateFirstVideosCount" parameterType="java.util.HashMap">
+		UPDATE first_videos
+		<set>
+			<trim suffixOverrides=",">
+				<if test="opType == 10">
+					collection_count = collection_count+1,
+				</if>
+				<if test="opType == 20">
+					love_count_real = love_count_real+1,
+				</if>
+				<if test="opType == 30">
+					watch_count_real = watch_count_real+1,
+				</if>
+				<if test="opType == 40">
+					collection_count = (if(collection_count>1,collection_count-1,0)),
+				</if>
+				<if test="opType == 50">
+					love_count_real = (if(love_count_real>1,love_count_real-1,0)),
+				</if>
+				<if test="opType == 60">
+					comment_count = comment_count+1,
+				</if>
+				<if test="opType == 70">
+					report = IFNULL(report, 0)+1,
+				</if>
+				<if test="opType == 80">
+					share_count = share_count+1,
+					fake_share_count = ifnull(fake_share_count, 0) + #{randomNum}
+				</if>
+				<if test="opType == 90">
+					play_all_count = play_all_count+1,play_count = play_count+1,
+				</if>
+				<if test="opType == 100">
+					play_count = play_count+1,
+				</if>
+				<if test="realWeight != null">
+					real_weight = #{realWeight}
+				</if>
+			</trim>
+		</set>
+		WHERE id = #{id}
+	</update>
+
+	<update id="updateFirstVideosCountBatch" parameterType="java.util.HashMap">
+		UPDATE first_videos
+		set	watch_count_real = watch_count_real + #{updateNum}
+		WHERE id in (${ids})
+	</update>
+
+	<update id="updateCommentCount" parameterType="java.util.HashMap">
+		UPDATE first_videos
+		set	comment_count = comment_count + #{updateNum}
+		WHERE id in (${ids})
+	</update>
+
+	<select id="findFirstVideoListByMyCollection" resultType="com.miguan.ballvideo.vo.FirstVideos"
+			parameterType="java.util.HashMap">
+		SELECT aa.really_watch_count + aa.watch_count as watch_count,aa.* from (
+		select IFNULL(g.id,0) as gatherId,IFNULL(vr.watch_count,0) as really_watch_count ,<include refid="Base_Column_List_FistVideo" />,
+		cuv.collection_time as collectionTime,cuv.id as collectionId,cuv.collection,cuv.love,cuv.video_type as videoType,
+		fv.video_size,fv.user_id,fv.bsy_m3u8,fv.encryption_android_url,fv.encryption_ios_url,fv.videos_source,fv.xcx_share_img
+		from cl_user_videos cuv
+		left join first_videos fv  on fv.id = cuv.video_id
+		left join videos_report vr on vr.video_id = fv.id and vr.video_type = 10
+        left join video_gather g on g.id = fv.gather_id and g.state = 1
+		where fv.state = 1 and cuv.user_id = #{userId} and cuv.collection = #{collection} and cuv.video_type = 10
+		union
+		select 0 as gatherId, IFNULL(vr.watch_count,0) as really_watch_count, <include refid="Base_Column_List" />,
+		cuv.collection_time as collectionTime,cuv.id as collectionId,cuv.collection,cuv.love,cuv.video_type as videoType,
+		sv.video_size,0 user_id,'' bsy_m3u8,'' encryption_android_url,'' encryption_ios_url,'' videos_source,'' xcx_share_img
+		from cl_user_videos cuv
+		left join small_videos sv  on sv.id = cuv.video_id
+		left join videos_report vr on vr.video_id = sv.id and vr.video_type = 20
+		where sv.state = 1 and cuv.user_id = #{userId} and cuv.collection = #{collection} and cuv.video_type = 20) as aa
+		order by aa.collectionTime DESC
+	</select>
+
+	<!-- 查询全部首页视频列表 -->
+	<select id="findAllFirstVideosList" resultType="com.miguan.ballvideo.vo.FirstVideos">
+		SELECT
+		v.id, v.cat_id
+		FROM first_videos v
+		where v.bsy_url!='' and v.bsy_img_url!=''
+	</select>
+
+	<!--v1.6.1 -->
+	<!-- 通过条件查询首页视频列表(无用户ID) -->
+	<select id="findFirstVideosList161" resultType="com.miguan.ballvideo.vo.video.Videos161Vo"
+			parameterType="java.util.HashMap">
+		SELECT
+		v.id,v.title,v.cat_id,v.url_img,v.bsy_url,v.bsy_img_url,v.collection_count,(v.love_count + v.love_count_real) as love_count,v.comment_count,(v.watch_count + v.watch_count_real) as watch_count,'0'
+		collection,'0' love,v.bsy_head_url,v.video_author,v.video_time,v.state,v.video_size as videoSize,v.created_at,IFNULL(g.id, 0) AS gatherId,g.title as gatherTitle,
+		v.base_weight+v.real_weight as totalWeight,v.user_id,bsy_m3u8,v.share_count,v.fake_share_count,v.encryption_android_url,v.encryption_ios_url,v.videos_source,v.xcx_share_img
+		FROM first_videos v
+		left join video_gather g on g.id = v.gather_id and g.state = 1
+		<trim prefix="where" prefixOverrides="and|or">
+			v.bsy_url!='' and v.bsy_img_url!=''
+			and v.gather_id = 0  <!-- 屏蔽全部合集视频 -->
+			<if test="catId != null">
+				AND v.cat_id = #{catId}
+			</if>
+			<if test="otherCatIds != null">
+				AND v.cat_id NOT in
+				<foreach collection="otherCatIds" index="index" item="item" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="state != null">
+				AND v.state = #{state}
+			</if>
+			<if test="id != null">
+				AND v.id = #{id}
+			</if>
+			<if test="excludeId != null">
+				AND v.id != #{excludeId}
+			</if>
+			<if test="gatherIds != null and  gatherIds!=''">
+				AND v.gather_id not in  (${gatherIds})
+			</if>
+			<if test="incentive != null">
+				AND v.is_incentive = #{incentive}
+			</if>
+			<choose>
+				<when test="queryNumber != null">
+					ORDER BY RAND() limit ${queryNumber}
+				</when>
+				<otherwise>
+					<if test="videoType == '10'">
+						ORDER BY v.base_weight DESC
+					</if>
+					<if test="videoType == '20'">
+						ORDER BY v.created_at DESC
+					</if>
+				</otherwise>
+			</choose>
+		</trim>
+	</select>
+	<!-- 通过条件查询首页视频列表(有用户ID) -->
+	<select id="findFirstVideosListByUserId161" resultType="com.miguan.ballvideo.vo.video.Videos161Vo"
+			parameterType="java.util.HashMap">
+		SELECT
+		v.id, v.cat_id, v.title, v.url, v.url_audio, v.url_img,
+		v.bsy_url,v.bsy_img_url,v.share_count,v.fake_share_count,
+		v.collection_count,(v.love_count + v.love_count_real) as love_count,v.comment_count,(v.watch_count + v.watch_count_real) as watch_count,v.video_size as videoSize,
+		v.state,v.bsy_head_url,v.video_author,v.video_time,IFNULL(g.id, 0) AS gatherId,g.title as gatherTitle,
+		(case when cv.collection='1' then '1' else '0' end) collection,
+		(case when cv.love='1' then '1' else '0' end) love,v.base_weight+v.real_weight as totalWeight,v.user_id,bsy_m3u8,v.encryption_android_url,v.encryption_ios_url,
+		v.videos_source,v.xcx_share_img
+		FROM first_videos v LEFT JOIN cl_user_videos cv ON v.id = cv.video_id AND cv.video_type = 10 AND cv.user_id = #{userId}
+		left join video_gather g ON g.id = v.gather_id AND g.state = 1
+		<trim prefix="where" prefixOverrides="and|or">
+			and v.state = 1 and v.bsy_img_url != '' AND v.bsy_url != ''
+			and v.gather_id = 0  <!-- 屏蔽合集视频 -->
+			<if test="userId != null">
+				AND (cv.interest != '1' OR cv.interest is NULL)
+			</if>
+			<if test="catId != null">
+				AND v.cat_id = #{catId}
+			</if>
+			<if test="otherCatIds != null">
+				AND v.cat_id NOT in
+				<foreach collection="otherCatIds" index="index" item="item" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="id != null">
+				AND v.id = #{id}
+			</if>
+			<if test="excludeId != null">
+				AND v.id != #{excludeId}
+			</if>
+			<if test="gatherIds != null and  gatherIds!=''">
+				AND v.gather_id not in  (${gatherIds})
+			</if>
+			<if test="incentive != null">
+				AND v.is_incentive = #{incentive}
+			</if>
+			<choose>
+				<when test="queryNumber != null">
+					ORDER BY RAND() limit ${queryNumber}
+				</when>
+				<otherwise>
+					<if test="videoType == '10'">
+						ORDER BY v.base_weight DESC
+					</if>
+					<if test="videoType == '20'">
+						ORDER BY v.created_at DESC
+					</if>
+				</otherwise>
+			</choose>
+		</trim>
+	</select>
+	<!-- 通过条件查询首页视频列表(无用户ID) -->
+	<select id="findFirstVideosList18" resultType="com.miguan.ballvideo.vo.video.Videos161Vo"
+			parameterType="java.util.HashMap">
+		SELECT
+		v.id,v.title,v.cat_id,v.url_img,v.bsy_url as bsyUrl,v.created_at as createdAt,v.user_id,
+		v.bsy_img_url as bsyImgUrl,v.collection_count as collectionCount,(v.love_count + v.love_count_real) as loveCount,
+		v.comment_count as commentCount,IFNULL(g.id, 0) AS gatherId,g.title as gatherTitle,
+		(v.watch_count + v.watch_count_real) as watchCount,'0'collection,'0' love,v.bsy_head_url as bsyHeadUrl,v.video_author as videoAuthor,
+		v.video_time,v.state,v.video_size as videoSize,v.base_weight+v.real_weight as totalWeight,bsy_m3u8,v.share_count,v.fake_share_count,
+		v.encryption_android_url,v.encryption_ios_url,v.videos_source,v.xcx_share_img
+		FROM first_videos v left join video_gather g on g.id = v.gather_id and g.state = 1
+		<trim prefix="where" prefixOverrides="and|or">
+			AND v.state = 1 and v.bsy_url!='' and v.bsy_img_url!=''
+			and v.gather_id = 0  <!-- 屏蔽合集视频 -->
+			<if test="catId!='' and catId != 'created3Day' ">
+				AND v.cat_id = #{catId}
+			</if>
+			<if test="catIds != null and catIds!=''">
+				AND v.cat_id in (${catIds})
+			</if>
+			<if test="showedIds != null and showedIds!=''">
+				AND v.id NOT in (${showedIds})
+			</if>
+			<if test="otherCatIds != null and  otherCatIds!=''">
+				AND v.cat_id NOT in (${otherCatIds})
+			</if>
+			<if test="gatherIds != null and  gatherIds!=''">
+				AND v.gather_id not in  (${gatherIds})
+			</if>
+			<if test="incentive != null">
+				AND v.is_incentive = #{incentive}
+			</if>
+			<choose>
+				<when test="queryNumber != null">
+					ORDER BY RAND() limit ${num}
+				</when>
+				<otherwise>
+					<if test="catId == 'created3Day'">
+						ORDER BY v.created_at DESC
+					</if>
+					<if test="catId!=null and catId!='' and catId != 'created3Day'">
+						ORDER BY v.base_weight+v.real_weight DESC
+					</if>
+					<if test="num > 0">
+						limit #{num}
+					</if>
+				</otherwise>
+			</choose>
+		</trim>
+	</select>
+	<!-- 通过条件查询首页视频列表(有用户ID) -->
+	<select id="findFirstVideosListByUserId18" resultType="com.miguan.ballvideo.vo.video.Videos161Vo"
+			parameterType="java.util.HashMap">
+		SELECT
+		v.id, v.cat_id, v.title, v.url, v.url_audio, v.url_img,v.bsy_url as bsyUrl,v.bsy_img_url as bsyImgUrl,v.user_id,
+		v.collection_count as collectionCount,(v.love_count + v.love_count_real) as loveCount,v.comment_count as commentCount,(v.watch_count + v.watch_count_real) as
+		watchCount,v.video_size as videoSize,v.created_at as createdAt,IFNULL(g.id, 0) AS gatherId,g.title AS gatherTitle,
+		v.state,v.bsy_head_url as bsyHeadUrl,v.video_author as videoAuthor,v.video_time,
+		(case when cv.collection='1' then '1' else '0' end) collection,v.base_weight+v.real_weight as totalWeight,
+		(case when cv.love='1' then '1' else '0' end) love,bsy_m3u8,v.share_count,v.fake_share_count,v.encryption_android_url,v.encryption_ios_url,
+		v.videos_source,v.xcx_share_img
+		FROM first_videos v LEFT JOIN cl_user_videos cv on v.id = cv.video_id and cv.video_type = 10 and cv.user_id = #{userId}
+		LEFT join video_gather g ON g.id = v.gather_id AND g.state = 1
+		<trim prefix="where" prefixOverrides="and|or">
+			and v.state = 1 and v.bsy_img_url != '' AND v.bsy_url != '' AND (cv.interest != '1' OR cv.interest is NULL)
+			and v.gather_id = 0  <!-- 屏蔽合集视频 -->
+			<if test="catId != 'created3Day' and catId!=''">
+				AND v.cat_id = #{catId}
+			</if>
+			<if test="catIds != null and catIds!=''">
+				AND v.cat_id in (${catIds})
+			</if>
+			<if test="showedIds != null and showedIds!=''">
+				AND v.id NOT in (${showedIds})
+			</if>
+			<if test="otherCatIds != null and  otherCatIds!=''">
+				AND v.cat_id NOT in (${otherCatIds})
+			</if>
+			<if test="gatherIds != null and  gatherIds!=''">
+				AND v.gather_id not in  (${gatherIds})
+			</if>
+			<if test="incentive != null">
+				AND v.is_incentive = #{incentive}
+			</if>
+			<choose>
+				<when test="queryNumber != null">
+					ORDER BY RAND() limit ${num}
+				</when>
+				<otherwise>
+					<if test="catId == 'created3Day'">
+						ORDER BY v.created_at DESC
+					</if>
+					<if test="catId!=null and catId!='' and catId != 'created3Day'">
+						ORDER BY v.base_weight+v.real_weight DESC
+					</if>
+					<if test="num > 0">
+						limit #{num}
+					</if>
+				</otherwise>
+			</choose>
+		</trim>
+	</select>
+
+	<!-- 更新视频合集Id -->
+	<update id="updateFirstVideosGatherId" parameterType="java.lang.Long">
+		UPDATE first_videos set gather_id = 0 WHERE gather_id = #{gatherId}
+	</update>
+
+	<select id="calculateByIds" resultType="com.miguan.ballvideo.vo.video.RealWeightCalculateVo"  parameterType="java.lang.String">
+		select v.id,v.real_weight as realWeightDb,FLOOR(count(c.id) * 3 + (sqrt(v.play_all_count) + sqrt(v.play_count)) / 2 + v.share_count * 3 ) as realWeightCalculate
+		from first_videos v
+		left join cl_user_videos c on c.video_id = v.id and c.video_type = 10 and c.collection='1'
+		where v.id in (${ids})
+		group by v.id,v.share_count,v.play_all_count,v.play_count,v.real_weight
+	</select>
+
+	<update id="updateFirstVideosRealWeight" parameterType="String" >
+		${sql}
+	</update>
+
+	<!-- 根据权重查询视频数据-->
+	<select id="findBsyUrlList"  resultType="com.miguan.ballvideo.vo.video.Videos161Vo">
+		SELECT v.id,v.bsy_url as bsyUrl FROM first_videos v where v.state = 1 and v.bsy_img_url != '' AND v.bsy_url != ''
+		ORDER BY v.base_weight+v.real_weight DESC
+		<if test="queryNum > 0">
+			limit #{queryNum}
+		</if>
+	</select>
+
+	<insert id="saveVideo" parameterType="com.miguan.ballvideo.dto.FirstVideosDto">
+		INSERT INTO first_videos (
+			cat_id, title, bsy_url, bsy_audio_url, bsy_img_url, bsy_head_url, video_author, created_at,
+			state, video_time, video_size, local_audio_url, user_id, package_name, update_type, brief, exam_state
+		) VALUES (
+			#{catId}, #{title},  #{bsyUrl},  #{bsyAudioUrl},  #{bsyImgUrl},  #{bsyHeadUrl},  #{videoAuthor},  #{createdAt},
+			  #{state},  #{videoTime},  #{videoSize}, #{localAudioUrl}, #{userId}, #{appPackage}, #{updateType}, #{brief}, #{examState}
+		)
+	</insert>
+
+	<delete id="deletePublicationVideoByIdAndUserIdAndAndAppPackage" parameterType="java.util.Map">
+		delete from first_videos where id = #{id} and user_id = #{userId}
+	</delete>
+
+	<select id="selectPublicationVideoByUserId" parameterType="java.util.Map" resultType="com.miguan.ballvideo.vo.video.FirstVideosPublicationVo">
+		select f.id, f.cat_id, f.title, f.bsy_url, f.bsy_audio_url, f.bsy_img_url, c.img_url bsy_head_url, c.name video_author,
+		f.collection_count, (f.love_count + f.love_count_real) love_count, f.comment_count, (f.watch_count + f.watch_count_real) watch_count, f.created_at,
+		f.state, f.video_time, f.video_size, f.local_audio_url, f.user_id, f.brief, f.exam_state,f.share_count,f.fake_share_count
+		from first_videos f LEFT JOIN cl_user c ON f.user_id = c.id
+		where f.user_id = #{userId}
+		<if test="appPackage != null and appPackage != ''">
+			and f.package_name = #{appPackage}
+		</if>
+		<if test="isOwn == 0">
+			and f.exam_state = 1
+		</if>
+		<if test="isOwn == 1">
+			and (f.exam_state = 0 or f.exam_state = 1)
+		</if>
+		order by f.created_at DESC
+	</select>
+
+    <select id="countUserCenter" parameterType="java.util.Map" resultType="com.miguan.ballvideo.vo.UserCenterVo">
+        SELECT COUNT(id) videosCount, SUM(love_count + love_count_real) videosLCount, SUM(collection_count) videoCCount from first_videos
+		where user_id = #{userId}
+		<if test="isOwn == 0">
+			and exam_state = 1
+		</if>
+		<if test="isOwn == 1">
+			and (exam_state = 0 or exam_state = 1)
+		</if>
+    </select>
+
+    <!-- 更新首页视频点击数、展示数和ctr值 -->
+    <update id="updateFirstVideosCtr" parameterType="java.util.HashMap">
+        UPDATE first_videos
+        <set>
+            <trim suffixOverrides=",">
+                <if test="clickCount != null">
+                    click_count = #{clickCount},
+                </if>
+                <if test="showCount != null">
+                    show_count = #{showCount},
+                </if>
+                <if test="ctr != null">
+                    ctr = #{ctr},
+                </if>
+            </trim>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <update id="updatevideoAuthorAndbsyHeadUrlByUserId" parameterType="java.util.Map">
+		update first_videos set video_author = ifnull(#{videoAuthor}, video_author), bsy_head_url = ifnull(#{bsyHeadUrl}, bsy_head_url) where user_id = #{userId}
+	</update>
+
+	<select id="findIdListByUserId" parameterType="java.lang.Long" resultType="java.lang.String">
+		select id from first_videos where user_id = #{userId}
+	</select>
+	<!--查询视频少于20秒的数据-->
+	<select id="findFirstVideoIdsOne" resultType="java.lang.String">
+		SELECT  id from first_videos WHERE video_time &lt;  '00:20' and cat_id not in (SELECT id FROM videos_cat WHERE name = '祝福')
+	</select>
+	<!--查询视频标题少于5个字的数据-->
+	<select id="findFirstVideoIdsTwo" resultType="java.lang.String">
+		SELECT id FROM  first_videos  WHERE LENGTH(title)  &lt; 15
+	</select>
+
+	<!-- 通过ID查询首页视频列表(无用户ID) -->
+	<select id="findFirstVideosListById" resultType="com.miguan.ballvideo.vo.video.Videos161Vo"
+			parameterType="java.util.HashMap">
+		SELECT
+		v.id,v.title,v.cat_id,v.url_img,v.bsy_url as bsyUrl,v.created_at as createdAt,v.user_id,
+		v.bsy_img_url as bsyImgUrl,v.collection_count as collectionCount,(v.love_count + v.love_count_real) as loveCount,
+		v.comment_count as commentCount,IFNULL(g.id, 0) AS gatherId,g.title as gatherTitle,
+		(v.watch_count + v.watch_count_real) as watchCount,'0'collection,'0' love,v.bsy_head_url as bsyHeadUrl,v.video_author as videoAuthor,
+		v.video_time,v.state,v.video_size as videoSize,v.base_weight+v.real_weight as totalWeight,bsy_m3u8,v.share_count,v.fake_share_count,
+		v.encryption_android_url,v.encryption_ios_url,v.videos_source
+		FROM first_videos v left join video_gather g on g.id = v.gather_id and g.state = 1
+		<trim prefix="where" prefixOverrides="and|or">
+			v.state = 1 and v.bsy_url!='' and v.bsy_img_url!=''
+			AND v.id in (${showedIds})
+		</trim>
+	</select>
+
+	<select id="findSpecialVideosListById" resultType="com.miguan.ballvideo.vo.video.Videos161Vo"
+			parameterType="java.lang.String">
+		SELECT
+		v.id,v.title,v.cat_id,v.url_img,v.bsy_url as bsyUrl,v.created_at as createdAt,v.user_id,
+		v.bsy_img_url as bsyImgUrl,v.collection_count as collectionCount,(v.love_count + v.love_count_real) as loveCount,
+		v.comment_count as commentCount,0 AS gatherId,'' as gatherTitle,
+		(v.watch_count + v.watch_count_real) as watchCount,'0'collection,'0' love,v.bsy_head_url as bsyHeadUrl,v.video_author as videoAuthor,
+		v.video_time,v.state,v.video_size as videoSize,v.base_weight+v.real_weight as totalWeight,bsy_m3u8,v.share_count,v.fake_share_count,
+		v.encryption_android_url,v.encryption_ios_url,v.videos_source
+		FROM first_videos v
+		where v.id in (${videoIds})
+	</select>
+</mapper>

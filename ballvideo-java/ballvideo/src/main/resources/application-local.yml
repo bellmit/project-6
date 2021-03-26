@@ -1,0 +1,150 @@
+server:
+  port: 8101
+  tomcat:
+    uri-encoding: UTF-8
+    max-threads: 200
+    max-connections: 10000
+spring:
+  application:
+    name: ballVideo
+  datasource:
+    url: jdbc:mysql://112.74.179.254:3306/ballvideo_dev?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+    username: ballvideo_java
+    password: e7I8vpV7H6FZohOj
+    driverClassName: com.mysql.cj.jdbc.Driver
+    hikari:
+      connectionTimeout: 180000
+      maximumPoolSize: 1500
+      maxLifetime: 60000
+      minimumIdle: 20
+      validationTimeout: 8000
+      idleTimeout: 50000
+  secondDatasource:
+    url: jdbc:mysql://112.74.179.254:3306/ballvideoadv?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+    username: ballvideo_java
+    password: e7I8vpV7H6FZohOj
+    driverClassName: com.mysql.cj.jdbc.Driver
+    hikari:
+      connectionTimeout: 180000
+      maximumPoolSize: 1500
+      maxLifetime: 60000
+      minimumIdle: 20
+      validationTimeout: 8000
+      idleTimeout: 50000
+  thirdDataSource:
+    url: jdbc:mysql://112.74.179.254:3306/shangbao_dev?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+    username: shangbao_java
+    password: dly7xcRJVLcKya50
+    driverClassName: com.mysql.cj.jdbc.Driver
+    hikari:
+      connectionTimeout: 180000
+      maximumPoolSize: 1500
+      maxLifetime: 60000
+      minimumIdle: 20
+      validationTimeout: 8000
+      idleTimeout: 50000
+  fourthDatasource:
+    url: jdbc:mysql://112.74.179.254:3306/channel_tool_mofang?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+    username: ballvideo_java
+    password: e7I8vpV7H6FZohOj
+    driverClassName: com.mysql.cj.jdbc.Driver
+    hikari:
+      connectionTimeout: 180000
+      maximumPoolSize: 1500
+      maxLifetime: 60000
+      minimumIdle: 20
+      validationTimeout: 8000
+      idleTimeout: 50000
+  fiveDataSource:
+    url: jdbc:mysql://112.74.179.254:3306/ballvideotask?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+    username: ballvideo_java
+    password: e7I8vpV7H6FZohOj
+    driverClassName: com.mysql.cj.jdbc.Driver
+    hikari:
+      connectionTimeout: 180000
+      maximumPoolSize: 1500
+      maxLifetime: 60000
+      minimumIdle: 20
+      validationTimeout: 8000
+      idleTimeout: 50000
+  redis:
+    host: 112.74.179.254
+    port: 6379
+    password: e8cFnj3CoWZdUFyXg8Dkv9Vp66c=
+    timeout: 15000
+    database: 1
+    jedis:
+      pool:
+        max-active: 10000
+        max-idle: 100
+        min-idle: 20
+        max-wait: 3000
+    #上报redis数据源
+    shangbaoDatabase: 1
+    shangbaoHost: 112.74.179.254
+    shangbaoPort: 6379
+    shangbaoPassword: e8cFnj3CoWZdUFyXg8Dkv9Vp66c=
+    shangbaoTimeOut: 15000
+    bloom:
+      host: 112.74.179.254
+      port: 6379
+      password: e8cFnj3CoWZdUFyXg8Dkv9Vp66c=
+      init-capacity: 10000000
+      error-rate: 0.0001
+      database: 9
+  session:
+    store-type: redis
+  data:
+    elasticsearch:
+      cluster-name: ballVideo
+      cluster-nodes: dev.xyes9200.uheixia.com:9300
+    mongodb:
+      log:
+        uri: mongodb://logjava:xCbxTG4PHWnq8Ncj@112.74.179.254:53333/log
+      feature:
+        uri: mongodb://liyu:9OxClDKGIMNcCFQw@112.74.179.254:53333/feature?minpoolsize=32&maxpoolsize=1000
+      idmapping:
+        uri: mongodb://kangkunhuang:4bFRBkFmsgpIO8K9@112.74.179.254:53333/idmapping
+      drive:
+        uri: mongodb://xy_java:OymdUupKHtnBBibU@192.168.100.10:53333/drive
+  service:
+    predict:
+      host: localdev.predict-java.uheixia.com
+    recommend:
+      host: 192.168.100.10:8380
+    xyuid:
+      host: localdev.xyuid.uheixia.com
+    nconf:
+      host: localdev.nconf-java.98du.com
+  rabbitmq:
+    addresses: 112.74.179.254
+    username: admin
+    port: 5672
+    password: nx8260529
+    open: true
+  jpa:
+    database: mysql
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 100MB
+send:
+  abtest:
+    url: http://dev.abtest-go.98du.com
+swagger:
+  enable: true
+logging:
+#  config: classpath:log4j2/Log4j2-local.xml
+  level:
+    root: info
+    com.miguan.ballvideo.mapper: warn
+    com.miguan.ballvideo.service.impl: debug
+    org.springframework.data.mongodb: debug
+
+push:
+  auto-push:
+    url: http://dev.bdrep.uheixia.com

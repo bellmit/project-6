@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.ballvideo.mapper.VideoExamineMapper">
+    <resultMap id="BaseVideoExamineVoResultMap" type="com.miguan.ballvideo.vo.video.VideoExamineVo">
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="app_package" property="appPackage" jdbcType="VARCHAR" />
+        <result column="video_id" property="videoId" jdbcType="INTEGER" />
+        <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="message_model_id" property="messageModelId" jdbcType="INTEGER" />
+        <result column="examine_status" property="examineStatus" jdbcType="INTEGER" />
+    </resultMap>
+    
+    <!--基本的sql查询字段 公共引用...-->
+    <sql id="Base_VideoExamineVoe_Column_List">
+        id,app_package,video_id,user_id,message_model_id,examine_status
+    </sql>
+    
+    <!-- 基本的sql查询条件公共引用 -->
+    <sql id="VideoExamineVoSearchBy">
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test=" id !=null">
+                id  = #{id,jdbcType=INTEGER}
+            </if>
+            <if test=" app_package !=null">
+                AND app_package  = #{appPackage,jdbcType=VARCHAR}
+            </if>
+            <if test=" video_id !=null">
+                AND video_id  = #{videoId,jdbcType=INTEGER}
+            </if>
+            <if test=" user_id !=null">
+                AND user_id  = #{userId,jdbcType=INTEGER}
+            </if>
+            <if test=" message_model_id !=null">
+                AND message_model_id  = #{messageModelId,jdbcType=INTEGER}
+            </if>
+            <if test=" examine_status !=null">
+                AND examine_status  <![CDATA[ <> ]]> #{examineStatus,jdbcType=INTEGER}
+            </if>
+        </trim>
+    </sql>
+
+    <select id="findSelective" resultMap="BaseVideoExamineVoResultMap" parameterType="java.util.HashMap">
+        select
+        <include refid="Base_VideoExamineVoe_Column_List" />
+        from video_examine
+        <include refid="VideoExamineVoSearchBy"/>
+    </select>
+</mapper>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.ballvideo.mapper.VideosCatSortMapper">
+    <!-- 根据渠道和版本号查询排序 -->
+    <select id="queryVideosCatSortList" resultType="com.miguan.ballvideo.vo.VideosCatSortVo" parameterType="java.util.HashMap">
+        SELECT
+        ascription_application,channel,sort
+        FROM videos_cat_sort
+        WHERE status = 1
+        <if test="appPackage != null and appPackage != ''">
+            AND ascription_application = #{appPackage}
+        </if>
+        <if test="channelId != null and channelId != ''">
+            AND (channel = 'all' OR (FIND_IN_SET(#{channelId},channel) AND parent_flag = #{parentFlag}))
+        </if>
+        <if test="appVersion != null and appVersion != ''">
+            AND
+            concat(lpad( SUBSTRING_INDEX(#{appVersion}, '.', 1 ), 3, '0' ),
+            lpad( SUBSTRING_INDEX( SUBSTRING_INDEX(#{appVersion}, '.',- 2 ), '.', 1 ), 3, '0' ),
+            lpad( SUBSTRING_INDEX( #{appVersion}, '.',- 1 ), 3, '0' ))
+            BETWEEN
+            concat(lpad(SUBSTRING_INDEX(version_start,'.',1), 3, '0'),
+            lpad(SUBSTRING_INDEX(SUBSTRING_INDEX(version_start,'.',-2),'.',1), 3, '0'),
+            lpad(SUBSTRING_INDEX(version_start,'.',-1), 3, '0'))
+            AND
+            concat(lpad(SUBSTRING_INDEX(version_end,'.',1), 3, '0'),
+            lpad(SUBSTRING_INDEX(SUBSTRING_INDEX(version_end,'.',-2),'.',1), 3, '0'),
+            lpad(SUBSTRING_INDEX(version_end,'.',-1), 3, '0'))
+        </if>
+    </select>
+</mapper>

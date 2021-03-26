@@ -1,0 +1,2 @@
+-- 在ballvideo下执行， by：2020-08-14
+INSERT INTO `arc_sys_config`(`type`, `name`, `code`, `value`, `status`, `remark`, `creator`, `created_at`, `updated_at`) VALUES ( 20, '使用新推荐算法mod值', 'use_recommend_mod', '5', 1, '使用新推荐算法mod值。取模后如果模为0，则使用新算法。特定值：（1）如果值为0，则都用旧算法；（2）如果值为1，则都使用新算法', 1, '2020-08-14 11:10:19', NULL);

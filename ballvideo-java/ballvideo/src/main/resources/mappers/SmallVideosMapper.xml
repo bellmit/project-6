@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.ballvideo.mapper.SmallVideosMapper">
+
+
+    <!-- 通过条件查询小视频列表（无用户） -->
+    <select id="findSmallVideosList" resultType="com.miguan.ballvideo.vo.SmallVideosVo"
+            parameterType="java.util.HashMap">
+        SELECT
+        v.id, v.cat_id, v.title,v.bsy_url,
+        v.bsy_audio_url, v.bsy_img_url,v.collection_count,(v.love_count + v.love_count_real) as love_count,v.comment_count,(v.watch_count + v.watch_count_real) as watch_count,
+        v.state,v.bsy_head_url,v.video_author,v.video_time,'0' collection,'0' love
+        FROM small_videos v
+        FORCE INDEX(INDEX_CREATED_AT)
+        <trim prefix="where" prefixOverrides="and|or">
+            v.bsy_url!='' and v.bsy_img_url!=''
+            <if test="catId != null">
+                AND v.cat_id = #{catId}
+            </if>
+            <if test="state != null">
+                AND v.state = #{state}
+            </if>
+            <if test="id != null">
+                AND v.id = #{id}
+            </if>
+            <if test="videoId != null">
+                AND v.id <![CDATA[<]]> #{videoId}
+            </if>
+            <!--排除已浏览视频-->
+            <if test="excludeIds != null">
+                AND v.id not in
+                <foreach collection="excludeIds" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <!--1.一周内上传的新视频放入推荐池-->
+            <if test="weekRecommendPool != null and weekRecommendPool == 1">
+                AND v.recommend = '0' and DATE_SUB(CURDATE(), INTERVAL 7 DAY) &lt;= DATE(v.created_at)
+            </if>
+            <!--2.近一个月后台推荐的视频放入推荐池-->
+            <if test="monthRecommendPool != null and monthRecommendPool == 1">
+                AND (v.recommend = '1' AND DATE_SUB(CURDATE(), INTERVAL 1 MONTH) &lt;= DATE(v.recommend_time))
+            </if>
+            <!-- 推荐池外的视频-->
+            <if test="recommendPool != null and recommendPool == 0">
+                AND (DATE_SUB(CURDATE(), INTERVAL 7 DAY) &gt; DATE(v.created_at)  OR v.recommend = '0' OR
+                (v.recommend = '1' AND DATE_SUB(CURDATE(), INTERVAL 1 MONTH) &gt; DATE(v.recommend_time)))
+            </if>
+            <choose>
+                <when test="pushType != null">
+                    ORDER BY v.id DESC
+                </when>
+                <when test="queryNumber != null">
+                    ORDER BY RAND() limit ${queryNumber}
+                </when>
+                <otherwise>
+                    ORDER BY v.created_at DESC
+                </otherwise>
+            </choose>
+        </trim>
+    </select>
+
+    <!-- 通过条件查询小视频列表（有用户ID） -->
+    <select id="findSmallVideosListByUserId" resultType="com.miguan.ballvideo.vo.SmallVideosVo"
+            parameterType="java.util.HashMap">
+        SELECT
+        v.id, v.cat_id, v.title,v.bsy_url,
+        v.bsy_audio_url, v.bsy_img_url,v.collection_count,(v.love_count + v.love_count_real) as love_count,v.comment_count,(v.watch_count + v.watch_count_real) as watch_count,
+        v.state,v.bsy_head_url,v.video_author,v.video_time,
+        (case when cv.collection='1' then '1' else '0' end) collection,
+        (case when cv.love='1' then '1' else '0' end) love
+        FROM small_videos v
+        FORCE INDEX(INDEX_CREATED_AT)
+        LEFT JOIN cl_user_videos cv on v.id = cv.video_id and cv.video_type = 20 and cv.user_id = #{userId}
+        <trim prefix="where" prefixOverrides="and|or">
+            v.bsy_url!='' and v.bsy_img_url!=''
+            <if test="userId != null">
+                AND (cv.interest != '1' OR cv.interest is NULL)
+            </if>
+            <if test="catId != null">
+                AND v.cat_id = #{catId}
+            </if>
+            <if test="state != null">
+                AND v.state = #{state}
+            </if>
+            <if test="id != null">
+                AND v.id = #{id}
+            </if>
+            <if test="videoId != null">
+                AND v.id <![CDATA[<]]> #{videoId}
+            </if>
+            <!--排除已浏览视频-->
+            <if test="excludeIds != null">
+                AND v.id not in
+                <foreach collection="excludeIds" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <!--1.一周内上传的新视频放入推荐池-->
+            <if test="weekRecommendPool != null and weekRecommendPool == 1">
+                AND v.recommend = '0' and DATE_SUB(CURDATE(), INTERVAL 7 DAY) &lt;= DATE(v.created_at)
+            </if>
+            <!--2.近一个月后台推荐的视频放入推荐池-->
+            <if test="monthRecommendPool != null and monthRecommendPool == 1">
+                AND (v.recommend = '1' AND DATE_SUB(CURDATE(), INTERVAL 1 MONTH) &lt;= DATE(v.recommend_time))
+            </if>
+            <!-- 推荐池外的视频-->
+            <if test="recommendPool != null and recommendPool == 0">
+                AND (DATE_SUB(CURDATE(), INTERVAL 7 DAY) &gt; DATE(v.created_at) OR v.recommend = '0' OR
+                (v.recommend = '1' AND DATE_SUB(CURDATE(), INTERVAL 1 MONTH) &gt; DATE(v.recommend_time)))
+            </if>
+            <choose>
+                <when test="pushType != null">
+                    ORDER BY v.id DESC
+                </when>
+                <when test="queryNumber != null">
+                    ORDER BY RAND() limit ${queryNumber}
+                </when>
+                <otherwise>
+                    ORDER BY v.created_at DESC
+                </otherwise>
+            </choose>
+        </trim>
+    </select>
+
+    <!-- 更新小视频收藏数、点赞数、评论数、观看数 -->
+    <update id="updateSmallVideosCount" parameterType="java.util.HashMap">
+        UPDATE small_videos
+        <set>
+            <trim suffixOverrides=",">
+                <if test="opType == 10">
+                    collection_count = collection_count+1,
+                </if>
+                <if test="opType == 20">
+                    love_count_real = love_count_real+1,
+                </if>
+                <if test="opType == 30">
+                    watch_count_real = watch_count_real+1,
+                </if>
+                <if test="opType == 40">
+                    collection_count = collection_count-1,
+                </if>
+                <if test="opType == 50">
+                    love_count_real = love_count_real-1,
+                </if>
+                <if test="opType == 60">
+                    comment_count = comment_count+1
+                </if>
+                <if test="opType == 70">
+                    report = IFNULL(report, 0)+1
+                </if>
+                <if test="opType == 80">
+                    share_count = share_count+1
+                </if>
+                <if test="opType == 90">
+                    play_all_count = play_all_count+1
+                </if>
+            </trim>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+</mapper>

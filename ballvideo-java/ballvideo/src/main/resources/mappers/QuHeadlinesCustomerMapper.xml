@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.miguan.ballvideo.mapper.QuHeadlinesCustomerMapper" >
+  <resultMap id="BaseResultMap" type="com.miguan.ballvideo.entity.QuHeadlinesCustomer" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="cid" property="cid" jdbcType="VARCHAR" />
+        <result column="imei" property="imei" jdbcType="VARCHAR" />
+        <result column="os" property="os" jdbcType="INTEGER" />
+        <result column="timestamp" property="timestamp" jdbcType="BIGINT" />
+        <result column="plan" property="plan" jdbcType="VARCHAR" />
+        <result column="unit" property="unit" jdbcType="VARCHAR" />
+        <result column="adid" property="adid" jdbcType="VARCHAR" />
+        <result column="idfa" property="idfa" jdbcType="VARCHAR" />
+        <result column="callback_url" property="callbackUrl" jdbcType="VARCHAR" />
+        <result column="imeimd5" property="imeimd5" jdbcType="VARCHAR" />
+        <result column="tsms" property="tsms" jdbcType="BIGINT" />
+        <result column="androidid" property="androidid" jdbcType="VARCHAR" />
+        <result column="uid" property="uid" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+      </resultMap>
+      <sql id="Base_Column_List" >
+    id, cid, imei, os, timestamp, plan, unit, adid, idfa, callback_url, imeimd5, tsms,
+    androidid, uid, create_time
+  </sql>
+
+      <insert id="insertSelective" parameterType="com.miguan.ballvideo.entity.QuHeadlinesCustomer" >
+        insert into qu_headlines_customer
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+          <if test="id != null" >
+            id,
+          </if>
+          <if test="cid != null" >
+            cid,
+          </if>
+          <if test="imei != null" >
+            imei,
+          </if>
+          <if test="os != null" >
+            os,
+          </if>
+          <if test="timestamp != null" >
+            timestamp,
+          </if>
+          <if test="plan != null" >
+            plan,
+          </if>
+          <if test="unit != null" >
+            unit,
+          </if>
+          <if test="adid != null" >
+            adid,
+          </if>
+          <if test="idfa != null" >
+            idfa,
+          </if>
+          <if test="callbackUrl != null" >
+            callback_url,
+          </if>
+          <if test="imeimd5 != null" >
+            imeimd5,
+          </if>
+          <if test="tsms != null" >
+            tsms,
+          </if>
+          <if test="androidid != null" >
+            androidid,
+          </if>
+          <if test="uid != null" >
+            uid,
+          </if>
+          <if test="createTime != null" >
+            create_time,
+          </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+          <if test="id != null" >
+            #{id,jdbcType=INTEGER},
+          </if>
+          <if test="cid != null" >
+            #{cid,jdbcType=VARCHAR},
+          </if>
+          <if test="imei != null" >
+            #{imei,jdbcType=VARCHAR},
+          </if>
+          <if test="os != null" >
+            #{os,jdbcType=INTEGER},
+          </if>
+          <if test="timestamp != null" >
+            #{timestamp,jdbcType=BIGINT},
+          </if>
+          <if test="plan != null" >
+            #{plan,jdbcType=VARCHAR},
+          </if>
+          <if test="unit != null" >
+            #{unit,jdbcType=VARCHAR},
+          </if>
+          <if test="adid != null" >
+            #{adid,jdbcType=VARCHAR},
+          </if>
+          <if test="idfa != null" >
+            #{idfa,jdbcType=VARCHAR},
+          </if>
+          <if test="callbackUrl != null" >
+            #{callbackUrl,jdbcType=VARCHAR},
+          </if>
+          <if test="imeimd5 != null" >
+            #{imeimd5,jdbcType=VARCHAR},
+          </if>
+          <if test="tsms != null" >
+            #{tsms,jdbcType=BIGINT},
+          </if>
+          <if test="androidid != null" >
+            #{androidid,jdbcType=VARCHAR},
+          </if>
+          <if test="uid != null" >
+            #{uid,jdbcType=VARCHAR},
+          </if>
+          <if test="createTime != null" >
+            #{createTime,jdbcType=TIMESTAMP},
+          </if>
+        </trim>
+      </insert>
+
+  <select id="selectByImeiAndAndroidid" resultMap="BaseResultMap" parameterType="com.miguan.ballvideo.entity.QuHeadlinesCustomer" >
+    Select qhc.* from qu_headlines_customer qhc
+    <where>
+      <if test="imei != null" >
+        imei = #{imei,jdbcType=VARCHAR}
+      </if>
+      <if test="androidid != null" >
+        and androidid = #{androidid,jdbcType=VARCHAR}
+      </if>
+    </where>
+       order by  qhc.create_time  DESC limit 1
+  </select>
+</mapper>

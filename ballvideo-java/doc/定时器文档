@@ -1,0 +1,15 @@
+1、用户标签、用户标签分过期删除定时器（一周一次）
+code:UserLabelServiceImpl.deleteUserLabelDatas
+
+2、百度热词更新定时器（4小时1次）
+code:HotWordServiceImpl.getBaiduHotWord
+
+3、视频真实权重更新定时器（25分钟一次，根据开关配置code=update_real_weight）
+code:FirstVideosOldServiceImpl.updateVideoRealWeightByRedis()
+
+4、消息推送定时器（根据push_article的push_time定时推送）
+code:PushArticleRunTask
+
+5、白山云文件文件预热定时器（凌晨3点）
+code:CachePrefetchServiceImpl.videoCachePrefetchQuartz
+

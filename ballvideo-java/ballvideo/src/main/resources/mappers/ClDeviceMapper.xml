@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.ballvideo.mapper.ClDeviceMapper">
+
+	<resultMap type="com.miguan.ballvideo.vo.ClDeviceVo" id="clDeviceMap">
+		<id property="id" column="id" javaType="java.lang.Long"></id>
+		<result property="deviceId" column="device_id" javaType="java.lang.String"></result>
+		<result property="distinctId" column="distinct_id" javaType="java.lang.String"></result>
+		<result property="deviceToken" column="device_token" javaType="java.lang.String"></result>
+		<result property="huaweiToken" column="huawei_token" javaType="java.lang.String"></result>
+		<result property="vivoToken" column="vivo_token" javaType="java.lang.String"></result>
+		<result property="oppoToken" column="oppo_token" javaType="java.lang.String"></result>
+        <result property="xiaomiToken" column="xiaomi_token" javaType="java.lang.String"></result>
+		<result property="state" column="state" javaType="java.lang.String"></result>
+		<result property="appPackage" column="app_package" javaType="java.lang.String"></result>
+		<result property="createTime" column="create_time" javaType="java.lang.String"></result>
+		<result property="updateTime" column="update_time" javaType="java.lang.String"></result>
+	</resultMap>
+
+	<!-- 通用查询结果列-->
+	<sql id="Base_Column_List">
+		id, device_id, state, create_time, update_time,device_token,huawei_token,vivo_token,oppo_token,xiaomi_token,app_package,distinct_id
+	</sql>
+
+	<!-- 通过ID查询用户意见反馈信息 -->
+	<select id="getDeviceByDeviceIdAppPackage" resultMap="clDeviceMap" parameterType="java.util.HashMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM cl_device
+		WHERE device_id = #{deviceId}
+		<if test="appPackage != null">
+			and app_package = #{appPackage}
+		</if>
+		limit 1
+	</select>
+
+	<!-- 新增设备信息 -->
+	<insert id="saveClDevice" parameterType="com.miguan.ballvideo.vo.ClDeviceVo">
+		 INSERT INTO cl_device
+ 		(device_id, state, create_time, update_time,device_token,huawei_token,vivo_token,oppo_token,xiaomi_token,app_package,app_version,is_delete,utd_id)
+		 VALUES 
+ 		(#{deviceId},#{state},now(),now(),#{deviceToken},#{huaweiToken},#{vivoToken},#{oppoToken},#{xiaomiToken},#{appPackage},#{appVersion},0,#{utdId})
+	</insert>
+
+	<!-- 修改设备信息 -->
+	<update id="updateClDevice" parameterType="com.miguan.ballvideo.vo.ClDeviceVo">
+		UPDATE cl_device set update_time = now(),is_delete = 0
+		<if test="state != null and state != ''">
+			,state = #{state}
+		</if>
+		<if test="appVersion != null and appVersion != ''">
+			,app_version = #{appVersion}
+		</if>
+			,device_token = #{deviceToken}
+			,huawei_token = #{huaweiToken}
+			,vivo_token = #{vivoToken}
+			,oppo_token = #{oppoToken}
+            ,xiaomi_token = #{xiaomiToken}
+		    ,is_delete = #{isDelete}
+		<if test="utdId != null and utdId != ''">
+			,utd_id = #{utdId}
+		</if>
+		where device_id = #{deviceId} and app_package = #{appPackage}
+	</update>
+
+	<select id="findAllTokens" resultMap="clDeviceMap" parameterType="java.util.HashMap">
+		select id,huawei_token,oppo_token,xiaomi_token,vivo_token
+		from cl_device
+		where state = '10'
+		and (huawei_token !='' OR oppo_token !='' OR xiaomi_token !='' OR vivo_token !='')
+		and app_package = #{appPackage} and ( is_delete is null or is_delete != 1 )
+		<if test="ids != null">
+			and id in (${ids})
+		</if>
+		ORDER BY id DESC
+		<if test="index != null">
+			limit ${index}, 5000
+		</if>
+	</select>
+
+	<select id="getAllTokensCount" parameterType = "java.lang.String" resultType="java.lang.Integer">
+		select count(1)
+		from cl_device
+		where state = '10'
+		and (huawei_token !='' OR oppo_token !='' OR xiaomi_token !='' OR vivo_token !='')
+		and app_package = #{appPackage} and ( is_delete is null or is_delete != 1 )
+	</select>
+
+	<select id="findAllTokensByDistinct" resultMap="clDeviceMap" parameterType="java.util.HashMap">
+		select id,distinct_id,device_token,huawei_token,oppo_token,xiaomi_token,vivo_token
+		from cl_device
+		where state = '10'
+		and app_package = #{appPackage}
+		and (device_token != '' OR huawei_token !='' OR oppo_token !='' OR xiaomi_token !='' OR vivo_token !='')
+		and distinct_id in
+		<foreach collection="distinctIds" item="distinctId" index="index" open="(" close=")" separator=",">
+			#{distinctId}
+		</foreach>
+		<if test="index != null">
+			limit ${index}, 5000
+		</if>
+	</select>
+
+	<select id="countAllDeviceId" resultType="java.lang.Long" >
+		select count(*)
+		from cl_device
+		where state = '10'
+		and (device_token != '' OR huawei_token !='' OR oppo_token !='' OR xiaomi_token !='' OR vivo_token !='')
+		and (distinct_id is null OR distinct_id = '' )
+	</select>
+
+	<select id="findAllDeviceId" resultMap="clDeviceMap" parameterType="int">
+		select id,device_id
+		from cl_device
+		where state = '10'
+		and (device_token != '' OR huawei_token !='' OR oppo_token !='' OR xiaomi_token !='' OR vivo_token !='')
+		and (distinct_id is null OR distinct_id = '' )
+		limit #{index}, 10
+	</select>
+
+	<update id="updateDistinctId" parameterType="java.util.Map" >
+		update cl_device
+		set distinct_id = #{distinctId}
+		where id = #{id}
+	</update>
+
+	<update id="updateDeviceId" parameterType="java.util.Map" >
+		update cl_device
+		set device_id = #{deviceId},update_time = now(),is_delete = 1
+		where id = #{id}
+	</update>
+
+    <!--删除李杰用户设备信息-->
+    <delete id="deleteDeviceId" >
+		delete from cl_device where device_id='4f13322e9e48d4e0'
+	</delete>
+
+	<select id="getAllTokensCountByDistinct" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+		select count(1)
+		from cl_device
+		where state = '10'
+		and app_package = #{appPackage}
+		and (device_token != '' OR huawei_token !='' OR oppo_token !='' OR xiaomi_token !='' OR vivo_token !='')
+		and distinct_id in
+		<foreach collection="distinctIds" item="distinctId" index="index" open="(" close=")" separator=",">
+			#{distinctId}
+		</foreach>
+	</select>
+
+</mapper>
