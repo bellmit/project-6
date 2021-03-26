@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.reportview.mapper.FirstVideosMapper">
+
+    <select id="staoffline" parameterType="map" resultType="com.miguan.reportview.vo.FirstVideosStaVo">
+        select count(1) as videoNum, cat_id as catid, 0 type, #{date} date
+        from first_videos
+        where state = -3
+        and updated_at between #{startDate,jdbcType=TIMESTAMP} and #{endDate,jdbcType=TIMESTAMP}
+        GROUP BY cat_id;
+    </select>
+
+    <select id="staAdd" parameterType="map" resultType="com.miguan.reportview.vo.FirstVideosStaVo">
+        select count(1) as videoNum, cat_id as catid, 1 type, #{date} date
+        from first_videos
+        where created_at between #{startDate,jdbcType=TIMESTAMP} and #{endDate,jdbcType=TIMESTAMP}
+        GROUP BY cat_id;
+    </select>
+
+    <select id="staAll" resultType="com.miguan.reportview.vo.FirstVideosStaVo">
+        select count(1) as videoNum, cat_id as catid, 2 type, #{date} date
+        from first_videos
+        GROUP BY cat_id;
+    </select>
+
+    <select id="staNewOnlineVideo" resultType="com.miguan.reportview.vo.FirstVideosStaVo">
+        /*新上线视频数*/
+        select cat_id catid, count(1) videoNum, 3 type, #{date} date
+        from first_videos
+        where online_date between #{startDate,jdbcType=TIMESTAMP} and #{endDate,jdbcType=TIMESTAMP}
+        group by cat_id
+    </select>
+
+    <select id="staNewOfflineVideo" resultType="com.miguan.reportview.vo.FirstVideosStaVo">
+        /*新下线视频数*/
+        select cat_id catid, count(1) videoNum, 4 type, #{date} date
+        from first_videos
+        where offline_time between #{startDate,jdbcType=TIMESTAMP} and #{endDate,jdbcType=TIMESTAMP}
+        group by cat_id
+    </select>
+
+    <select id="staOlineVideo" resultType="com.miguan.reportview.vo.FirstVideosStaVo">
+        /*线上视频数*/
+        select cat_id catid, count(1) videoNum, 5 type, #{date} date
+        from first_videos
+        where state=1
+        group by cat_id
+    </select>
+
+    <select id="staNewCollectVideo" resultType="com.miguan.reportview.vo.FirstVideosStaVo">
+        /*新采集视频数*/
+        select cat_id catid, count(1) videoNum, 6 type, #{date} date
+        from first_videos
+        where state in (2,-1)
+        group by cat_id
+    </select>
+
+    <select id="findMaxVideoUpdatedTime" resultType="java.lang.String">
+        select max(updated_at) from video_info
+    </select>
+
+    <select id="countNewVideos" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(1)
+        from first_videos v, videos_cat c
+        where v.cat_id = c.id
+        and v.updated_at &gt;  #{maxUpdateTime}
+    </select>
+
+    <select id="queryNewVideos" parameterType="map" resultType="com.miguan.reportview.vo.FirstVideosVo">
+        select v.*, c.name cat_name, c.ascription_application
+        from first_videos v, videos_cat c
+        where v.cat_id = c.id
+        and v.updated_at &gt;  #{maxUpdateTime}
+        limit #{startRow}, #{pageSize}
+    </select>
+
+    <delete id="deleteVideoInfoById" parameterType="java.util.List">
+        alter table video_info delete where id in <foreach collection="dataList" item="data" separator="," open="(" close=")">#{data.id}</foreach>
+    </delete>
+
+    <insert id="batchInsertUpdateVideo" parameterType="com.miguan.reportview.vo.FirstVideosVo">
+        insert into video_info(id,cat_id,cat_name,title,url,url_audio,url_img,url_headimg,local_url,local_audio_url,local_img_url,bsy_url,bsy_audio_url,
+        bsy_img_url,bsy_head_url,video_author,collection_count,love_count,comment_count,watch_count,click_count,show_count,ctr,created_at,
+        updated_at,state,video_time,local_headimg,report,share_count,fake_share_count,play_all_count,base_weight,video_size,real_weight,
+        play_count,gather_id,watch_count_real,love_count_real,video_hour,is_incentive,user_id,package_name,brief,online_state,update_type,
+        exam_state,audit_at,exposure_num,compare_show_expo,offline_state,offline_time,width,height,width_height_text,verify_date,online_date,
+        bsy_m3u8,videos_source,encryption_android_url,encryption_ios_url,encryption_xcx_url,deleted_at,ascription_application,sensitive)
+        <foreach collection="dataList" item="data" separator="," open="values " close="">
+            (ifnull(#{data.id},0),ifnull(#{data.catId},0),ifnull(#{data.catName},''),ifnull(#{data.title},''),ifnull(#{data.url},''),ifnull(#{data.urlAudio},''),ifnull(#{data.urlImg},''),
+            ifnull(#{data.urlHeadimg},''),ifnull(#{data.localUrl},''),ifnull(#{data.localAudioUrl},''),ifnull(#{data.localImgUrl},''),ifnull(#{data.bsyUrl},''),
+            ifnull(#{data.bsyAudioUrl},''),ifnull(#{data.bsyImgUrl},''),ifnull(#{data.bsyHeadUrl},''),ifnull(#{data.videoAuthor},''),ifnull(#{data.collectionCount},0),
+            ifnull(#{data.loveCount},0),ifnull(#{data.commentCount},0),ifnull(#{data.watchCount},0),ifnull(#{data.clickCount},0),ifnull(#{data.showCount},0),
+            ifnull(#{data.ctr},0.0),ifnull(#{data.createdAt},toDate('1980-01-01')),ifnull(#{data.updatedAt},toDate('1980-01-01')),ifnull(#{data.state},0),ifnull(#{data.videoTime},''),
+            ifnull(#{data.localHeadimg},''),ifnull(#{data.report},0),ifnull(#{data.shareCount},0),ifnull(#{data.fakeShareCount},0),ifnull(#{data.playAllCount},0),
+            ifnull(#{data.baseWeight},0),ifnull(#{data.videoSize},''),ifnull(#{data.realWeight},0),ifnull(#{data.playCount},0),ifnull(#{data.gatherId},0),
+            ifnull(#{data.watchCountReal},0),ifnull(#{data.loveCountReal},0),ifnull(#{data.videoHour},0),ifnull(#{data.isIncentive},0),ifnull(#{data.userId},0),
+            ifnull(#{data.packageName},''),ifnull(#{data.brief},''),ifnull(#{data.onlineState},0),ifnull(#{data.updateType},0),ifnull(#{data.examState},0),
+            ifnull(#{data.auditAt},toDate('1980-01-01')),ifnull(#{data.exposureNum},0),ifnull(#{data.compareShowExpo},0),ifnull(#{data.offlineState},0),
+            ifnull(#{data.offlineTime},toDate('1980-01-01')),ifnull(#{data.width},''),ifnull(#{data.height},''),ifnull(#{data.widthHeightText},''),
+            ifnull(#{data.verifyDate},toDate('1980-01-01')),ifnull(#{data.onlineDate},toDate('1980-01-01')),ifnull(#{data.bsyM3u8},''),ifnull(#{data.videosSource},''),
+            ifnull(#{data.encryptionAndroidUrl},''),ifnull(#{data.encryptionIosUrl},''),ifnull(#{data.encryptionXcxUrl},''),ifnull(#{data.deletedAt},toDate('1980-01-01')),
+            ifnull(#{data.ascriptionApplication},''),ifnull(#{data.sensitive},-1))
+        </foreach>
+    </insert>
+
+    <delete id="deleteVideoDetail" parameterType="java.lang.String">
+        alter table video_detail delete where dd= #{day}
+    </delete>
+
+    <insert id="batchSaveVideoDetail" parameterType="java.lang.String">
+        insert into video_detail(id,dd,package_name,app_version,video_id,catid,section6,section9,show_count,play_count,show_user,play_user,play_time_real,vplay_count,vplay_user,all_play_count,all_play_user,like_count,like_user,
+                                 share_count,share_user,fav_count,fav_user,cat_show_count,dd_show_count,cat_play_count,dd_play_count)
+        select id,a.dd dd,package_name,app_version, video_id,a.catid catid,section6,section9,show_count,play_count,show_user,play_user,play_time_real,vplayCount,vplay_user,all_play_count,all_play_user,like_count,like_user,share_count,
+               share_user,fav_count,fav_user, ifnull(cat_show_count,0) cat_show_count, ifnull(dd_show_count,0) dd_show_count, ifnull(cat_play_count,0) cat_play_count, ifnull(dd_play_count,0) dd_play_count
+        from (
+            select 
+                   sipHash64(toYYYYMMDDhhmmss(now()), video_id) id, 
+                   dd,
+                   anyLast(package_name) package_name,
+                   anyLast(app_version) app_version,
+                   video_id, /*视频id*/
+                   vi.cat_id catid, /*视频分类id*/
+                   sum(show) show_count,  /*曝光次数*/
+                   sum(play_start) play_count,  /*播放次数*/
+                   ifnull(count(distinct if(show=1,distinct_id,null)),0) show_user,  /*曝光用户*/
+                   ifnull(count(distinct if(play_start=1,distinct_id,null)),0) play_user,  /*播放用户*/
+                   sum(if(is_play_time=1,play_time_r,0)) play_time_real,  /*视频播放时长*/
+                   sum(is_play_valid) vplayCount,   /*有效播放次数*/
+                   ifnull(count(distinct if(is_play_valid=1,distinct_id,null)),0) vplay_user, /*有效播放用户*/
+                   sum(is_play_end) all_play_count,     /*完播次数*/
+                   ifnull(count(distinct if(is_play_end=1,distinct_id,null)),0) all_play_user,/*完播用户数*/
+                   sum(praise) like_count, /*点赞数*/
+                   ifnull(count(distinct if(praise=1,distinct_id,null)),0) like_user, /*点赞用户数*/
+                   sum(share) share_count,/*分享数*/
+                   ifnull(count(distinct if(share=1,distinct_id,null)),0) share_user,/*分享用户数*/
+                   sum(collect) fav_count, /*收藏数*/
+                   ifnull(count(distinct if(collect=1,distinct_id,null)),0) fav_user/*收藏用户数*/,
+                   (case when show_count between 1 and 20 then '1~20'
+						 when show_count between 21 and 50 then '21~50'
+						 when show_count between 51 and 100 then '51~100'
+						 when show_count between 101 and 300 then '101~300'
+						 when show_count between 301 and 500 then '301~500'
+						 when show_count >500 then '>500'
+						 else ''
+                    end) section6,  /*6纬度的曝光区间*/
+                   (case when show_count between 1 and 20 then '1~20'
+						 when show_count between 21 and 50 then '21~50'
+						 when show_count between 51 and 100 then '51~100'
+						 when show_count between 101 and 300 then '101~300'
+						 when show_count between 301 and 500 then '301~500'
+						 when show_count between 501 and 1000 then '501~1000'
+						 when show_count between 1000 and 2000 then '1000~2000'
+						 when show_count between 2000 and 3000 then '2000~3000'
+						 when show_count >3000 then '>3000'
+						 else ''
+                    end) section9  /*9纬度的曝光区间*/
+            from dw_video_actions_aggregation v inner join video_info vi on v.video_id = vi.id
+            where dd=#{day}
+            and video_id > 0
+            group by dd,vi.cat_id,video_id 
+        ) a left join (
+            select
+                dd,
+                vi.cat_id catid,
+                sum(show) cat_show_count,  /*分类曝光数*/
+                sum(play_start) cat_play_count   /*分类播放数*/
+            from dw_video_actions_aggregation v inner join video_info vi on v.video_id = vi.id
+            where dd=#{day}
+            and video_id > 0
+            group by dd, vi.cat_id 
+        ) b on a.dd=b.dd and a.catid=b.catid
+        left join (
+            select
+                dd,
+                sum(show) dd_show_count,  /*天曝光数*/
+                sum(play_start) dd_play_count  /*天播放数*/
+            from dw_video_actions_aggregation
+            where dd=#{day}
+            and video_id > 0
+            group by dd
+        ) c on a.dd=c.dd
+    </insert>
+
+    <sql id="whereSql">
+        <if test="dateType == 1">
+            and dd = #{day}   /*行为日期*/
+            <if test="nowOnlineType == 1">
+                and toDate(online_date) = #{day}  /*上线日期是行为日期的当天*/
+            </if>
+            <if test="nowJwType == 1">
+                and toDate(created_at) = #{day}  /*进文日期是行为日期的当天*/
+            </if>
+        </if>
+        <if test="dateType == 2">
+            and toDate(online_date) = #{day}   /*上线日期*/
+            and dd &gt;= #{day}
+            <if test="nowOnlineType == 1">
+                and dd = #{day}  /*上线日期是行为日期的当天*/
+            </if>
+        </if>
+        <if test="dateType == 3">
+            and toDate(created_at) = #{day}   /*进文日期*/
+            and dd &gt;= #{day}
+            <if test="nowJwType == 1">
+                and dd = #{day}  /*进文日期是行为日期的当天*/
+            </if>
+        </if>
+        <if test="appPackages != null">
+            and package_name in<foreach collection="appPackages" item="appPackage" separator="," open="(" close=")">#{appPackage}</foreach>
+        </if>
+        <if test="appVersions != null">
+            and app_version in<foreach collection="appVersions" item="appVersion" separator="," open="(" close=")">#{appVersion}</foreach>
+        </if>
+        <if test="catIds != null">
+            and catid in<foreach collection="catIds" item="catId" separator="," open="(" close=")">#{catId}</foreach>
+        </if>
+        <if test="isIncentive != null">
+            and v.is_incentive = #{isIncentive}
+        </if>
+    </sql>
+
+    <select id="findVideoDetailList" parameterType="map" resultType="com.miguan.reportview.dto.UserContentDetailDto">
+        select dd,
+               toDate(online_date) onlineDate, /*上线日期*/
+               toDate(created_at) jwDate,  /*进文日期*/
+               cat_name catName,  /*分类*/
+               cat_id catId,  /*分类id*/
+               (case when videos_source='yiyouliao' then '易有料' when videos_source='wuli' then '唔哩视频' when videos_source='yueke' then '阅客视频'  when videos_source='qczj' then '汽车之家' else '98°视频' end) videosSource,  /*内容来源*/
+               title videoTitle,  /*视频标题*/
+               v.id videoId, /*视频id*/
+               if(is_incentive=1,'是','否') isIncentive, /*是否激励视频*/
+               ${section} as section,
+               show_count showNum,  /*曝光次数*/
+               cat_show_count catShowNum,  /*分类曝光次数*/
+               dd_show_count ddShowNum,  /*天曝光次数*/
+               play_count playNum,  /*播放次数*/
+               if(show_count=0,0,round(play_count*100/show_count,2)) playRate,  /*播放率*/
+               if(cat_show_count=0,0,round(cat_play_count*100/cat_show_count,2)) catPlayRate,  /*分类平均播放率*/
+               if(dd_show_count=0,0,round(dd_play_count*100/dd_show_count,2)) totalPlayRate,  /*总体平均播放率*/
+               show_user showUser,  /*曝光用户*/
+               play_user playUser,  /*播放用户*/
+               round(play_time_real/60000,2) playTimeR, /*播放时长*/
+               if(show_count=0,0,round(playTimeR/show_count, 2)) everyPlayTimeR,  /*每次曝光播放时长*/
+               if(show_user=0,0,round(show_count/show_user, 2)) perShowNum,/*人均曝光次数*/
+               if(play_user=0,0,round(play_count/play_user, 2)) perPlayNum,/*人均播放次数*/
+               vplay_count vplayNum, /*有效播放次数*/
+               if(play_count=0,0,round(vplay_count*100/play_count,2)) vplayRate,  /*有效播放率*/
+               vplay_user vplayUser,  /*有效播放用户*/
+               all_play_count allPlayNum,  /*完播次数*/
+               if(play_count=0,0,round(all_play_count*100/play_count,2)) allPlayRate,  /*完博率*/
+               all_play_user allPlayUser, /*完播用户数*/
+               if(all_play_user=0,0,round(all_play_count/all_play_user, 2)) preEndPayCount, /*人均完播次数*/
+                like_count likeNum, /*点赞数*/
+                like_user likeUser, /*点赞用户数*/
+                share_count shareNum, /*分享数*/
+                share_user shareUser, /*分享用户数*/
+                fav_count favNum, /*收藏数*/
+                fav_user favUser /*收藏用户数*/
+        from video_detail d inner join video_info v on d.video_id = v.id
+        where 1=1
+        <include refid="whereSql" />
+        ${orderByField}
+    </select>
+
+    <select id="totalVideoDetail" parameterType="map" resultType="com.miguan.reportview.dto.UserContentDetailDto">
+        select
+               count(DISTINCT video_id) videoTitle,  /*视频总数*/
+               ifnull(count(DISTINCT if(is_incentive=1,video_id,null)),0) isIncentive,  /*激励视频总数*/
+               sum(show_count) showNum,  /*曝光次数*/
+               sum(cat_show_count) catShowNum,  /*分类曝光次数*/
+               sum(dd_show_count) ddShowNum,  /*天曝光次数*/
+               sum(play_count) playNum,  /*播放次数*/
+               sum(cat_play_count) catPlayNum,  /*分类播放次数*/
+               sum(dd_play_count) ddPlayNum,  /*天播放次数*/
+               sum(show_user) showUser,  /*曝光用户*/
+               sum(play_user) playUser,  /*播放用户*/
+               round(sum(play_time_real)/60000, 2) playTimeR, /*播放时长*/
+               sum(vplay_count) vplayNum, /*有效播放次数*/
+               sum(vplay_user) vplayUser,  /*有效播放用户*/
+               sum(all_play_count) allPlayNum,  /*完播次数*/
+               sum(all_play_user) allPlayUser, /*完播用户数*/
+               sum(like_count) likeNum, /*点赞数*/
+               sum(like_user) likeUser, /*点赞用户数*/
+               sum(share_count) shareNum, /*分享数*/
+               sum(share_user) shareUser, /*分享用户数*/
+               sum(fav_count) favNum, /*收藏数*/
+               sum(d.fav_user) favUser /*收藏用户数*/
+        from video_detail d inner join video_info v on d.video_id = v.id
+        where 1=1
+        <include refid="whereSql" />
+    </select>
+
+    <select id="findVideoSectionList"  parameterType="map" resultType="com.miguan.reportview.dto.VideoSectionDataDto">
+        select a.*,videoCount,showNum,playNum,playRate,playTimeR,prePlayTimeR
+        from (
+             select dd,
+                    ${section} section,
+                    ifnull(count(DISTINCT video_id),0) allVideoCount,
+                    sum(show_count) allShowNum,
+                    sum(play_count) allPlayNum,
+                    if(allShowNum=0,0,round(allPlayNum*100/allShowNum,2)) allPlayRate,
+                    round(sum(play_time_real)/60000,2)  allPlayTimeR,
+                    if(allPlayNum=0,0,round(allPlayTimeR/allPlayNum,2)) allPrePlayTimeR
+             from video_detail
+             where dd = #{day}
+             and section !=''
+            <if test="catIds != null">
+                and catid in<foreach collection="catIds" item="catId" separator="," open="(" close=")">#{catId}</foreach>
+            </if>
+             group by dd, ${section}
+         ) a left join (
+             select dd,
+                    ${section} section,
+                    ifnull(count(DISTINCT video_id),0) videoCount,
+                    sum(show_count) showNum,
+                    sum(play_count) playNum,
+                    if(showNum=0,0,round(playNum*100/showNum,2)) playRate,
+                    round(sum(play_time_real)/60000,2)  playTimeR,
+                    if(playNum=0,0,round(playTimeR/playNum,2)) prePlayTimeR
+             from video_detail d inner join video_info i on d.video_id =i.id
+             where dd = toString(toDate(online_date))
+             and dd = #{day}
+             and section !=''
+            <if test="catIds != null">
+                and catid in<foreach collection="catIds" item="catId" separator="," open="(" close=")">#{catId}</foreach>
+            </if>
+             group by dd, ${section}
+         ) b on a.dd=b.dd and a.section=b.section
+        order by toUInt64OrZero(replace(replace(a.section,'~',''),'>','10000'))
+    </select>
+
+    <select id="findMaxLdVideoUpdatedTime" resultType="java.lang.String">
+        select max(updated_at) from ld_video_info
+    </select>
+
+    <select id="countNewLdVideos" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(1)
+        from videos v, videos_cat c
+        where v.cat_id= c.id
+        and ifnull(v.updated_at,v.created_at) &gt;  #{maxUpdateTime}
+    </select>
+
+    <select id="queryNewLdVideos" parameterType="map" resultType="com.miguan.reportview.vo.LdVideosVo">
+        select v.*, c.name cat_name
+        from videos v, videos_cat c
+        where v.cat_id= c.id
+        and ifnull(v.updated_at,v.created_at) &gt;  #{maxUpdateTime}
+        order by v.updated_at
+        limit #{startRow}, #{pageSize}
+    </select>
+
+    <delete id="deleteLdVideoInfoById" parameterType="java.util.List">
+        alter table ld_video_info delete where id in <foreach collection="dataList" item="data" separator="," open="(" close=")">#{data.id}</foreach>
+    </delete>
+
+    <insert id="batchInsertUpdateLdVideo" parameterType="com.miguan.reportview.vo.LdVideosVo">
+        insert into ld_video_info(id,title,url,cat_id,url_audio,url_img,local_url,bsy_url,local_img_url,bsy_img_url,like_count,share_count,user_id,user_name,click_count,created_at,updated_at,
+        state,user_like_count,local_audio_url,bsy_audio_url,force_adv,success_num,recommend,type,approval_state,video_time,app_type,base_weight,quick_setting,width,height,
+        video_label_ids,video_label_names,cat_name,is_push)
+        <foreach collection="dataList" item="data" separator="," open="values " close="">
+            (ifnull(#{data.id},0),ifnull(#{data.title},''),ifnull(#{data.url},''),ifnull(#{data.catId},0),ifnull(#{data.urlAudio},''),ifnull(#{data.urlImg},''),ifnull(#{data.localUrl},''),
+            ifnull(#{data.bsyUrl},''),ifnull(#{data.localImgUrl},''),ifnull(#{data.bsyImgUrl},''),ifnull(#{data.likeCount},0),ifnull(#{data.shareCount},0),ifnull(#{data.userId},0),ifnull(#{data.userName},''),
+            ifnull(#{data.clickCount},0),ifnull(#{data.createdAt},now()),ifnull(#{data.updatedAt},now()),ifnull(#{data.state},0),ifnull(#{data.userLikeCount},0),
+            ifnull(#{data.localAudioUrl},''),ifnull(#{data.bsyAudioUrl},''),ifnull(#{data.forceAdv},0),ifnull(#{data.successNum},0),ifnull(#{data.recommend},0),ifnull(#{data.type},''),
+            ifnull(#{data.approvalState},''),ifnull(#{data.videoTime},''),ifnull(#{data.appType},''),ifnull(#{data.baseWeight},0),ifnull(#{data.quickSetting},0),ifnull(#{data.width},''),
+            ifnull(#{data.height},''),ifnull(#{data.videoLabelIds},''),ifnull(#{data.videoLabelNames},''),ifnull(#{data.catName},''),ifnull(#{data.isPush},0))
+        </foreach>
+    </insert>
+</mapper>

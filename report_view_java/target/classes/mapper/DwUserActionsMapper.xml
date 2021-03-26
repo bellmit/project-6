@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.reportview.mapper.DwUserActionsMapper">
+    <sql id="groupShowColumsql">
+        <if test="groups != null">
+            <foreach collection="groups" item="groupi" separator="" open="" close="">
+                , ${groupi}
+            </foreach>
+        </if>
+    </sql>
+    <sql id="orderbyShowColumsql">
+        <if test="orderbys != null">
+            <foreach collection="orderbys" item="colum" separator="" open="" close="">
+                , ${colum}
+            </foreach>
+        </if>
+    </sql>
+    <sql id="wheresql">
+        and dd between #{startDate} and #{endDate}
+        <if test="showType != null">
+            and is_new_app = #{showType}
+        </if>
+        <if test="appPackages != null">
+            and package_name in
+            <foreach collection="appPackages" item="appPackage" separator="," open="(" close=")">
+                #{appPackage}
+            </foreach>
+        </if>
+        <if test="appVersions != null">
+            and app_version in
+            <foreach collection="appVersions" item="appVersion" separator="," open="(" close=")">
+                #{appVersion}
+            </foreach>
+        </if>
+        <if test="pChannelIds != null">
+            and father_channel in
+            <foreach collection="pChannelIds" item="pChannelId" separator="," open="(" close=")">
+                #{pChannelId}
+            </foreach>
+        </if>
+        <if test="channelIds != null">
+            and channel in
+            <foreach collection="channelIds" item="channelId" separator="," open="(" close=")">
+                #{channelId}
+            </foreach>
+        </if>
+        <if test="catIds != null">
+            and catid in
+            <foreach collection="catIds" item="catId" separator="," open="(" close=")">
+                #{catId}
+            </foreach>
+        </if>
+        <if test="videoSources != null">
+            and videos_source in
+            <foreach collection="videoSources" item="videoSource" separator="," open="(" close=")">
+                #{videoSource}
+            </foreach>
+        </if>
+        <if test="incentiveTag == 1">
+            and is_incentive = 1
+        </if>
+        <if test="videoTypes != null">
+            and l.video_type in<foreach collection="videoTypes" item="videoType" separator="," open="(" close=")">#{videoType}</foreach>
+        </if>
+    </sql>
+
+
+    <sql id="wheresqlDwUserSimple">
+        and dt between toYYYYMMDD(toDate(#{startDate})) and toYYYYMMDD(toDate(#{endDate}))
+        <if test="showType != null">
+            and is_new_app = #{showType}
+        </if>
+        <if test="appPackages != null">
+            and package_name in
+            <foreach collection="appPackages" item="appPackage" separator="," open="(" close=")">
+                #{appPackage}
+            </foreach>
+        </if>
+        <if test="appVersions != null">
+            and app_version in
+            <foreach collection="appVersions" item="appVersion" separator="," open="(" close=")">
+                #{appVersion}
+            </foreach>
+        </if>
+        <if test="pChannelIds != null">
+            and father_channel in
+            <foreach collection="pChannelIds" item="pChannelId" separator="," open="(" close=")">
+                #{pChannelId}
+            </foreach>
+        </if>
+        <if test="channelIds != null">
+            and channel in
+            <foreach collection="channelIds" item="channelId" separator="," open="(" close=")">
+                #{channelId}
+            </foreach>
+        </if>
+        <if test="catIds != null">
+            and catid in
+            <foreach collection="catIds" item="catId" separator="," open="(" close=")">
+                #{catId}
+            </foreach>
+        </if>
+        <if test="videoSources != null">
+            and videos_source in
+            <foreach collection="videoSources" item="videoSource" separator="," open="(" close=")">
+                #{videoSource}
+            </foreach>
+        </if>
+        <if test="incentiveTag == 1">
+            and is_incentive = 1
+        </if>
+        <if test="videoTypes != null">
+            and l.video_type in<foreach collection="videoTypes" item="videoType" separator="," open="(" close=")">#{videoType}</foreach>
+        </if>
+    </sql>
+    <sql id="joinSql">
+        (select * from
+        (select * from
+        (select * from
+        (select * from
+        (select * from
+        (select * from
+        (select * from
+        <include refid="playUser"/>
+        GLOBAL LEFT OUTER JOIN
+        <include refid="showUser"/>
+        USING (dd<include refid="groupShowColumsql"/>)
+        ) jc1
+        GLOBAL LEFT OUTER JOIN
+        <include refid="reviewUser"/>
+        USING (dd<include refid="groupShowColumsql"/>)
+        ) jc2
+        GLOBAL LEFT OUTER JOIN
+        <include refid="likeUser"/>
+        USING (dd<include refid="groupShowColumsql"/>)
+        ) jc3
+        GLOBAL LEFT OUTER JOIN
+        <include refid="favUser"/>
+        USING (dd<include refid="groupShowColumsql"/>)
+        ) jc4
+        GLOBAL LEFT OUTER JOIN
+        <include refid="vplayUser"/>
+        USING (dd<include refid="groupShowColumsql"/>)
+        ) jc5
+        GLOBAL LEFT OUTER JOIN
+        <include refid="activeUser"/>
+        USING (dd<include refid="groupShowColumsql"/>)
+        ) jc6
+        GLOBAL LEFT OUTER JOIN
+        <include refid="playTime"/>
+        USING (dd<include refid="groupShowColumsql"/>)
+        ) jc7
+    </sql>
+    <select id="getData" parameterType="map" resultType="com.miguan.reportview.vo.UserContentDataVo">
+        select * from
+        <include refid="mainsql"/>
+        GLOBAL LEFT OUTER JOIN
+        <include refid="joinSql"/>
+        USING (dd<include refid="groupShowColumsql"/>)
+        order by dd desc
+        <include refid="orderbyShowColumsql"/>
+    </select>
+    <sql id="mainsql">
+        ( select
+        sum(play_start) as playCount,
+        sum(show) as showCount,
+        sum(is_play_valid) as vplayCount,
+        sum(is_play_end) as allPlayCount,
+        sum(comment) as reviewCount,
+        sum(praise) as likeCount,
+        sum(collect) as favCount,
+        dd
+        <include refid="groupShowColumsql"/>
+        from dw_video_actions_aggregation
+        where 1=1
+        <include refid="wheresql"/>
+        group by dd
+        <include refid="groupShowColumsql"/>
+        ) m
+    </sql>
+    <sql id="playTime">
+        <!--实际播放总时长-->
+        ( select
+        sum(play_time) as playTime,
+        sum(play_time_r) as playTimeReal,
+        dd
+        <include refid="groupShowColumsql"/>
+        FROM dw_video_actions_aggregation
+        WHERE
+        is_play_time = 1
+        <include refid="wheresql"/>
+        group by dd
+        <include refid="groupShowColumsql"/>) vbu
+    </sql>
+    <sql id="playUser">
+        <!--播放用户-->
+        (select count(distinct distinct_id) as playUser,
+        dd
+        <include refid="groupShowColumsql"/>
+        from dw_video_actions_aggregation
+        where play_start = 1
+        <include refid="wheresql"/>
+        group by dd
+        <include refid="groupShowColumsql"/>
+        ) pu
+    </sql>
+    <sql id="showUser">
+        <!--爆光用户-->
+        (select count(distinct distinct_id) as showUser,
+        dd
+        <include refid="groupShowColumsql"/>
+        from dw_video_actions_aggregation
+        where show = 1
+        <include refid="wheresql"/>
+        group by dd
+        <include refid="groupShowColumsql"/>
+        ) su
+    </sql>
+    <sql id="reviewUser">
+        <!--评论用户-->
+        (select count(distinct distinct_id) as reviewUser,
+        dd
+        <include refid="groupShowColumsql"/>
+        from dw_video_actions_aggregation
+        where comment = 1
+        <include refid="wheresql"/>
+        group by dd
+        <include refid="groupShowColumsql"/>
+        ) ru
+    </sql>
+    <sql id="likeUser">
+        <!--点赞用户-->
+        (select count(distinct distinct_id) as likeUser,
+        dd
+        <include refid="groupShowColumsql"/>
+        from dw_video_actions_aggregation
+        where praise = 1
+        <include refid="wheresql"/>
+        group by dd
+        <include refid="groupShowColumsql"/>
+        ) lu
+    </sql>
+    <sql id="favUser">
+        <!--收藏用户-->
+        (select count(distinct distinct_id) as favUser,
+        dd
+        <include refid="groupShowColumsql"/>
+        from dw_video_actions_aggregation
+        where collect = 1
+        <include refid="wheresql"/>
+        group by dd
+        <include refid="groupShowColumsql"/>
+        ) fu
+    </sql>
+    <sql id="vplayUser">
+        <!--有效播放用户-->
+        (select count (distinct distinct_id) as vplayUser,
+        dd
+        <include refid="groupShowColumsql"/>
+        from dw_video_actions_aggregation
+        where is_play_valid = 1
+        <include refid="wheresql"/>
+        group by dd
+        <include refid="groupShowColumsql"/>) vpu
+    </sql>
+    <sql id="activeUser">
+        <!--活跃用户-->
+        (select count (distinct distinct_id) as activeUser,
+        dd
+        <include refid="groupShowColumsql"/>
+        from dw_user_simple
+        where 1=1
+        <include refid="wheresqlDwUserSimple"/>
+        group by dd
+        <include refid="groupShowColumsql"/>) au
+    </sql>
+
+    <select id="getNewData" parameterType="map" resultType="com.miguan.reportview.vo.UserContentDataVo">
+        SELECT
+        dd,
+        <if test='groups != null and groups.contains("package_name")'>
+            package_name,
+        </if>
+        <if test='groups != null and groups.contains("app_version")'>
+            app_version,
+        </if>
+        <if test='groups != null and groups.contains("is_new")'>
+            is_new,
+        </if>
+        <if test='groups != null and groups.contains("father_channel")'>
+            father_channel,
+        </if>
+        <if test='groups != null and groups.contains("channel")'>
+            channel,
+        </if>
+        <if test='groups != null and groups.contains("catid")'>
+            catid,
+        </if>
+        play_count,
+        show_count,
+        vplay_count,
+        play_time,
+        play_time_real,
+        all_play_count,
+        review_count,
+        like_count,
+        fav_count,
+        play_user,
+        show_user,
+        review_user,
+        like_user,
+        fav_user,
+        vplay_user,
+        active_user,
+        video_time
+        FROM user_content_operation
+        where 1=1
+        and dd between #{startDate} and #{endDate}
+        ${conditionSql}
+        order by dd desc <include refid="orderbyShowColumsql"/>
+    </select>
+
+    <select id="getLdData" parameterType="map" resultType="com.miguan.reportview.vo.LdUserContentDataVo">
+        SELECT
+            dd,
+            <if test='groups != null and groups.contains("app_version")'>
+                app_version,
+            </if>
+            <if test='groups != null and groups.contains("is_new_app")'>
+                is_new_app,
+            </if>
+            <if test='groups != null and groups.contains("father_channel")'>
+                father_channel,
+            </if>
+            <if test='groups != null and groups.contains("channel")'>
+                channel,
+            </if>
+            <if test='groups != null and groups.contains("video_type")'>
+                video_type,
+            </if>
+            active_user,new_user,register_user,detail_play_count,detail_play_user,set_count,set_user,set_confirm_count,set_confirm_user,video_show_count,
+            video_show_user,video_collect_count,video_collect_user,share_count,share_user,set_phone_count,set_lock_screen_count,set_wallpaper_count,
+            set_skin_count,ring_audition_count,ring_audition_user,browse_ring_count,click_set_ring_count,click_set_ring_user,set_ring_confirm_count,
+            set_ring_confirm_user,app_start_count,play_time
+        FROM ld_user_content_operation
+        where 1=1
+        and dd between #{startDate} and #{endDate}
+        ${conditionSql}
+        order by dd desc <include refid="orderbyShowColumsql"/>
+    </select>
+
+    <select id="getLdMultipleData" parameterType="map" resultType="com.miguan.reportview.vo.LdUserContentDataVo">
+                select toDate(receive_time) dd,
+                        <if test='groups != null and groups.contains("app_version")'>
+                            if(app_version='','未知',app_version) app_version,
+                        </if>
+                        <if test='groups != null and groups.contains("is_new_app")'>
+                            is_new_app,
+                        </if>
+                        <if test='groups != null and groups.contains("father_channel")'>
+                            if(father_channel='','未知', father_channel) father_channel,
+                        </if>
+                        <if test='groups != null and groups.contains("channel")'>
+                            if(channel='','未知',channel) channel,
+                        </if>
+                        <if test='groups != null and groups.contains("video_type")'>
+                            video_type,
+                        </if>
+                       ifnull(count(DISTINCT distinct_id),0) active_user,   /*活跃用户数*/
+                       ifnull(count(DISTINCT if(l.is_new_app=1,distinct_id,null)),0) new_user,  /*新增用户数*/
+                       ifnull(count(DISTINCT if(action_id ='login' and l.is_new_app=1,distinct_id,null)),0) register_user,  /*注册用户数*/
+                       ifnull(count(DISTINCT if(action_id='into_fodder_detail' and type=1, distinct_id,null)),0) detail_play_user, /*详情页播放用户*/
+                       sum(if(action_id='into_fodder_detail' and type=1, 1,0)) detail_play_count,  /*详情页播放次数*/
+                       sum(if(action_id='click_tab_type',1,0)) set_count, /* 设置次数*/
+                       ifnull(count(DISTINCT if(action_id='click_tab_type',distinct_id,null)),0) set_user,   /*设置用户 */
+                       sum(if(action_id='tab_confirm' and is_success=1, 1,0)) set_confirm_count, /* 成功设置次数 */
+                       ifnull(count(DISTINCT if(action_id='tab_confirm' and is_success=1, distinct_id,null)),0) set_confirm_user,
+                       sum(if(action_id='video_expose',1,0)) video_show_count, /*来电秀曝光量 */
+                       ifnull(count(DISTINCT if(action_id='video_expose',distinct_id,null)),0) video_show_user,  /*曝光用户 */
+                       sum(if(action_id='show_collect',1,0)) video_collect_count,/*收藏量 */
+                       ifnull(count(DISTINCT if(action_id='show_collect',distinct_id,null)),0) video_collect_user,  /*收藏用户 */
+                       sum(if(action_id='show_share',1,0)) share_count, /*分享量 */
+                       ifnull(count(DISTINCT if(action_id='show_share',distinct_id,null)),0) share_user,  /*分享用户 */
+                       sum(if(action_id='tab_confirm' and tab_type=1, 1,0)) set_phone_count, /*设置来电秀成功数*/
+                       ifnull(count(DISTINCT if(action_id='tab_confirm' and tab_type=1, distinct_id,null)), 0) set_phone_user, /*设置来电秀成功用户数*/
+                       sum(if(action_id='tab_confirm' and tab_type=2, 1,0)) set_lock_screen_count, /*设置锁屏成功数*/
+                       ifnull(count(DISTINCT if(action_id='tab_confirm' and tab_type=2, distinct_id,null)), 0) set_lock_screen_user, /*设置锁屏成功用户数*/
+                       sum(if(action_id='tab_confirm' and tab_type=3, 1,0)) set_wallpaper_count, /*设置壁纸成功数*/
+                       ifnull(count(DISTINCT if(action_id='tab_confirm' and tab_type=3, distinct_id,null)), 0) set_wallpaper_user, /*设置壁纸成功用户数*/
+                       sum(if(action_id='tab_confirm' and tab_type=4, 1,0)) set_skin_count, /*设置皮肤成功数*/
+                       ifnull(count(DISTINCT if(action_id='tab_confirm' and tab_type=4, distinct_id,null)), 0) set_skin_user, /*设置皮肤成功用户数*/
+                       sum(if(action_id='into_fodder_detail' and type=2, 1,0)) ring_audition_count, /*铃声试听数*/
+                       ifnull(count(DISTINCT if(action_id='into_fodder_detail' and type=2,distinct_id,null)),0) ring_audition_user,  /*铃声试听用户数 */
+                       ifnull(count(DISTINCT if(action_id='index_scan' and scan_type=2,distinct_id,null)),0) browse_ring_count, /*浏览铃声页面用户数*/
+                       sum(if(action_id='click_set_ring_button',1,0)) click_set_ring_count, /*点击设铃声次数 */
+                       ifnull(count(DISTINCT if(action_id='click_set_ring_button',distinct_id,null)),0) click_set_ring_user, /*点击设铃声用户*/
+                       sum(if(action_id='set_ring',1,0)) set_ring_confirm_count, /*成功设置铃声次数 */
+                       ifnull(count(DISTINCT if(action_id='set_ring',distinct_id,null)),0) set_ring_confirm_user, /*成功设置铃声用户*/
+                       sum(if(action_id='app_start',1,0)) app_start_count, /*app启动次数 */
+                       sum(if(action_id='app_end',play_time ,0)) play_time /*使用总时长 */
+                from dw.laidian_user_action_view_old l
+                where 1=1 and dt between toYYYYMMDD(toDate(#{startDate})) and toYYYYMMDD(toDate(#{endDate}))
+                <include refid="wheresql"/>
+                group by dd<include refid="groupShowColumsql" />
+                order by dd desc <include refid="orderbyShowColumsql"/>
+    </select>
+
+
+    <select id="getStaData" parameterType="map" resultType="com.miguan.reportview.vo.UserContentDataVo">
+        select a.*, b.activeUser activeUser
+        from (
+            select sum(play_start) as playCount, sum(show) as showCount, sum(is_play_valid) as vplayCount, sum(is_play_end) as allPlayCount,
+                   sum(comment) as reviewCount, sum(praise) as likeCount, sum(collect) as favCount,
+                   ifnull(count(DISTINCT if(play_start=1,distinct_id,null)),0) playUser,
+                   ifnull(count(DISTINCT if(show=1,distinct_id,null)),0) showUser,
+                   ifnull(count(DISTINCT if(comment=1,distinct_id,null)),0) reviewUser,
+                   ifnull(count(DISTINCT if(praise=1,distinct_id,null)),0) likeUser,
+                   ifnull(count(DISTINCT if(collect=1,distinct_id,null)),0) favUser,
+                   ifnull(count(DISTINCT if(is_play_valid=1,distinct_id,null)),0) vplayUser,
+                   sum(if(is_play_time=1,play_time,0)) playTime,
+                   sum(if(is_play_time=1,play_time_r,0)) playTimeReal,
+                   dd
+                   <include refid="groupShowColumsql"/>
+            from dw_video_actions_aggregation n
+            <if test='groups != null and groups.contains("videos_source") or videoSources != null'>
+                inner join video_info i on n.video_id = i.id
+            </if>
+            where 1=1
+            <include refid="wheresql"/>
+            group by dd<include refid="groupShowColumsql"/>
+        ) a left join (
+            select count (distinct distinct_id) as activeUser,
+                   dd<include refid="groupShowColumsql"/>
+            from dw_user_actions n
+            <if test='groups != null and groups.contains("videos_source") or videoSources != null'>
+                inner join video_info i on n.video_id = i.id
+            </if>
+            where 1=1
+            <include refid="wheresql"/>
+            group by dd<include refid="groupShowColumsql"/>
+        ) b USING (dd<include refid="groupShowColumsql"/>)
+        order by dd desc
+    </select>
+</mapper>

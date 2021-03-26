@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.reportview.mapper.SyncUserContentMapper">
+
+    <insert id="batchSaveUserContent" parameterType="java.util.List">
+        INSERT INTO user_content_operation(dd, package_name, app_version, is_new, father_channel, channel, catid, play_count, show_count, vplay_count,
+                                           play_time, play_time_real, all_play_count, review_count, like_count, fav_count, play_user, show_user, review_user,
+                                           like_user, fav_user, vplay_user, active_user, vb_user, ad_click, adclick_user, index_page_user, new_user, reg_user)
+        VALUES
+        <foreach collection="lists" item="user" separator=",">
+            (#{user.dd}, #{user.packageName}, #{user.appVersion}, #{user.isNew}, #{user.fatherChannel}, #{user.channel}, #{user.catid}, #{user.playCount},
+             #{user.showCount}, #{user.vplayCount}, #{user.playTime}, #{user.playTimeReal}, #{user.allPlayCount}, #{user.reviewCount}, #{user.likeCount},
+             #{user.favCount}, #{user.playUser}, #{user.showUser}, #{user.reviewUser}, #{user.likeUser}, #{user.favUser}, #{user.vplayUser}, #{user.activeUser},
+             #{user.vbUser}, #{user.adClick}, #{user.adclickUser}, #{user.indexPageUser}, #{user.newUser}, #{user.regUser})
+        </foreach>
+    </insert>
+
+    <delete id="deleteUserContent">
+        delete from user_content_operation where dd between #{startDate} and #{endDate}
+    </delete>
+
+    <select id="countActionData" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(1)
+        from (
+                select dd,
+                       if(package_name='','未知',package_name) package_name,
+                       if(app_version='','未知',app_version) app_version,
+                       is_new_app+1 is_new,
+                       if(channel='','未知',channel) channel,
+                       if(catid=0,-1,catid) catid,
+                       if(father_channel='','未知', father_channel) father_channel,
+                       sum(play_start) playCount, sum(show) showCount, sum(is_play_valid) vplayCount, sum(is_play_end) allPlayCount,sum(comment) reviewCount,
+                       sum(praise) likeCount, sum(collect) favCount,
+                       sum(if(v.is_play_time=1,play_time,0)) playTime,
+                       sum(if(v.is_play_time=1,play_time_r,0)) playTimeReal,
+                       count(distinct if(play_start=1,distinct_id,null)) playUser,
+                       count(distinct if(comment=1,distinct_id,null)) reviewUser,
+                       count(distinct if(praise=1,distinct_id,null)) likeUser,
+                       count(distinct if(collect=1,distinct_id,null)) favUser,
+                       count(distinct if(show=1,distinct_id,null)) showUser
+                from dw_video_actions_aggregation v
+                where dd between #{startDate} and #{endDate} and package_name != 'com.mg.phonecall'
+                GROUP BY CUBE (dd, package_name, app_version, is_new_app, channel, catid, father_channel)
+                HAVING dd !='0000-00-00'
+        )
+    </select>
+
+    <!-- 统计事件相关数据 -->
+    <select id="statActionData" resultType="com.miguan.reportview.vo.SyncUserContentDataVo">
+        select a.dd dd,a.package_name package_name,a.app_version app_version,a.is_new is_new,a.channel channel,a.catid catid,a.father_channel father_channel,
+               playCount,showCount,vplayCount,allPlayCount,reviewCount,likeCount,favCount,playTime,playTimeReal,playUser,reviewUser,likeUser,favUser,showUser,
+               vplayUser,vbUser,adclickUser,indexPageUser,regUser,adClick,newUser,activeUser
+        from (
+                select dd,
+                       if(package_name='','未知',package_name) package_name,
+                       if(app_version='','未知',app_version) app_version,
+                       is_new_app+1 is_new,
+                       if(channel='','未知',channel) channel,
+                       if(catid=0,-1,catid) catid,
+                       if(father_channel='','未知', father_channel) father_channel,
+                       sum(play_start) playCount, sum(show) showCount, sum(is_play_valid) vplayCount, sum(is_play_end) allPlayCount,sum(comment) reviewCount,
+                       sum(praise) likeCount, sum(collect) favCount,
+                       sum(if(v.is_play_time=1,play_time,0)) playTime,
+                       sum(if(v.is_play_time=1,play_time_r,0)) playTimeReal,
+                       count(distinct if(play_start=1,distinct_id,null)) playUser,
+                       count(distinct if(comment=1,distinct_id,null)) reviewUser,
+                       count(distinct if(praise=1,distinct_id,null)) likeUser,
+                       count(distinct if(collect=1,distinct_id,null)) favUser,
+                       count(distinct if(show=1,distinct_id,null)) showUser
+                from dw_video_actions_aggregation v
+                where dd between #{startDate} and #{endDate} and package_name != 'com.mg.phonecall'
+                GROUP BY CUBE (dd, package_name, app_version, is_new_app, channel, catid, father_channel)
+                HAVING dd !='0000-00-00') a  
+        left join (
+                    select dd,
+                           if(package_name='','未知',package_name) package_name,
+                           if(app_version='','未知',app_version) app_version,
+                           is_new_app+1 is_new,
+                           if(channel='','未知',channel) channel,
+                           if(catid=0,-1,catid) catid,
+                           if(father_channel='','未知', father_channel) father_channel,
+                           count(distinct if(valid_play=1,distinct_id,null)) vplayUser,
+                           count(distinct if(valid_play=1 or ad_click=1,distinct_id,null)) vbUser,
+                           count(distinct if(ad_click=1,distinct_id,null)) adclickUser,
+                           count(distinct if(home_view=1,distinct_id,null)) indexPageUser,
+                           count(distinct if(register=1,distinct_id,null)) regUser,
+                           sum(ad_click) adClick
+                    from dw_user_actions_aggregation v
+                    where dd between #{startDate} and #{endDate}  and package_name != 'com.mg.phonecall'
+                    GROUP BY CUBE (dd, package_name, app_version, is_new_app, channel, catid, father_channel)
+                    HAVING dd !='0000-00-00'
+        ) b on a.dd=b.dd and a.package_name=b.package_name and a.app_version=b.app_version and a.is_new=b.is_new and a.channel=b.channel and a.catid=b.catid and a.father_channel=b.father_channel
+        left join (
+                    select dd,
+                           if(package_name='','未知',package_name) package_name,
+                           if(app_version='','未知',app_version) app_version,
+                           is_new_app+1 is_new,
+                           if(channel='','未知',channel) channel,
+                           if(catid=0,-1,catid) catid,
+                           if(father_channel='','未知', father_channel) father_channel,
+                           count(distinct if(v.is_new_app=1,distinct_id,null)) newUser,
+                           count(distinct distinct_id) as activeUser
+                    from dw_user_simple v
+                    where dt between toYYYYMMDD(toDate(#{startDate})) and toYYYYMMDD(toDate(#{endDate})) and package_name != 'com.mg.phonecall'
+                    GROUP BY CUBE (dd, package_name, app_version, is_new, channel, catid, father_channel)
+                    HAVING dd !='0000-00-00'
+        ) c on a.dd=c.dd and a.package_name=c.package_name and a.app_version=c.app_version and a.is_new=c.is_new and a.channel=c.channel and a.catid=c.catid and a.father_channel=c.father_channel
+        ${limitSql}
+    </select>
+
+    <insert id="batchSaveActionData" parameterType="java.lang.String">
+        INSERT INTO user_content_operation(dd,package_name,app_version,is_new,father_channel,channel,catid,incentive_tag,play_count,show_count,vplay_count,play_time,
+                                           play_time_real,all_play_count,review_count,like_count,fav_count,play_user,show_user,review_user,like_user,fav_user,
+                                           vplay_user,active_user,vb_user,ad_click,adclick_user,index_page_user,new_user,reg_user,video_time,sync_tag)
+        select
+            a.dd dd,
+            a.package_name package_name,
+            a.app_version app_version,
+            (case when a.is_new_app=0 then '' when a.is_new_app=1 then '0' else '1' end) is_new,
+            a.father_channel father_channel,
+            a.channel channel,
+            (case when a.catid=0 then '' when a.catid=-1 then '0' else toString(a.catid) end) catid,
+            if(a.is_incentive==2,1,0) incentive_tag,
+            ifnull(playCount,0) play_Count,
+            ifnull(showCount,0) showCount,
+            ifnull(vplayCount,0) vplay_count,
+            ifnull(playTime,0) play_time,
+            ifnull(playTimeReal,0) play_time_real,
+            ifnull(allPlayCount,0) all_play_count,
+            ifnull(reviewCount,0) review_count,
+            ifnull(likeCount,0) like_count,
+            ifnull(favCount,0) fav_count,
+            ifnull(playUser,0) play_user,
+            ifnull(showUser,0) show_user,
+            ifnull(reviewUser,0) review_user,
+            ifnull(likeUser,0) like_user,
+            ifnull(favUser,0) fav_user,
+            ifnull(vplayUser,0) vplay_user,
+            ifnull(activeUser,0) active_user,
+            ifnull(vbUser,0) vb_user,
+            ifnull(adClick,0) ad_click,
+            ifnull(adclickUser,0) adclick_user,
+            ifnull(indexPageUser,0) index_page_user,
+            ifnull(newUser,0) new_user,
+            ifnull(regUser,0) reg_user,
+            ifnull(videoTime,0) video_time,
+            1 sync_tag
+        from (
+            select dd,
+                   if(package_name='','未知',package_name) package_name,
+                   if(app_version='','未知',app_version) app_version,
+                   is_new_app+1 is_new_app,
+                   if(channel='','未知',channel) channel,
+                   if(catid=0,-1,catid) catid,
+                   if(father_channel='','未知', father_channel) father_channel,
+                   is_incentive+1 is_incentive,
+                   sum(play_start) playCount, sum(show) showCount, sum(is_play_valid) vplayCount, sum(is_play_end) allPlayCount,sum(comment) reviewCount,
+                   sum(praise) likeCount, sum(collect) favCount,
+                   sum(if(v.is_play_time=1,play_time,0)) playTime,
+                   sum(if(v.is_play_time=1,play_time_r,0)) playTimeReal,
+                   sum(if(v.is_play_time=1,video_time,0)) videoTime,
+                   count(distinct if(is_play_valid=1,distinct_id,null)) vplayUser,
+                   count(distinct if(play_start=1,distinct_id,null)) playUser,
+                   count(distinct if(comment=1,distinct_id,null)) reviewUser,
+                   count(distinct if(praise=1,distinct_id,null)) likeUser,
+                   count(distinct if(collect=1,distinct_id,null)) favUser,
+                   count(distinct if(show=1,distinct_id,null)) showUser
+            from dw_video_actions_aggregation v
+            where dd between #{startDate} and #{endDate}
+            GROUP BY CUBE (dd, package_name, app_version, is_new_app, channel, catid, father_channel,is_incentive)
+            HAVING dd !='0000-00-00' and is_incentive != 1) a
+        left join (
+                select dd,
+                       if(package_name='','未知',package_name) package_name,
+                       if(app_version='','未知',app_version) app_version,
+                       is_new_app+1 is_new_app,
+                       if(channel='','未知',channel) channel,
+                       if(catid=0,-1,catid) catid,
+                       if(father_channel='','未知', father_channel) father_channel,
+                       is_incentive+1 is_incentive,
+                       count(distinct if(valid_play=1 or ad_click=1,distinct_id,null)) vbUser,
+                       count(distinct if(ad_click=1,distinct_id,null)) adclickUser,
+                       count(distinct if(home_view=1,distinct_id,null)) indexPageUser,
+                       count(distinct if(register=1,distinct_id,null)) regUser,
+                       sum(ad_click) adClick
+                from dw_user_actions_aggregation v
+                where dd between #{startDate} and #{endDate} and package_name != 'com.mg.phonecall'
+                GROUP BY CUBE (dd, package_name, app_version, is_new_app, channel, catid, father_channel,is_incentive)
+                HAVING dd !='0000-00-00' and is_incentive != 1
+        ) b on a.dd=b.dd and a.package_name=b.package_name and a.app_version=b.app_version and a.is_new_app=b.is_new_app and a.channel=b.channel and a.catid=b.catid and a.father_channel=b.father_channel and a.is_incentive=b.is_incentive
+        left join (
+                select dd,
+                       if(package_name='','未知',package_name) package_name,
+                       if(app_version='','未知',app_version) app_version,
+                       is_new_app+1 is_new_app,
+                       if(channel='','未知',channel) channel,
+                       if(catid=0,-1,catid) catid,
+                       if(father_channel='','未知', father_channel) father_channel,
+                       is_incentive+1 is_incentive,
+                       count(distinct if(v.is_new_app=1,distinct_id,null)) newUser,
+                       count(distinct distinct_id) as activeUser
+                from dw_user_simple v
+                where dt between toYYYYMMDD(toDate(#{startDate})) and toYYYYMMDD(toDate(#{endDate})) and package_name != 'com.mg.phonecall'
+                GROUP BY CUBE (dd, package_name, app_version, is_new_app, channel, catid, father_channel,is_incentive)
+                HAVING dd !='0000-00-00'  and is_incentive != 1
+        ) c on a.dd=c.dd and a.package_name=c.package_name and a.app_version=c.app_version and a.is_new_app=c.is_new_app and a.channel=c.channel and a.catid=c.catid and a.father_channel=c.father_channel  and a.is_incentive=c.is_incentive
+    </insert>
+
+    <delete id="deleteActionData" parameterType="java.lang.String">
+        alter table user_content_operation delete where dd between #{startDate} and #{endDate} and sync_tag = 0
+    </delete>
+
+    <update id="updateActionData" parameterType="java.lang.String">
+        alter table user_content_operation update sync_tag=0 where dd between #{startDate} and #{endDate} and sync_tag = 1
+    </update>
+
+    <insert id="batchSaveLdActionData" parameterType="java.lang.String">
+        INSERT INTO ld_user_content_operation(dd,app_version,is_new_app,father_channel,channel,video_type,active_user,new_user,register_user,detail_play_count,
+                                              detail_play_user,set_count,set_user,set_confirm_count,set_confirm_user,video_show_count,video_show_user,
+                                              video_collect_count,video_collect_user,share_count,share_user,set_phone_count,set_phone_user,set_lock_screen_count,set_lock_screen_user,
+                                              set_wallpaper_count,set_wallpaper_user,set_skin_count,set_skin_user,ring_audition_count,ring_audition_user,
+                                              browse_ring_count,click_set_ring_count,click_set_ring_user,set_ring_confirm_count,set_ring_confirm_user,app_start_count,
+                                              play_time,browse_home_page_user,ad_click_count,ad_click_user,ad_show_count,ad_show_user,create_time,sync_tag)
+        select dd,app_version,
+              (case when a.is_new_app=0 then '' when a.is_new_app=1 then '0' else '1' end) is_new_app,father_channel,channel,
+              (case when a.video_type=0 then '' when a.video_type=-1 then '0' else toString(a.video_type) end) video_type,
+              active_user,new_user,register_user,detail_play_count,
+              detail_play_user,set_count,set_user,set_confirm_count,set_confirm_user,video_show_count,video_show_user,
+              video_collect_count,video_collect_user,share_count,share_user,set_phone_count,set_phone_user,set_lock_screen_count,set_lock_screen_user,
+              set_wallpaper_count,set_wallpaper_user,set_skin_count,set_skin_user,ring_audition_count,ring_audition_user,browse_ring_count,
+              click_set_ring_count,click_set_ring_user,set_ring_confirm_count,set_ring_confirm_user,app_start_count,play_time,browse_home_page_user,
+              ad_click_count,ad_click_user,ad_show_count,ad_show_user,now() create_time, 1 AS sync_tag
+        from (
+                select toDate(receive_time) dd,
+                       if(app_version='','未知',app_version) app_version,
+                       is_new_app+1 is_new_app,
+                       if(father_channel='','未知', father_channel) father_channel,
+                       if(channel='','未知',channel) channel,
+                       if(video_type=0,-1,video_type) video_type,
+                       ifnull(count(DISTINCT distinct_id),0) active_user,   /*活跃用户数*/
+                       ifnull(count(DISTINCT if(l.is_new_app=1,distinct_id,null)),0) new_user,  /*新增用户数*/
+                       ifnull(count(DISTINCT if(action_id ='login' and l.is_new_app=1,distinct_id,null)),0) register_user,  /*注册用户数*/
+                       ifnull(count(DISTINCT if(action_id='into_fodder_detail' and type=1, distinct_id,null)),0) detail_play_user, /*详情页播放用户*/
+                       sum(if(action_id='into_fodder_detail' and type=1, 1,0)) detail_play_count,  /*详情页播放次数*/
+                       sum(if(action_id='click_tab_type',1,0)) set_count, /* 设置次数*/
+                       ifnull(count(DISTINCT if(action_id='click_tab_type',distinct_id,null)),0) set_user,   /*设置用户 */
+                       sum(if(action_id='tab_confirm' and is_success=1, 1,0)) set_confirm_count, /* 成功设置次数 */
+                       ifnull(count(DISTINCT if(action_id='tab_confirm' and is_success=1, distinct_id,null)),0) set_confirm_user,
+                       sum(if(action_id='video_expose',1,0)) video_show_count, /*来电秀曝光量 */
+                       ifnull(count(DISTINCT if(action_id='video_expose',distinct_id,null)),0) video_show_user,  /*曝光用户 */
+                       sum(if(action_id='show_collect',1,0)) video_collect_count,/*收藏量 */
+                       ifnull(count(DISTINCT if(action_id='show_collect',distinct_id,null)),0) video_collect_user,  /*收藏用户 */
+                       sum(if(action_id='show_share',1,0)) share_count, /*分享量 */
+                       ifnull(count(DISTINCT if(action_id='show_share',distinct_id,null)),0) share_user,  /*分享用户 */
+                       sum(if(action_id='tab_confirm' and tab_type=1, 1,0)) set_phone_count, /*设置来电秀成功数*/
+                       ifnull(count(DISTINCT if(action_id='tab_confirm' and tab_type=1, distinct_id,null)), 0) set_phone_user, /*设置来电秀成功用户数*/
+                       sum(if(action_id='tab_confirm' and tab_type=2, 1,0)) set_lock_screen_count, /*设置锁屏成功数*/
+                       ifnull(count(DISTINCT if(action_id='tab_confirm' and tab_type=2, distinct_id,null)), 0) set_lock_screen_user, /*设置锁屏成功用户数*/
+                       sum(if(action_id='tab_confirm' and tab_type=3, 1,0)) set_wallpaper_count, /*设置壁纸成功数*/
+                       ifnull(count(DISTINCT if(action_id='tab_confirm' and tab_type=3, distinct_id,null)), 0) set_wallpaper_user, /*设置壁纸成功用户数*/
+                       sum(if(action_id='tab_confirm' and tab_type=4, 1,0)) set_skin_count, /*设置皮肤成功数*/
+                       ifnull(count(DISTINCT if(action_id='tab_confirm' and tab_type=4, distinct_id,null)), 0) set_skin_user, /*设置皮肤成功用户数*/
+                       sum(if(action_id='into_fodder_detail' and type=2, 1,0)) ring_audition_count, /*铃声试听数*/
+                       ifnull(count(DISTINCT if(action_id='into_fodder_detail' and type=2,distinct_id,null)),0) ring_audition_user,  /*铃声试听用户数 */
+                       ifnull(count(DISTINCT if(action_id='index_scan' and scan_type=2,distinct_id,null)),0) browse_ring_count, /*浏览铃声页面用户数*/
+                       sum(if(action_id='click_set_ring_button',1,0)) click_set_ring_count, /*点击设铃声次数 */
+                       ifnull(count(DISTINCT if(action_id='click_set_ring_button',distinct_id,null)),0) click_set_ring_user, /*点击设铃声用户*/
+                       sum(if(action_id='set_ring',1,0)) set_ring_confirm_count, /*成功设置铃声次数 */
+                       ifnull(count(DISTINCT if(action_id='set_ring',distinct_id,null)),0) set_ring_confirm_user, /*成功设置铃声用户*/
+                       sum(if(action_id='app_start',1,0)) app_start_count, /*app启动次数 */
+                       sum(if(action_id='app_end',play_time ,0)) play_time, /*使用总时长 */
+                       ifnull(countDistinct(if((app_version&lt;'2.7.8' AND (action_id = 'index_scan') AND (scan_type = 1)) OR (app_version>='2.7.8' AND action_id='page_view' and page_code='VideoListFrag'), distinct_id, NULL)), 0) AS browse_home_page_user /*首页游览用户*/
+                from dw.laidian_user_action_view_old l
+                where dt = toYYYYMMDD(toDate(#{date}))
+                group by CUBE (dd, app_version,is_new_app,father_channel,channel,video_type)
+                HAVING dd != '0000-00-00'
+        ) a left join (
+            select dd,
+                   if(app_version='','未知',app_version) app_version,
+                   is_new_app+1 is_new_app,
+                   if(father_channel='','未知', father_channel) father_channel,
+                   if(channel='','未知',channel) channel,
+                   video_type,
+                   sum(click) ad_click_count, /*广告点击次数 */
+                   ifnull(count(distinct if(click=1,distinct_id,null)),0) ad_click_user, /*广告点击用户 */
+                   sum(show) ad_show_count, /*广告曝光数 */
+                   ifnull(count(distinct if(show=1,distinct_id,null)),0) ad_show_user /*广告点曝光用户 */
+            from (select a1.*, toInt64OrZero('-1') video_type from dw_ad_actions a1 where dt = toYYYYMMDD(toDate(#{date})) and package_name ='com.mg.phonecall') a
+            group by CUBE (dd, app_version,is_new_app,father_channel,channel,video_type)
+            HAVING dd != '0000-00-00'
+        ) b on a.dd=b.dd and a.app_version =b.app_version and a.is_new_app =b.is_new_app and a.father_channel =b.father_channel and a.channel=b.channel and a.video_type=b.video_type
+    </insert>
+
+    <delete id="deleteLdActionData" parameterType="java.lang.String">
+        alter table ld_user_content_operation delete where dd = #{date} and sync_tag = 0
+    </delete>
+
+    <update id="updateLdActionData" parameterType="java.lang.String">
+        alter table ld_user_content_operation update sync_tag=0 where dd = #{date} and sync_tag = 1
+    </update>
+
+</mapper>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.reportview.mapper.VideoLeaderboardMapper">
+    
+    <insert id="insertBatch" parameterType="java.util.List">
+        insert into view_leaderboard (dd, dh, type, video_id, number)
+        <foreach collection="dataList" item="data" separator="," open="values " close="">
+            (#{data.dd}, #{data.dh}, #{data.type}, #{data.video_id},#{data.number})
+        </foreach>
+    </insert>
+
+    <delete id="deleteData" parameterType="java.util.Map">
+        delete from view_leaderboard
+        <where>
+            <if test="dd != null">dd = #{dd}</if>
+            <if test="dh != null">and dh = #{dh}</if>
+            <if test="type != null">and type = #{type}</if>
+        </where>
+    </delete>
+
+    <select id="findViewLeaderboard" parameterType="map" resultType="java.util.Map">
+        SELECT video_id, number as number_of_views from view_leaderboard
+        where type = #{type}
+        <if test="dd != null">and dd =#{dd}</if>
+        <if test="dh != null">and dh =#{dh}</if>
+        ORDER BY number desc
+        limit 200
+    </select>
+    
+    <select id="findViewNumberByVideoId" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT video_id, number FROM view_leaderboard
+        <where>
+            <if test="dd != null">dd =#{dd}</if>
+            <if test="dh != null">and dh =#{dh}</if>
+            <if test="type != null">and type = #{type}</if>
+            <if test="videoId != null">and video_id = #{videoId}</if>
+        </where>
+    </select>
+</mapper>

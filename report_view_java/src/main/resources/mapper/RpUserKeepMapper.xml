@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.reportview.mapper.RpUserKeepMapper">
+    <resultMap id="BaseResultMap" type="com.miguan.reportview.entity.RpUserKeep">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="dd" jdbcType="INTEGER" property="dd" />
+        <result column="package_name" jdbcType="VARCHAR" property="packageName" />
+        <result column="app_version" jdbcType="VARCHAR" property="appVersion" />
+        <result column="father_channel" jdbcType="VARCHAR" property="fatherChannel" />
+        <result column="change_channel" jdbcType="VARCHAR" property="changeChannel" />
+        <result column="is_new" jdbcType="TINYINT" property="isNew" />
+        <result column="type" jdbcType="TINYINT" property="type" />
+        <result column="sd" jdbcType="INTEGER" property="sd" />
+        <result column="user" jdbcType="INTEGER" property="user" />
+        <result column="keep_1" jdbcType="INTEGER" property="keep1" />
+        <result column="keep_2" jdbcType="INTEGER" property="keep2" />
+        <result column="keep_3" jdbcType="INTEGER" property="keep3" />
+        <result column="keep_4" jdbcType="INTEGER" property="keep4" />
+        <result column="keep_5" jdbcType="INTEGER" property="keep5" />
+        <result column="keep_6" jdbcType="INTEGER" property="keep6" />
+        <result column="keep_7" jdbcType="INTEGER" property="keep7" />
+        <result column="keep_14" jdbcType="INTEGER" property="keep14" />
+        <result column="keep_30" jdbcType="INTEGER" property="keep30" />
+    </resultMap>
+    
+    <select id="getData" parameterType="map" resultType="com.miguan.reportview.vo.UserKeepVo">
+        SELECT
+        user,
+        <if test='valueTypes.contains("0")'>
+            user as showValue,
+        </if>
+        <if test='valueTypes.contains("1")'>
+            keep_1 as showValue,
+        </if>
+        <if test='valueTypes.contains("2")'>
+            keep_2 as showValue,
+        </if>
+        <if test='valueTypes.contains("3")'>
+            keep_3 as showValue,
+        </if>
+        <if test='valueTypes.contains("4")'>
+            keep_4 as showValue,
+        </if>
+        <if test='valueTypes.contains("5")'>
+            keep_5 as showValue,
+        </if>
+        <if test='valueTypes.contains("6")'>
+            keep_6 as showValue,
+        </if>
+        <if test='valueTypes.contains("7")'>
+            keep_7 as showValue,
+        </if>
+        <if test='valueTypes.contains("14")'>
+            keep_14 as showValue,
+        </if>
+        <if test='valueTypes.contains("30")'>
+            keep_30 as showValue,
+        </if>
+        <if test="groups != null">
+            <foreach collection="groups" item="groupi" separator="" open="" close="">
+               ${groupi},
+            </foreach>
+        </if>
+        sd as dd
+        from rp_user_keep
+        where
+        sd between #{startDate} and #{endDate}
+        <if test="showType != null">
+            and is_new = #{showType}
+        </if>
+        <if test="showType == null">
+            and is_new = -1
+        </if>
+        <if test="appPackages != null">
+            and package_name in
+            <foreach collection="appPackages" item="appPackage" separator="," open="(" close=")">
+                #{appPackage}
+            </foreach>
+        </if>
+        <if test="appPackages == null">
+            and package_name = '-1'
+        </if>
+        <if test="appVersions != null">
+            and app_version in
+            <foreach collection="appVersions" item="appVersion" separator="," open="(" close=")">
+                #{appVersion}
+            </foreach>
+        </if>
+        <if test="appVersions == null">
+            and app_version = '-1'
+        </if>
+        <if test="pChannelIds != null">
+            and father_channel in
+            <foreach collection="pChannelIds" item="pChannelId" separator="," open="(" close=")">
+                #{pChannelId}
+            </foreach>
+        </if>
+        <if test="pChannelIds == null">
+            and father_channel = '-1'
+        </if>
+        <if test="channelIds != null">
+            and change_channel in
+            <foreach collection="channelIds" item="channelId" separator="," open="(" close=")">
+                #{channelId}
+            </foreach>
+        </if>
+        <if test="channelIds == null">
+            and change_channel = '-1'
+        </if>
+        <if test="appType != null">
+            and app_type = #{appType}
+        </if>
+        group by sd
+        <if test="groups != null">
+            <foreach collection="groups" item="groupi" separator="," open="," close="">
+                ${groupi}
+            </foreach>
+        </if>
+    </select>
+    <select id="getTableData" parameterType="map" resultMap="BaseResultMap">
+        SELECT
+        user ,
+        keep_1,
+        keep_2,
+        keep_3,
+        keep_4,
+        keep_5,
+        keep_6,
+        keep_7,
+        keep_14,
+        keep_30,
+        <if test="groups != null">
+            <foreach collection="groups" item="groupi" separator="" open="" close="">
+               ${groupi},
+            </foreach>
+        </if>
+        sd
+        from rp_user_keep
+        where
+        sd between #{startDate} and #{endDate}
+        <if test="showType != null">
+            and is_new = #{showType}
+        </if>
+        <if test="showType == null">
+            and is_new = -1
+        </if>
+        <if test="appPackages != null">
+            and package_name in
+            <foreach collection="appPackages" item="appPackage" separator="," open="(" close=")">
+                #{appPackage}
+            </foreach>
+        </if>
+        <if test="appPackages == null">
+            and package_name = '-1'
+        </if>
+        <if test="appVersions != null">
+            and app_version in
+            <foreach collection="appVersions" item="appVersion" separator="," open="(" close=")">
+                #{appVersion}
+            </foreach>
+        </if>
+        <if test="appVersions == null">
+            and app_version = '-1'
+        </if>
+        <if test="pChannelIds != null">
+            and father_channel in
+            <foreach collection="pChannelIds" item="pChannelId" separator="," open="(" close=")">
+                #{pChannelId}
+            </foreach>
+        </if>
+        <if test="pChannelIds == null">
+            and father_channel = '-1'
+        </if>
+        <if test="channelIds != null">
+            and change_channel in
+            <foreach collection="channelIds" item="channelId" separator="," open="(" close=")">
+                #{channelId}
+            </foreach>
+        </if>
+        <if test="channelIds == null">
+            and change_channel = '-1'
+        </if>
+        <if test="appType != null">
+            and app_type = #{appType}
+        </if>
+        group by sd
+        <if test="groups != null">
+            <foreach collection="groups" item="groupi" separator="," open="," close="">
+                ${groupi}
+            </foreach>
+        </if>
+    </select>
+    <delete id="deleteBySd" parameterType="java.lang.Integer">
+        DELETE FROM rp_user_keep WHERE sd = #{sd} and app_type= #{appType}
+    </delete>
+
+    <insert id="insert" parameterType="com.miguan.reportview.entity.RpUserKeep">
+      insert into rp_user_keep (dd, package_name, app_version, father_channel, change_channel, is_new, sd, `user`, keep_1)
+      values (#{dd}, #{packageName}, #{appVersion}, #{fatherChannel}, #{changeChannel}, #{isNew}, #{sd}, #{user}, #{keep1})
+    </insert>
+
+    <insert id="insertBatch" parameterType="com.miguan.reportview.entity.RpUserKeep">
+      insert into rp_user_keep (dd, package_name, app_version, father_channel, change_channel, is_new, sd, `user`, keep_1)
+        <foreach collection="dataList" item="data" separator="," open="values " close="">
+            (#{data.dd}, #{data.packageName}, #{data.appVersion}, #{data.fatherChannel}, #{data.changeChannel}, #{data.isNew}, #{data.sd}, #{data.user}, #{data.keep1})
+        </foreach>
+    </insert>
+    
+    <select id="findByDto" parameterType="map" resultMap="BaseResultMap">
+        select * from rp_user_keep
+        where dd = #{dd}
+        and sd = #{sd}
+        and package_name = #{package_name}
+        and app_version = #{app_version}
+        and change_channel = #{change_channel}
+        and is_new = #{is_new_app}
+        and father_channel = #{father_channel}
+    </select>
+    
+    <update id="updateUserAndKeep1ById" parameterType="map">
+        update rp_user_keep
+        set user = #{user}, keep_1 = #{keep1}
+        where id = #{id}
+    </update>
+
+    <insert id="insertLdBatch" parameterType="com.miguan.reportview.entity.RpUserKeep">
+        insert into rp_user_keep (dd,package_name,app_version,father_channel,change_channel,is_new,sd,user,keep_1,keep_2,keep_3,keep_4,keep_5,keep_6,keep_7,keep_14,keep_30,app_type)
+        <foreach collection="dataList" item="data" separator="," open="values " close="">
+            (#{data.dd},#{data.packageName},#{data.appVersion},#{data.fatherChannel},#{data.changeChannel},#{data.isNew},#{data.sd},#{data.user},#{data.keep1},#{data.keep2},#{data.keep3},#{data.keep4},#{data.keep5},#{data.keep6},#{data.keep7},#{data.keep14},#{data.keep30},#{data.appType})
+        </foreach>
+    </insert>
+
+    <select id="getNewUserKeep" parameterType="map" resultType="com.miguan.reportview.vo.UserKeepVo">
+        SELECT USER,
+            keep_1 showValue,
+            sd as dd<include refid="groupShowColumsql" />
+        FROM rp_user_keep
+        where 1=1
+        and sd between #{startDate} and #{endDate}
+        ${conditionSql}
+    </select>
+
+    <sql id="groupShowColumsql">
+        <if test="groups != null">
+            <foreach collection="groups" item="groupi" separator="" open="" close="">
+                , ${groupi}
+            </foreach>
+        </if>
+    </sql>
+</mapper>

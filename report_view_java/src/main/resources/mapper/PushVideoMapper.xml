@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.reportview.mapper.PushVideoMapper">
+
+    <select id="findPushVideosInfo" parameterType="java.util.List" resultType="com.miguan.reportview.dto.PushVideoDto">
+         select video_id, play_count playNum, all_play_count playEndNum
+         from video_detail
+         where dd=toString(toDate(now()))
+         and video_id in <foreach collection="videoIds" item="videoId" separator="," open="(" close=")">${videoId}</foreach>
+    </select>
+
+    <insert id="batchSavePushVideos"  parameterType="java.util.List">
+         insert into push_videos(catid, video_id , video_time,created_at,updated_at)
+         select s.cat_id catid,
+                s.id video_id,
+                toUInt32(toFloat64OrZero(replace(s.video_time,':','.')) *60),
+                now() created_at,
+                now() updated_at
+         from video_info s
+         where s.id in <foreach collection="videoIds" item="videoId" separator="," open="(" close=")">${videoId}</foreach>
+    </insert>
+
+    <delete id="deletePushVideos" parameterType="java.util.List">
+        alter table push_videos delete where video_id in <foreach collection="videoIds" item="videoId" separator="," open="(" close=")">${videoId}</foreach>
+    </delete>
+
+    <delete id="deletePushUser" parameterType="map">
+        alter table dm_data_product.dm_auto_push_user_local on cluster ck6_s3_r2 delete where dt=#{dt} and user_type = #{userType} and package_name = #{packageName}
+    </delete>
+
+
+    <delete id="deleteOldPushUser" parameterType="int">
+        <![CDATA[ alter table dm_data_product.dm_auto_push_user_local on cluster ck6_s3_r2 delete where dt = #{dt} ]]>
+    </delete>
+
+    <insert id="batchSaveNewUserNoPlay" parameterType="map">
+         /*新用户（激活当天）,20点前新增的用户，且（0-19：59）未产生播放行为*/
+        /*新用户（激活当天）,20点后新增的用户，且（20-23：59）未产生播放行为*/
+        insert into dm_data_product.dm_auto_push_user_disb(dt,distinct_id,package_name,user_type)
+        SELECT #{dt},
+               newu.distinct_id as distinct_id,
+               #{packageName} as package_name,
+               #{userType} as user_type
+        FROM
+        (
+            select distinct_id
+            from dw.dwd_user_package_info_disb
+            WHERE package_name =#{packageName}
+            and first_visit_time BETWEEN #{startTime} and #{endTime}
+            GROUP BY distinct_id
+        ) newu
+        LEFT JOIN (
+            SELECT distinct_id
+            FROM dw.dws_user_video_hour_disb duvhd
+            where dt=#{dt}
+            and package_name =#{packageName}
+            <if test="userType == 1">
+                and `hour` &lt;= 19
+            </if>
+            <if test="userType == 1">
+                and `hour` >= 20
+            </if>
+            GROUP BY distinct_id
+            HAVING SUM(play_count)>0
+        ) vplay on newu.distinct_id = vplay.distinct_id
+        WHERE vplay.distinct_id=''  /*过滤掉未产生播放行为*/
+    </insert>
+
+
+    <insert id="batchSaveNewUserPlay" parameterType="map">
+        /*新用户（激活当天) 当日产生播放行为*/
+        insert into dm_data_product.dm_auto_push_user_disb(dt,distinct_id,package_name,user_type)
+        SELECT #{dt}, distinct_id, #{packageName}, #{userType}
+        FROM dw.dws_user_video_hour_disb duvhd 
+        where dt=#{dt}
+        and is_new_app=1
+        and package_name = #{packageName}
+        GROUP BY distinct_id 
+        HAVING SUM(play_count)>0
+    </insert>
+
+    <insert id="batchSaveOldUserPlay" parameterType="map">
+        /*老用户（激活次日以后） 当日产生播放行为*/
+        insert into dm_data_product.dm_auto_push_user_disb(dt,distinct_id,package_name,user_type)
+        select #{dt},distinct_id,#{packageName},#{userType}
+        from (
+            select distinct_id 
+            from dw.dws_user_video_hour_disb
+            where dt=#{dt}
+            and is_new_app=0
+            and package_name = #{packageName}
+            group by distinct_id
+            HAVING SUM(play_count)>0
+        ) a
+        INNER JOIN (
+            select distinct_id
+            from dw.dwd_user_package_info_disb
+            WHERE package_name =#{packageName}
+            and toDate(last_access_time) BETWEEN toDate(addDays(now(),#{startDay})) and toDate(addDays(now(),#{endDay}))
+            GROUP BY distinct_id 
+        ) b ON a.distinct_id = b.distinct_id
+    </insert>
+
+    <insert id="batchSaveOldUserNoPlay" parameterType="map">
+        /*老用户（激活次日以后） 当日未产生播放行为*/
+        insert into dm_data_product.dm_auto_push_user_disb(dt,distinct_id,package_name,user_type)
+        select #{dt},a.distinct_id,#{packageName},#{userType}
+        from (
+            select distinct_id
+            from dw.dwd_user_package_info_disb
+            WHERE 1=1
+            and package_name =#{packageName}
+            and toDate(last_access_time) BETWEEN toDate(addDays(now(),#{startDay})) and toDate(addDays(now(),#{endDay}))
+            GROUP BY distinct_id
+        ) a
+        left JOIN (
+            select distinct_id
+            from dw.dws_user_video_hour_disb
+            where dt=#{dt}
+            and is_new_app=0
+            and package_name = #{packageName}
+            group by distinct_id
+            HAVING SUM(play_count)>0
+        ) b ON a.distinct_id = b.distinct_id
+        where b.distinct_id = ''
+    </insert>
+
+    <insert id="batchSaveOldUserNoActive" parameterType="map">
+        /*不活跃用户（未启动天数>=30天）*/
+        insert into dm_data_product.dm_auto_push_user_disb(dt,distinct_id,package_name,user_type)
+        select #{dt},distinct_id,#{packageName},#{userType}
+        from dw.dwd_user_package_info_disb
+        WHERE package_name =#{packageName}
+        GROUP BY distinct_id 
+        having dateDiff('day',max(last_access_time),now()) BETWEEN #{startDay} and #{endDay}
+    </insert>
+
+    <insert id="syncAutoPushLog" parameterType="com.alibaba.fastjson.JSONArray" >
+       insert into auto_push_log(package_name,distinct_id,video_id,created_at)
+        <foreach collection="list" item="data" separator="," open="values " close="">
+            (ifnull(#{data.package_name},''),ifnull(#{data.distinct_id},''),ifnull(#{data.video_id},0),now())
+        </foreach>
+    </insert>
+
+    <sql id="videoDetailTotal">
+        select video_id, sum(vplay_count) vplay_count, sum(play_count) play_count, sum(all_play_count) all_play_count from video_detail group by video_id
+    </sql>
+
+    <select id="countPushVideos" resultType="java.lang.Integer">
+         select count(1)
+         from push_videos v,(<include refid="videoDetailTotal" />)  d
+         where v.video_id = d.video_id
+    </select>
+
+    <select id="listPushVideos" resultType="com.miguan.reportview.vo.PushVideoVo" parameterType="map">
+         select v.video_id, play_count playNum, vplay_count vplay_num,all_play_count playEndNum
+         from push_videos v,(<include refid="videoDetailTotal" />) d
+         where v.video_id = d.video_id
+         limit #{startRow}, #{pageSize}
+    </select>
+
+    <delete id="deletePushVideosMid">
+        delete from push_videos_mid
+    </delete>
+
+    <insert id="batchSavePushVideosMid" parameterType="java.util.List" >
+        insert into push_videos_mid(video_id,play_num,vplay_num,play_end_num,created_at,updated_at)
+        <foreach collection="list" item="data" separator="," open="values " close="">
+            (#{data.videoId},#{data.playNum},#{data.vplayNum},#{data.playEndNum},now(),now())
+        </foreach>
+    </insert>
+
+    <update id="updatePushVideosNums">
+        update push_videos v,
+               (select video_id,max(play_num) play_num, max(vplay_num) vplay_num, max(play_end_num) play_end_num
+                from push_videos_mid group by video_id) m
+        set v.play_num=m.play_num,v.vplay_num=m.vplay_num,v.play_end_num=m.play_end_num,v.updated_at = now()
+        where v.video_id = m.video_id
+    </update>
+
+    <select id="findPushConfig" resultType="com.miguan.reportview.vo.PushConfigVo">
+        select app_package package_name,trigger_event type,trigger_type,trigger_time,activity_type_days activityDays
+        from auto_push_config
+        where status = 1
+        and project_type=2
+        order by (case when trigger_event=3 then 1 when trigger_event=1 then 3 else trigger_event end)
+    </select>
+
+
+    <select id="findPushConfigUserType" resultType="java.lang.Integer">
+        select trigger_event type
+        from auto_push_config
+        where status = 1
+        group by atrigger_event
+    </select>
+
+    <insert id="batchStaPushVidosResult" parameterType="map">
+        /*用户自动推送表*/
+        insert into push_videos_result(dd,distinct_id,package_name,video_id,user_type,sync_tag,created_at)
+        select #{dd} sta_date,
+               u.distinct_id distinct_id,
+               package_name,
+               argMax(video_id, vplay_count) r_video_id, /*获取有效播放数最高的视频id*/
+               any(u.user_type) r_user_type,
+               1 sync_tag,
+               now() create_time
+        from (select v1.*,d.vplay_count vplay_count from push_videos v1, (<include refid="videoDetailTotal" />) d where v1.video_id=d.video_id) v, push_user u
+        where u.user_type = #{userType}
+        <![CDATA[ and v.video_time > 60 ]]> /*播放时长大于0秒*/
+        and u.dd=#{dd}
+        /*去掉用户播放过的视频*/
+        and (v.video_id,u.distinct_id,u.package_name ) not in (select DISTINCT a.video_id ,a.distinct_id,a.package_name
+                                                                from dw_video_actions a,push_user u1
+                                                                where a.distinct_id = u1.distinct_id
+                                                                and a.package_name = u1.package_name
+                                                                and u1.user_type = #{userType}
+                                                                and u1.dd=#{dd}
+                                                                and a.play_start = 1
+                                                              )
+        /*去掉用户已经推送过的视频*/
+        and (v.video_id,u.distinct_id,u.package_name ) not in (select DISTINCT a.video_id ,a.distinct_id,a.package_name
+                                                                from auto_push_log a,push_user u1
+                                                                where a.distinct_id = u1.distinct_id
+                                                                and a.package_name = u1.package_name
+                                                                and u1.user_type = #{userType}
+                                                                and u1.dd=#{dd}
+                                                               )
+        <if test="userType==3 or userType==4 or userType==5 or userType==6">
+            /*查询推荐算法主标签下的视频（用户最近一次播放视频的标签）*/
+            and (v.catid,u.distinct_id,u.package_name) in (select argMax(catid, a.receive_time ) r_catid, a.distinct_id,a.package_name
+                                                            from dw_video_actions a,push_user u1
+                                                            where a.distinct_id = u1.distinct_id
+                                                            and a.package_name = u1.package_name
+                                                            and u1.user_type = #{userType}
+                                                            and u1.dd=#{dd}
+                                                            and a.play_start = 1
+                                                            and a.catid > 0
+                                                            group by a.distinct_id,a.package_name
+                                                          )
+        </if>
+        group by u.distinct_id,u.package_name
+    </insert>
+
+    <delete id="deletePushVideosResult" parameterType="map">
+        alter table push_videos_result delete where dd=#{dd} and user_type=#{userType} and sync_tag=0
+    </delete>
+
+    <update id="updatePushVideosResultTag">
+        alter table push_videos_result update sync_tag=0 where dd=#{dd}  and user_type=#{userType} and sync_tag = 1
+    </update>
+
+    <delete id="deleteOldPushVideosResult" parameterType="java.lang.String">
+        <![CDATA[  alter table push_videos_result delete where dd < #{dd} and sync_tag=0 ]]>
+    </delete>
+
+    <delete id="deleteAutoPushUserVideo" parameterType="map">
+         delete from auto_push_user_video where date(`date`)=#{date} and user_type=#{userType} and package_name=#{packageName}
+    </delete>
+    
+    <insert id="insertAutoPushUserVideo" parameterType="map">
+        INSERT into table mysql_data_server.${tableName} (user_type, distinct_id, video_id,created_at)
+        SELECT #{userType} as user_type,
+               uu.distinct_id as distinct_id,
+               argMax(uu.video_id, vv.vplay_count) as video_id,
+               now()
+        FROM
+        (
+          SELECT
+            u.distinct_id as distinct_id,
+            <if test="userType==1 or userType==2 or userType==6">
+                arrayJoin(bitmapToArray(bitmapAndnot(v1.video_map, bitmapOr(pl.videos, pu.videos)))) as video_id
+            </if>
+            <if test="userType==3 or userType==4 or userType==5">
+                /*查询推荐算法主标签下的视频（用户最近一次播放视频的标签）*/
+                arrayJoin(bitmapToArray(bitmapAndnot(bitmapAnd(v1.video_map,pw.videos), bitmapOr(pl.videos, pu.videos)))) as video_id
+            </if>
+          FROM
+          (
+            SELECT 1 as join_key, distinct_id
+            FROM dm_data_product.dm_auto_push_user_disb pu
+            where dt=#{dt}
+            and user_type = #{userType}
+            and package_name = #{packageName}
+          ) u
+          LEFT JOIN
+          (
+            SELECT 1 as join_key, groupBitmapState(CAST(video_id,'UInt32')) as video_map
+            from mysql_ballvideo.push_videos pv
+          ) v1 on u.join_key = v1.join_key
+          LEFT JOIN
+          (/*已播放过的视频*/
+            select distinct_id,
+                   groupBitmapState(video_id) as videos
+            FROM (
+                    select
+                        distinct_id,
+                        video_id as video_id
+                    from dw.dws_user_video_hour_disb duvhd
+                    where dt=#{dt}
+                    and package_name = #{packageName}
+                    and play_count>0
+                    GROUP BY distinct_id,video_id
+                    UNION ALL
+                    select distinct_id,
+                           arrayJoin(bitmapToArray(videos)) as video_id
+                    FROM dw.dws_user_play_videos_disb
+                    where dt=toYYYYMMDD(addDays(now(),-1))
+                    and package_name = #{packageName}
+                 ) a group by distinct_id
+          ) pl on u.distinct_id = pl.distinct_id
+          LEFT JOIN
+          (/*已推送过的视频*/
+            select distinct_id,
+                   groupBitmapState(video_id) as videos
+            FROM (
+                  select distinct_id,
+                         CAST(video_id,'UInt32') as video_id
+                  from dw.dwd_push_log_disb duvhd
+                  where dt=#{dt}
+                  and video_id>0
+                  and push_method=2 /*推送方式：自动推送*/
+                  and if(app_package='xld','com.mg.phonecall',app_package) = #{packageName}
+                  GROUP BY distinct_id,video_id
+                  UNION ALL
+                  select distinct_id,
+                         arrayJoin(bitmapToArray(videos)) as video_id
+                  FROM dw.dws_user_push_videos_disb
+                  where dt= toYYYYMMDD(addDays(now(),-1))
+                  and push_method=2 /*推送方式：自动推送*/
+                  and package_name = #{packageName}
+                ) a group by distinct_id
+          ) pu  on u.distinct_id = pu.distinct_id
+        <if test="userType==3 or userType==4 or userType==5">
+              LEFT JOIN
+              (/*用户最近一次播放视频的标签下的视频*/
+                select distinct_id,
+                       groupBitmapState(b.video_id) videos
+                from (
+                    select distinct_id, argMax(tag_category_id, receive_time ) tag_category_id
+                    from dw.dws_user_video_hour_disb duvhd
+                    where package_name = #{packageName}
+                    and play_count>0
+                    GROUP BY distinct_id
+                ) a inner join (
+                    select fv.cat_id, toUInt32(fv.id) video_id
+                    from mysql_ballvideo.push_videos pv
+                    inner join mysql_ballvideo.first_videos fv on pv.video_id = toInt32(fv.id)
+                ) b on a.tag_category_id= toUInt16(b.cat_id)
+                group by distinct_id
+              ) pw on u.distinct_id = pw.distinct_id
+        </if>
+        ) uu
+        LEFT JOIN
+        (
+          select video_id, vplay_count
+          from
+          (
+            select video_id,SUM(vaild_play_count) as  vplay_count
+            FROM dw.dws_video_day_disb dvdd
+            group by video_id
+          ) v0
+          JOIN
+          (
+            SELECT CAST(video_id,'UInt32') video_id
+            from mysql_ballvideo.push_videos pv
+            group by video_id
+          ) v1 on v0.video_id = v1.video_id
+        ) vv on uu.video_id =vv.video_id
+        group by distinct_id
+    </insert>
+
+    <select id="findPushVideosResult" parameterType="map" resultType="com.miguan.reportview.dto.PushVideoResultDto">
+        select distinct_id, #{packageName} package_name, video_id
+        from ${tableName}
+        limit #{startRow},#{endRow}
+    </select>
+
+    <select id="staOldVideoItem" resultType="map" parameterType="string">
+        select date, package_name packageName, user_type userType
+        from auto_push_user_video
+        where date = #{dd}
+        group by date,package_name,user_type
+    </select>
+
+    <update id="optimizeTable">
+        optimize table ${tableName}
+    </update>
+
+    <select id="isExistAutoPushTable" parameterType="string" resultType="int">
+      select count(1) from INFORMATION_SCHEMA.TABLES where table_name=#{tableName}
+    </select>
+
+    <select id="findOldAutoPushTable" parameterType="string" resultType="string">
+        select table_name from INFORMATION_SCHEMA.TABLES where table_name like concat('push_com', '%', #{dt})
+    </select>
+    
+    <update id="createAutoPushTable" parameterType="string">
+        CREATE TABLE ${tableName} (
+          `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+          `user_type` int(5) DEFAULT NULL COMMENT '用户类型，1:用户（激活当天）,20点前新增的用户，且（0-19：59）未产生播放行为;2:新用户（激活当天）,20点后新增的用户，且（20-23：59）未产生播放行为3:新用户（激活当天) 当日产生播放行为4:老用户（激活次日以后） 当日产生播放行为5:老用户（激活次日以后） 当日未产生播放行为6:不活跃用户（未启动天数>=30天）',
+          `distinct_id` varchar(255) NOT NULL DEFAULT '' COMMENT '设备id',
+          `video_id` int(11) DEFAULT NULL COMMENT '用于推送的视频id',
+          `created_at` datetime NOT NULL COMMENT '创建时间',
+          PRIMARY KEY (`id`) USING BTREE
+        ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='视频自动推送分表（按包名，用户类型，日期分表）';
+    </update>
+
+    <update id="dropAutoPushTable" parameterType="string">
+        drop table ${tableName}
+    </update>
+</mapper>

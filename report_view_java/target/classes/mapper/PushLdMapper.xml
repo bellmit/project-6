@@ -1,0 +1,631 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.reportview.mapper.PushLdMapper">
+
+    <update id="modifyIsPushTag" parameterType="map">
+        alter table ld_video_info update is_push=#{isPush}
+        where id in <foreach collection="videoIds" item="videoId" separator="," open="(" close=")">${videoId}</foreach>
+    </update>
+
+    <select id="countPushLd" resultType="java.lang.Integer">
+        select count(1)
+        from (
+                select v.id video_id, count(1) play_num
+                from ld_video_info v, ld_push_user_actions l
+                where v.id=l.video_id
+                and v.is_push =1
+                and l.into_fodder_detail=1   /*来电秀播放事件*/
+                and l.type=1
+                group by v.id
+             )
+    </select>
+
+    <select id="listPushLd" resultType="com.miguan.reportview.vo.PushVideoVo" parameterType="map">
+        select v.id video_id, count(1) play_num
+        from ld_video_info v, ld_push_user_actions l
+        where v.id=l.video_id
+        and v.is_push =1
+        and l.into_fodder_detail=1  /*来电秀播放事件*/
+        and l.type=1
+        group by v.id
+        limit #{startRow}, #{pageSize}
+    </select>
+
+    <delete id="deletePushLdMid">
+        delete from push_ld_mid
+    </delete>
+
+    <insert id="batchSavePushLdMid" parameterType="java.util.List" >
+        insert into push_ld_mid(video_id,play_num,created_at)
+        <foreach collection="list" item="data" separator="," open="values " close="">
+            (#{data.videoId},#{data.playNum},now())
+        </foreach>
+    </insert>
+
+    <update id="updatePushLdPlayCount">
+        update videos v, push_ld_mid m set v.play_count=m.play_num where v.id=m.video_id
+    </update>
+
+    <insert id="syncAutoLdPushLog" parameterType="com.alibaba.fastjson.JSONArray" >
+        insert into auto_ld_push_log(package_name,distinct_id,video_id,created_at)
+        <foreach collection="list" item="data" separator="," open="values " close="">
+            (ifnull(#{data.package_name},''),ifnull(#{data.distinct_id},''),ifnull(#{data.video_id},0),now())
+        </foreach>
+    </insert>
+
+    <select id="findLdVideosCatList" resultType="map">
+      select id, name, sort
+      from videos_cat
+      where type=1 and status=1
+    </select>
+
+    <delete id="deleteCkLdVideoCat">
+      alter table ld_video_cat delete where 1=1
+    </delete>
+
+    <insert id="syncLdVideoCat" parameterType="java.util.List" >
+        insert into ld_video_cat(id,name,sort,created_at)
+        <foreach collection="list" item="data" separator="," open="values " close="">
+            (ifnull(#{data.id},0),ifnull(#{data.name},''),ifnull(#{data.sort},0),now())
+        </foreach>
+    </insert>
+
+    <delete id="deleteLdPushUser">
+        alter table ld_push_user delete where dd=#{dd} and package_name=#{packageName} and user_type = #{userType}
+    </delete>
+
+    <insert id="syncNewUserNoSetVideo" parameterType="map">
+        insert into ld_push_user (dd,distinct_id,package_name,user_type,create_time)
+        select #{dd}, distinct_id, #{packageName}, #{userType},now()
+        from ld_push_user_actions lpua
+        where 1=1
+        and distinct_id in (
+            select DISTINCT distinct_id
+            from ld_push_user_actions
+            where dd = #{dd}
+            and package_name =#{packageName}
+            and app_start = 1
+            and is_new_app =1
+        )
+        and dd in <foreach collection="dates" item="date" separator="," open="(" close=")">#{date}</foreach>
+        and package_name =#{packageName}
+        group by distinct_id
+        having sum(if(tab_confirm=1 and tab_type=1, 1,0)) = 0 /*未设置来电秀*/
+        <if test="userType==11001 or userType==11002">
+            and hasAll(groupUniqArray(permission_type),[1,2,3,4,7,6,8,10]) = 0 /*未开通权限*/
+        </if>
+        <if test="userType==11004 or userType==11005">
+            and hasAll(groupUniqArray(permission_type),[1,2,3,4,7,6,8,10]) = 1 /*已开通权限*/
+        </if>
+
+        <if test="userType==11001 or userType==11004">
+            and sum(if(into_fodder_detail=1 and type=1, 1,0)) > 0 /*已浏览来电秀*/
+        </if>
+        <if test="userType==11002 or userType==11005">
+            and sum(if(into_fodder_detail=1 and type=1, 1,0)) = 0 /*未浏览来电秀*/
+        </if>
+    </insert>
+
+    <insert id="syncNewUserSetVideo" parameterType="map">
+        insert into ld_push_user (dd,distinct_id,package_name,user_type,create_time)
+        select #{dd}, distinct_id, #{packageName}, #{userType},now()
+        from ld_push_user_actions
+        where 1=1
+        and distinct_id in (
+            select DISTINCT distinct_id
+            from ld_push_user_actions
+            where dd =#{dd}
+            and package_name =#{packageName}
+            and app_start = 1
+            and is_new_app =1
+        )
+        and dd in <foreach collection="dates" item="date" separator="," open="(" close=")">#{date}</foreach>
+        <if test="filterUserTypeList != null">
+            and distinct_id not in (
+                       select distinct_id
+                       from ld_push_user
+                       where user_type in <foreach collection="filterUserTypeList" item="userType" separator="," open="(" close=")">#{userType}</foreach>
+                       and dd=#{dd}
+            )
+        </if>
+        and package_name =#{packageName}
+        group by distinct_id
+        having sum(if(tab_confirm=1 and tab_type=1, 1,0)) > 0 /*已设置来电秀*/
+        <if test="userType==12001 ">
+            and sum(if(tab_confirm=1 and tab_type=3, 1,0)) = 0 /*未设置壁纸*/
+        </if>
+        <if test="userType==12002 ">
+            and sum(if(tab_confirm=1 and tab_type=2, 1,0)) = 0 /*未设置锁屏*/
+        </if>
+    </insert>
+
+    <insert id="syncNewUserNoSetRing" parameterType="map">
+        insert into ld_push_user (dd,distinct_id,package_name,user_type,create_time)
+        select #{dd}, distinct_id, #{packageName}, #{userType},now()
+        from ld_push_user_actions
+        where 1=1
+        and distinct_id in (
+            select DISTINCT distinct_id
+            from ld_push_user_actions
+            where toDate(receive_time) =#{dd}
+            and package_name =#{packageName}
+            and app_start = 1
+            and is_new_app =1
+        )
+        and dd in <foreach collection="dates" item="date" separator="," open="(" close=")">#{date}</foreach>
+        <if test="filterUserTypeList != null">
+            and distinct_id not in (
+                    select distinct_id
+                    from ld_push_user
+                    where user_type in <foreach collection="filterUserTypeList" item="userType" separator="," open="(" close=")">#{userType}</foreach>
+                    and dd=#{dd}
+            )
+        </if>
+        and package_name =#{packageName}
+        group by distinct_id
+        having sum(set_ring) = 0 /*未设置铃声*/
+        and sum(if(index_scan=1 and scan_type=2,1,0)) > 0 /*已浏览铃声*/
+    </insert>
+
+    <insert id="syncActiveVideos" parameterType="map">
+        insert into ld_push_user (dd,distinct_id,package_name,user_type,create_time)
+        select #{dd}, distinct_id, #{packageName}, #{userType},now()
+        from ld_push_user_actions
+        where 1=1
+        and distinct_id in (
+            select DISTINCT distinct_id
+            from ld_push_user_actions
+            where dd BETWEEN toDate(addDays(now(),#{endDay})) and toDate(addDays(now(),#{startDay}))
+            and package_name =#{packageName}
+            and app_start = 1
+            and is_new_app =0
+        )
+        <if test="filterUserTypeList != null">
+            and distinct_id not in (
+                    select distinct_id
+                    from ld_push_user
+                    where user_type in <foreach collection="filterUserTypeList" item="userType" separator="," open="(" close=")">#{userType}</foreach>
+                    and dd=#{dd}
+            )
+        </if>
+        and package_name =#{packageName}
+        group by distinct_id
+        <if test="userType==21007 or userType==21003">
+            having sum(if(tab_confirm=1 and tab_type=1, 1,0)) = 0 /*未设置来电秀*/
+        </if>
+        <if test="userType==22001 or userType==22002">
+            having sum(if(tab_confirm=1 and tab_type=1, 1,0)) > 0 /*已设置来电秀*/
+        </if>
+        <if test="userType==23002">
+            having sum(set_ring) = 0 /*未设置铃声*/
+        </if>
+
+        <if test="userType==21007">
+            and hasAll(groupUniqArray(permission_type),[1,2,3,4,7,6,8,10]) = 0 /*未开通权限*/
+  <![CDATA[ and min(dd) >= #{onlineDate} ]]>  /*权限在上线后，被拆分成多个细权限，所以onlineDate上线后未开通权限的用户才算*/
+        </if>
+        <if test="userType==21003">
+            /*已开通权限(onlineDate上线前的活跃用户都当做已开通权限)*/
+  <![CDATA[ and ((min(dd) >= #{onlineDate} and hasAll(groupUniqArray(permission_type),[1,2,3,4,7,6,8,10]) = 1) or min(dd) < #{onlineDate})  ]]>
+        </if>
+        <if test="userType==22001">
+            and sum(if(tab_confirm=1 and tab_type=3, 1,0)) = 0 /*未设置壁纸*/
+        </if>
+        <if test="userType==22002">
+            and sum(if(tab_confirm=1 and tab_type=2, 1,0)) = 0 /*未设置锁屏*/
+        </if>
+    </insert>
+
+    <insert id="syncNoActiveVideos" parameterType="map">
+        insert into ld_push_user (dd,distinct_id,package_name,user_type,create_time)
+        select #{dd}, distinct_id, #{packageName}, #{userType},now()
+        from ld_push_user_actions
+        where 1=1
+        and package_name =#{packageName}
+        <if test="filterUserTypeList != null">
+            and distinct_id not in (
+                select distinct_id
+                from ld_push_user
+                where user_type in <foreach collection="filterUserTypeList" item="userType" separator="," open="(" close=")">#{userType}</foreach>
+                and dd=#{dd}
+            )
+        </if>
+        group by distinct_id
+        having dateDiff('day',max(receive_time),now()) BETWEEN #{startDay} and #{endDay} /*不活跃天数在配置天数内*/
+        <if test="userType==31005">
+            and sum(if(tab_confirm=1 and tab_type=1, 1,0)) = 0 /*未设置来电秀*/
+        </if>
+        <if test="userType==32001 or userType==32002">
+            and sum(if(tab_confirm=1 and tab_type=1, 1,0)) > 0 /*已设置来电秀*/
+        </if>
+        <if test="userType==32001">
+            and sum(if(tab_confirm=1 and tab_type=3, 1,0)) = 0 /*未设置壁纸*/
+        </if>
+        <if test="userType==32002">
+            and sum(if(tab_confirm=1 and tab_type=2, 1,0)) = 0 /*未设置锁屏*/
+        </if>
+        <if test="userType==33001">
+            and sum(set_ring) = 0 /*未设置铃声*/
+            and sum(if(index_scan=1 and scan_type=2,1,0)) > 0 /*已浏览铃声*/
+        </if>
+    </insert>
+
+    <insert id="insertNewUserNoSign" parameterType="map">
+        /*签到推送-新用户-未签到*/
+        insert into ld_push_user (dd,distinct_id,package_name,user_type,create_time)
+        select #{dd}, distinct_id, #{packageName}, #{userType},now()
+        from dw.dwd_ld_user_actions_disb
+        where 1=1
+        and package_name =#{packageName}
+        and distinct_id global in (
+            select distinct_id
+            from dw.dwd_ld_user_actions_disb
+            where dt = #{dt}
+            and package_name =#{packageName}
+            and action_id ='app_start'
+            and is_new_app =1
+            and first_visit_time BETWEEN #{startTime} and #{endTime}
+            group by distinct_id
+        )
+        and dt in <foreach collection="dts" item="date" separator="," open="(" close=")">#{date}</foreach>
+        group by distinct_id
+        having sum(if(action_id ='sign_day', 1,0)) = 0 /*未签到*/
+    </insert>
+
+    <insert id="insertActiveContinueSign" parameterType="map">
+        /*签到推送-活跃用户-连续签到*/
+        insert into ld_push_user (dd,distinct_id,package_name,user_type,create_time)
+        select #{dd}, distinct_id, #{packageName}, #{userType},now()
+        from dw.dwd_ld_user_actions_disb
+        where 1=1
+        and package_name =#{packageName}
+        and distinct_id global in (
+            select DISTINCT distinct_id
+            from dw.dwd_ld_user_actions_disb
+            where dt BETWEEN toYYYYMMDD(addDays(now(),#{endDay})) and toYYYYMMDD(addDays(now(),#{startDay}))
+            and package_name =#{packageName}
+            and action_id ='app_start'
+            and is_new_app =0
+        )
+        and dt = #{dt}
+        and action_id ='sign_day'
+        and day = #{day}  /*连续N天签到*/
+        group by distinct_id
+    </insert>
+
+    <insert id="insertYesSignTodayNoSign" parameterType="map">
+        /*签到推送-活跃用户-昨日已签到-当日（0-20点）未签到【5001】  25001*/
+        insert into ld_push_user (dd,distinct_id,package_name,user_type,create_time)
+        select #{dd}, distinct_id, #{packageName}, #{userType},now()
+        from dw.dwd_ld_user_actions_disb
+        where 1=1
+        and package_name =#{packageName}
+        and distinct_id global in (
+            select DISTINCT distinct_id
+            from dw.dwd_ld_user_actions_disb
+            where dt BETWEEN toYYYYMMDD(addDays(now(),#{endDay})) and toYYYYMMDD(addDays(now(),#{startDay}))
+            and package_name =#{packageName}
+            and action_id ='app_start'
+            and is_new_app =0
+        )
+        and (dt=toYYYYMMDD(addDays(toDate(#{dd}),-1)) or (dt=toYYYYMMDD(toDate(#{dd})) and receive_time BETWEEN #{startTime} and #{endTime}))
+        and action_id ='sign_day'
+        group by distinct_id 
+        having sum(if(toDate(receive_time) = addDays(toDate(#{dd}),-1),1,0)) > 0  /*昨日已签到*/
+        and sum(if(toDate(receive_time) = #{dd},1,0)) = 0  /*今日未签到*/
+    </insert>
+
+    <insert id="insertYesNoSign" parameterType="map">
+        /*签到推送-活跃用户-昨日未签到  25002*/
+        insert into ld_push_user (dd,distinct_id,package_name,user_type,create_time)
+        select #{dd}, distinct_id, #{packageName}, #{userType},now()
+        from dw.dwd_ld_user_actions_disb
+        where 1=1
+        and package_name =#{packageName}
+        and distinct_id global in (
+            select DISTINCT distinct_id
+            from dw.dwd_ld_user_actions_disb
+            where dt BETWEEN toYYYYMMDD(addDays(now(),#{endDay})) and toYYYYMMDD(addDays(now(),#{startDay}))
+            and package_name =#{packageName}
+            and action_id ='app_start'
+            and is_new_app =0
+        )
+        and dt = toYYYYMMDD(addDays(toDate(#{dd}),-1))
+        group by distinct_id 
+        having sum(if(action_id='sign_day',1,0)) = 0  /*昨日未签到*/
+    </insert>
+
+    <insert id="insertNewUserActivity" parameterType="map">
+        /*活动推送-新增用户*/
+        insert into ld_push_user (dd,distinct_id,package_name,user_type,create_time)
+        select #{dd}, distinct_id, #{packageName}, #{userType},now()
+        from dw.dwd_ld_user_actions_disb
+        where 1=1
+        and package_name =#{packageName}
+        and distinct_id global in (
+            select distinct_id
+            from dw.dwd_ld_user_actions_disb
+            where dt = #{dt}
+            and package_name =#{packageName}
+            and action_id ='app_start'
+            and is_new_app =1
+            and first_visit_time BETWEEN #{startTime} and #{endTime}
+            group by distinct_id
+        )
+        and dt in <foreach collection="dts" item="date" separator="," open="(" close=")">#{date}</foreach>
+        group by distinct_id
+        having sum(if(action_id ='fodder_scan', 1,0)) = 0 /*未访问活动页面*/
+    </insert>
+
+    <insert id="insertOldUserNoLuckDraw" parameterType="map">
+         /*活动推送-活跃用户-今日抽奖次数=0*/
+        insert into ld_push_user (dd,distinct_id,package_name,user_type,create_time)
+        select #{dd}, distinct_id, #{packageName}, #{userType},now()
+        from dw.dwd_ld_user_actions_disb
+        where 1=1
+        and package_name =#{packageName}
+        and distinct_id global in (
+            select DISTINCT distinct_id
+            from dw.dwd_ld_user_actions_disb
+            where dt BETWEEN toYYYYMMDD(addDays(now(),#{endDay})) and toYYYYMMDD(addDays(now(),#{startDay}))
+            and package_name =#{packageName}
+            and action_id ='app_start'
+            and is_new_app =0
+        )
+        and action_id ='lottery_activity'
+        and last_num = 0  /*剩余抽奖次数为0*/
+        and dt = toYYYYMMDD(toDate(#{dd}))
+        group by distinct_id
+    </insert>
+
+    <insert id="insertOldUserHavLuckDraw" parameterType="map">
+         /*活动推送-活跃用户-抽奖次数不等于0的用户*/
+        insert into ld_push_user (dd,distinct_id,package_name,user_type,create_time)
+        select #{dd}, distinct_id, #{packageName}, #{userType},now()
+        from dw.dwd_ld_user_actions_disb
+        where 1=1
+        and package_name =#{packageName}
+        and distinct_id global in (
+            select DISTINCT distinct_id
+            from dw.dwd_ld_user_actions_disb
+            where dt BETWEEN toYYYYMMDD(addDays(now(),#{endDay})) and toYYYYMMDD(addDays(now(),#{startDay}))
+            and package_name =#{packageName}
+            and action_id ='app_start'
+            and is_new_app =0
+        )
+        and distinct_id not in (
+            select distinct_id 
+            from ld_push_user 
+            where dd=#{dd}
+            and package_name =#{packageName} 
+            and user_type =26004
+        )
+        group by distinct_id 
+    </insert>
+
+    <insert id="syncNewUser" parameterType="map">
+        insert into ld_push_user (dd,distinct_id,package_name,user_type,create_time)
+        select #{dd}, distinct_id, #{packageName}, #{userType},now()
+        from ld_push_user_actions
+        where 1=1
+        and dd=#{dd}
+        and dh BETWEEN #{startDh} and #{endDh}
+        and package_name =#{packageName}
+        and app_start = 1
+        and is_new_app =1
+        group by distinct_id
+    </insert>
+
+    <insert id="syncActiveUser" parameterType="map">
+        insert into ld_push_user (dd,distinct_id,package_name,user_type,create_time)
+        select #{dd}, distinct_id, #{packageName}, #{userType},now()
+        from ld_push_user_actions 
+        where dd BETWEEN toDate(addDays(now(),#{endDay})) and toDate(addDays(now(),#{startDay}))
+        and app_start = 1
+        and package_name =#{packageName}
+        and is_new_app =0
+        group by distinct_id 
+    </insert>
+
+    <insert id="syncNoActiveUser" parameterType="map">
+        insert into ld_push_user (dd,distinct_id,package_name,user_type,create_time)
+        select #{dd}, distinct_id, #{packageName}, #{userType},now()
+        from ld_push_user_actions
+        where 1=1
+        and package_name =#{packageName}
+        group by distinct_id 
+        having dateDiff('day',max(receive_time),now()) BETWEEN #{startDay} and #{endDay} /*不活跃天数在配置天数内*/
+    </insert>
+
+    <select id="queryLdAutoConfig" resultType="com.miguan.reportview.vo.PushLdConfigVo">
+        select if(app_package='xld','com.mg.phonecall',app_package) package_name,concat(activity_type,trigger_event) user_type,trigger_type,trigger_time,activity_type_days activityDays
+        from auto_push_config
+        where status=1
+        and project_type=1
+        order by concat(activity_type,trigger_event)
+    </select>
+
+    <delete id="delLdAutoPushUserVideo" parameterType="map">
+        delete from ld_auto_push_user_video where date(`date`)=#{dd} and user_type=#{userType} and package_name=#{packageName}
+    </delete>
+
+    <insert id="insertLdAutoPushUserVideo" parameterType="map">
+        INSERT into table mysql_data_server.ld_auto_push_user_video (`date`, created_at, distinct_id, package_name, user_type, video_id)
+        select toDate(#{dd}) as date,
+               now(),
+               dd.distinct_id,
+               dd.package_name,
+               #{userType} user_type,
+               <choose>
+                   <when test="userType == 22001 or userType == 22002">
+                       argMax(video_id,play_num) video_id   /*获取播放量最高的来电秀*/
+                   </when>
+                   <otherwise>
+                       argMax(video_id,rand64()) video_id   /*获取随机视频id*/
+                   </otherwise>
+               </choose>
+        from (
+            SELECT a.distinct_id as distinct_id,
+                   a.package_name as package_name,
+                   a.user_type as user_type,
+                   <choose>
+                       <when test="userType == 11001 or userType == 11004">
+                           arrayJoin(bitmapToArray(bitmapAndnot(e.video_map, bitmapOr(c.videos, d.videos)))) as video_id
+                       </when>
+                       <when test="userType == 12001 or userType == 12002 or userType == 22001 or userType == 22002">
+                           arrayJoin(bitmapToArray(bitmapAndnot(f.video_map, bitmapOr(c.videos, d.videos)))) as video_id
+                       </when>
+                       <otherwise>
+                           arrayJoin(bitmapToArray(bitmapAndnot(b.video_map, bitmapOr(c.videos, d.videos)))) as video_id /*从push库中去掉用户游览过的来电秀和推送过的来电秀*/
+                       </otherwise>
+                   </choose>
+            from (
+                select 1 as join_key, distinct_id ,package_name ,user_type
+                from ld_push_user
+                where dd=#{dd}
+                and package_name =#{packageName}
+                and user_type=#{userType}
+                /*每个用户每天最多接受6条push，超过6条不接收*/
+                and distinct_id not in (
+                    select distinct_id
+                    from dw.dwd_push_log_disb
+                    where toDate(insert_time) = today()
+                    and push_method=2
+                    and if(app_package='xld','com.mg.phonecall',app_package) = #{packageName}
+                    group by distinct_id
+                    having count(1) >= 6
+                )
+            ) a
+            left join (
+                /*push视频库*/
+                select 1 as join_key,  groupBitmapState(id) as video_map
+                from ld_video_info i
+                where is_push = 1
+            ) b on a.join_key = b.join_key
+            left join (
+                /*去掉用户游览过的来电秀*/
+                select distinct_id,package_name,groupBitmapState(video_id ) as videos
+                from ld_push_user_actions
+                where 1=1
+                and package_name = #{packageName}
+                and into_fodder_detail=1
+                and type=1
+                group by distinct_id,package_name
+            ) c on a.distinct_id = c.distinct_id and a.package_name = c.package_name
+            left join (
+                /*去掉一周内已经推送过的来电秀*/
+                select distinct_id,
+                       if(app_package='xld','com.mg.phonecall',app_package) as package_name,
+                       groupBitmapState(toUInt64(ifnull(video_id,0))) as videos
+                from dw.dwd_push_log_disb
+                where 1=1
+                and insert_time >= addDays(now(),-7)
+                and package_name = #{packageName}
+                and push_method=2
+                and video_id is not null
+                group BY distinct_id,package_name
+            ) d on a.distinct_id = d.distinct_id and a.package_name = d.package_name
+            <if test="userType == 11001 or userType == 11004">
+                left join(
+                    /*根据浏览的分类权重，查询权重最高的分类*/
+                    select c.distinct_id,c.package_name, groupBitmapState(i.video_id) as video_map
+                    from (
+                        select argMin(c.id, c.sort) cat_id, l.distinct_id,l.package_name
+                        from ld_push_user_actions l,ld_video_cat c
+                        where 1=1
+                        and l.video_type = c.id
+                        and l.package_name = #{packageName}
+                        and into_fodder_detail=1
+                        and type=1
+                        group by l.distinct_id,l.package_name
+                    ) c
+                    inner join (
+                        select cat_id, id video_id
+                        from ld_video_info
+                        where is_push=1
+                    ) i on c.cat_id = i.cat_id
+                    group by c.distinct_id,c.package_name
+                ) e on a.distinct_id = e.distinct_id and a.package_name = e.package_name
+            </if>
+            <if test="userType == 12001 or userType == 12002 or userType == 22001 or userType == 22002">
+                left join(
+                    /*查询出用户已设置的来电分类(若设置了多个来电秀，则设置所有人来电的优先推送，若未设置所有人来电，则再按人数降序推)*/
+                    select c.distinct_id,c.package_name, groupBitmapState(i.video_id) as video_map
+                    from (
+                            select argMax(video_type, total_num) cat_id, distinct_id,package_name
+                            from (select l.distinct_id,package_name,video_type,sum(if(contact_type =1,100000,1)) total_num
+                                  from ld_push_user_actions l
+                                  where 1=1
+                                  and l.package_name = #{packageName}
+                                  and tab_confirm=1
+                                  and tab_type=1
+                                  and contact_type > 0
+                                  and video_type > 0
+                                  group by l.distinct_id,video_type,package_name
+                                  ) a
+                            group by distinct_id,package_name
+                    ) c
+                    inner join (
+                        select cat_id, id video_id
+                        from ld_video_info
+                        where is_push=1
+                    ) i on c.cat_id = i.cat_id
+                    group by c.distinct_id,c.package_name
+                ) f on a.distinct_id = f.distinct_id and a.package_name = f.package_name
+            </if>
+        ) dd
+        <if test="userType == 22001 or userType == 22002">
+            left join (
+                select i.id video_id, l.play_num
+                from ld_video_info i
+                left join (select video_id, count(1) play_num from ld_push_user_actions where into_fodder_detail=1 and type=1 group by video_id) l on i.id=l.video_id
+                where i.is_push=1
+            ) v1 on dd.video_id = v1.video_id
+        </if>
+        group by dd.distinct_id,dd.package_name
+    </insert>
+
+    <delete id="delOldLdAutoPushUserVideo" parameterType="java.lang.String">
+        <![CDATA[ delete from ld_auto_push_user_video where date(`date`) < #{dd} ]]>
+    </delete>
+
+    <select id="findLdAutoPushList" resultType="com.miguan.reportview.dto.PushVideoResultDto" parameterType="map">
+        select distinct_id, package_name, video_id
+        from ld_auto_push_user_video
+        where date = date(#{dd})
+        and user_type=#{userType}
+        and package_name=#{packageName}
+        limit #{startRow},#{endRow}
+    </select>
+
+    <select id="findLdAutoPushUserList" resultType="com.miguan.reportview.dto.PushVideoResultDto" parameterType="map">
+        select package_name , distinct_id
+        from ld_push_user lpu
+        where dd=#{dd}
+        and user_type = #{userType}
+        and package_name = #{packageName}
+        /*每个用户每天最多接受6条push，超过6条不接收*/
+        and distinct_id not in (
+            select distinct_id
+            from dw.dwd_push_log_disb
+            where toDate(insert_time) = today()
+            and push_method=2
+            and if(app_package='xld','com.mg.phonecall',app_package) as package_name = #{packageName}
+            group by distinct_id
+            having count(1) >= 6
+        )
+        limit #{startRow},#{endRow}
+    </select>
+
+    <delete id="deleteOldPushLdUser" parameterType="java.lang.String">
+        <![CDATA[ alter table ld_push_user delete where dd < #{dd} ]]>
+    </delete>
+
+    <select id="countVideoCollect" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select count(1) from ld_push_user_actions where video_collect =1 and video_id = #{videoId}
+    </select>
+
+    <select id="countVideoTabConfirm" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select count(1) from ld_push_user_actions where tab_confirm =1 and video_id = #{videoId}
+    </select>
+</mapper>

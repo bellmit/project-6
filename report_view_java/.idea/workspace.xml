@@ -1,0 +1,2178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="3e148228-4d26-4ef5-8d38-bacee8bb6a82" name="Default" comment="来电自动推送 bug修改">
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/encodings.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__ch_qos_logback_logback_classic_1_2_3.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__ch_qos_logback_logback_core_1_2_3.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__cn_afterturn_easypoi_annotation_4_1_2.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__cn_afterturn_easypoi_base_4_1_2.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__cn_afterturn_easypoi_spring_boot_starter_4_1_2.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__cn_afterturn_easypoi_web_4_1_2.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_alibaba_fastjson_1_2_56.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_amazonaws_aws_java_sdk_core_1_11_77.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_amazonaws_aws_java_sdk_kms_1_11_77.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_amazonaws_aws_java_sdk_s3_1_11_77.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_amazonaws_jmespath_java_1_11_77.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_baomidou_dynamic_datasource_spring_boot_starter_3_1_1.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_baomidou_mybatis_plus_3_2_0.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_baomidou_mybatis_plus_annotation_3_3_2.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_baomidou_mybatis_plus_boot_starter_3_2_0.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_baomidou_mybatis_plus_core_3_3_2.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_baomidou_mybatis_plus_extension_3_3_2.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_baomidou_mybatis_plus_generator_3_3_2.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_cgcg_cgcg_base_spring_boot_starter_1_3_1_rc7.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_cgcg_cgcg_context_spring_boot_starter_1_3_1_rc7.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_classmate_1_5_1.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_annotations_2_11_1.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_core_2_11_1.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_databind_2_11_1.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_dataformat_jackson_dataformat_cbor_2_11_1.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_datatype_jackson_datatype_jdk8_2_11_1.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_datatype_jackson_datatype_jsr310_2_11_1.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_module_jackson_module_parameter_names_2_11_1.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_jsqlparser_jsqlparser_2_0.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_pagehelper_pagehelper_5_1_11.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_pagehelper_pagehelper_spring_boot_autoconfigure_1_2_13.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_pagehelper_pagehelper_spring_boot_starter_1_2_13.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_virtuald_curvesapi_1_06.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_xiaoymin_swagger_bootstrap_ui_1_9_6.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_guava_guava_19_0.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_jayway_jsonpath_json_path_2_4_0.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_vaadin_external_google_android_json_0_0_20131108_vaadin1.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_zaxxer_HikariCP_3_4_5.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__commons_codec_commons_codec_1_14.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__commons_fileupload_commons_fileupload_1_3_3.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__commons_io_commons_io_2_2.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__commons_logging_commons_logging_1_1_3.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__io_lettuce_lettuce_core_5_3_2_RELEASE.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__io_netty_netty_buffer_4_1_51_Final.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__io_netty_netty_codec_4_1_51_Final.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__io_netty_netty_common_4_1_51_Final.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__io_netty_netty_handler_4_1_51_Final.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__io_netty_netty_resolver_4_1_51_Final.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__io_netty_netty_transport_4_1_51_Final.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__io_projectreactor_reactor_core_3_3_8_RELEASE.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__io_springfox_springfox_core_2_7_0.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__io_springfox_springfox_schema_2_7_0.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__io_springfox_springfox_spi_2_7_0.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__io_springfox_springfox_spring_web_2_7_0.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__io_springfox_springfox_swagger2_2_7_0.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__io_springfox_springfox_swagger_common_2_7_0.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__io_swagger_swagger_annotations_1_5_13.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__io_swagger_swagger_models_1_5_13.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__jakarta_activation_jakarta_activation_api_1_2_2.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__jakarta_annotation_jakarta_annotation_api_1_3_5.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__jakarta_xml_bind_jakarta_xml_bind_api_2_3_3.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__javax_activation_javax_activation_api_1_2_0.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__javax_validation_validation_api_2_0_1_Final.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__javax_xml_bind_jaxb_api_2_3_1.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__joda_time_joda_time_2_8_1.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__mysql_mysql_connector_java_8_0_21.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__net_bytebuddy_byte_buddy_1_10_13.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__net_bytebuddy_byte_buddy_agent_1_10_13.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__net_jpountz_lz4_lz4_1_3_0.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__net_minidev_accessors_smart_1_2.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__net_minidev_json_smart_2_3.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__ognl_ognl_3_2_6.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_collections4_4_3.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_compress_1_18.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_lang3_3_10.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_math3_3_6_1.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_pool2_2_8_0.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_httpcomponents_httpclient_4_5_12.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_httpcomponents_httpcore_4_4_13.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_httpcomponents_httpmime_4_5_12.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_logging_log4j_log4j_api_2_13_3.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_logging_log4j_log4j_to_slf4j_2_13_3.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_poi_poi_4_1_0.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_poi_poi_ooxml_4_1_0.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_poi_poi_ooxml_schemas_4_1_0.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_tomcat_embed_tomcat_embed_core_9_0_37.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_tomcat_embed_tomcat_embed_websocket_9_0_37.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_xmlbeans_xmlbeans_3_1_0.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apiguardian_apiguardian_api_1_1_0.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_aspectj_aspectjweaver_1_9_6.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_assertj_assertj_core_3_16_1.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_freemarker_freemarker_2_3_30.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_jakarta_el_3_0_3.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_hamcrest_hamcrest_2_2.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_javassist_javassist_3_25_0_GA.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_5_6_2.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_api_5_6_2.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_engine_5_6_2.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_params_5_6_2.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_platform_junit_platform_commons_1_6_2.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_platform_junit_platform_engine_1_6_2.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_mapstruct_mapstruct_1_1_0_Final.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_mockito_mockito_core_3_3_3.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_mockito_mockito_junit_jupiter_3_3_3.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_mongodb_mongo_java_driver_3_12_7.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_mybatis_mybatis_3_5_3.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_mybatis_mybatis_spring_2_0_4.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_mybatis_spring_boot_mybatis_spring_boot_autoconfigure_2_1_1.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_mybatis_spring_boot_mybatis_spring_boot_starter_2_1_1.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_objenesis_objenesis_2_6.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_opentest4j_opentest4j_1_2_0.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_ow2_asm_asm_5_0_4.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_projectlombok_lombok_1_18_12.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_reactivestreams_reactive_streams_1_0_3.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_reflections_reflections_0_9_11.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_skyscreamer_jsonassert_1_5_0.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_slf4j_jul_to_slf4j_1_7_30.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_slf4j_slf4j_api_1_7_30.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_2_3_2_RELEASE.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_autoconfigure_2_3_2_RELEASE.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_configuration_processor_2_3_2_RELEASE.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_devtools_2_3_2_RELEASE.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_2_3_2_RELEASE.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_aop_2_3_2_RELEASE.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_data_mongodb_2_3_2_RELEASE.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_data_redis_2_3_2_RELEASE.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_jdbc_2_3_2_RELEASE.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_json_2_3_2_RELEASE.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_logging_2_3_2_RELEASE.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_test_2_3_2_RELEASE.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_tomcat_2_3_2_RELEASE.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_web_2_3_2_RELEASE.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_test_2_3_2_RELEASE.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_test_autoconfigure_2_3_2_RELEASE.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_data_spring_data_commons_2_3_2_RELEASE.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_data_spring_data_keyvalue_2_3_2_RELEASE.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_data_spring_data_mongodb_2_1_8_RELEASE.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_data_spring_data_redis_2_3_2_RELEASE.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_plugin_spring_plugin_core_1_2_0_RELEASE.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_plugin_spring_plugin_metadata_1_2_0_RELEASE.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_aop_5_2_8_RELEASE.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_beans_5_2_8_RELEASE.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_context_5_2_8_RELEASE.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_context_support_5_2_8_RELEASE.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_core_5_2_8_RELEASE.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_expression_5_2_8_RELEASE.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_jcl_5_2_8_RELEASE.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_jdbc_5_2_8_RELEASE.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_oxm_5_2_8_RELEASE.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_test_5_2_8_RELEASE.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_tx_5_2_8_RELEASE.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_web_5_2_8_RELEASE.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_webmvc_5_2_8_RELEASE.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_xmlunit_xmlunit_core_2_7_0.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_yaml_snakeyaml_1_26.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__redis_clients_jedis_3_3_0.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__ru_yandex_clickhouse_clickhouse_jdbc_0_2_4.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__software_amazon_ion_ion_java_1_0_1.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__tool_common_util_1_2_0.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
+    </list>
+    <ignored path="$PROJECT_DIR$/target/" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_DATA_SOURCES" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_TABLE_DETAILS" value="true" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+    <expand />
+    <select />
+  </component>
+  <component name="FavoritesManager">
+    <favorites_list name="report_view_java" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="application.yml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/resources/application.yml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1197">
+              <caret line="63" column="7" lean-forward="false" selection-start-line="63" selection-start-column="0" selection-end-line="63" selection-end-column="7" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PushLdServiceImpl.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/service/impl/PushLdServiceImpl.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="893">
+              <caret line="58" column="54" lean-forward="false" selection-start-line="58" selection-start-column="54" selection-end-line="58" selection-end-column="54" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="VideoInfoTask.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/task/VideoInfoTask.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="371">
+              <caret line="67" column="17" lean-forward="true" selection-start-line="67" selection-start-column="17" selection-end-line="67" selection-end-column="17" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="IVideosService.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/service/IVideosService.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="741">
+              <caret line="42" column="9" lean-forward="false" selection-start-line="42" selection-start-column="9" selection-end-line="42" selection-end-column="9" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PushVideoTask.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/task/PushVideoTask.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="513">
+              <caret line="46" column="74" lean-forward="false" selection-start-line="46" selection-start-column="44" selection-end-line="46" selection-end-column="74" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SyncDataController.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/controller/common/SyncDataController.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="3287">
+              <caret line="193" column="79" lean-forward="false" selection-start-line="193" selection-start-column="79" selection-end-line="193" selection-end-column="79" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="VideosServiceImpl.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/service/impl/VideosServiceImpl.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="2546">
+              <caret line="163" column="53" lean-forward="false" selection-start-line="163" selection-start-column="53" selection-end-line="163" selection-end-column="53" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="FirstVideosMapper.xml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/resources/mapper/FirstVideosMapper.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="6498">
+              <caret line="342" column="0" lean-forward="false" selection-start-line="342" selection-start-column="0" selection-end-line="349" selection-end-column="13" />
+              <folding>
+                <element signature="e#3024#3028#0" expanded="true" />
+                <marker date="1616381876641" expanded="true" signature="328:566" ph="select count... " />
+                <marker date="1616381876641" expanded="true" signature="691:906" ph="select count... " />
+                <marker date="1616381876641" expanded="true" signature="1011:1127" ph="select count... " />
+                <marker date="1616381876641" expanded="true" signature="1262:1472" ph="select cat_i... " />
+                <marker date="1616381876641" expanded="true" signature="1607:1818" ph="select cat_i... " />
+                <marker date="1616381876641" expanded="true" signature="1947:2079" ph="select cat_i... " />
+                <marker date="1616381876641" expanded="true" signature="2214:2354" ph="select cat_i... " />
+                <marker date="1616381876641" expanded="true" signature="2450:2488" ph="select max(u... video_info" />
+                <marker date="1616381876641" expanded="true" signature="2609:2744" ph="select count... first_videos" />
+                <marker date="1616381876641" expanded="true" signature="2873:3085" ph="select v.*, first_videos" />
+                <marker date="1616381876641" expanded="true" signature="3178:3306" ph="alter table video_info... " />
+                <marker date="1616381876641" expanded="true" signature="6694:6742" ph="alter table video_detail... " />
+                <marker date="1616381876641" expanded="true" signature="6838:11053" ph="insert into video_detail... " />
+                <marker date="1616381876641" expanded="true" signature="7200:11053" ph="select id,a.... sipHash64" />
+                <marker date="1616381876641" expanded="true" signature="7659:10293" ph="select sipHa... dw_video_actions_aggregation" />
+                <marker date="1616381876641" expanded="true" signature="10331:10689" ph="select dd, v... dw_video_actions_aggregation" />
+                <marker date="1616381876641" expanded="true" signature="10768:11028" ph="select dd, s... dw_video_actions_aggregation" />
+                <marker date="1616381876641" expanded="true" signature="11259:11275" ph="/*上线日期是行为日期的... " />
+                <marker date="1616381876641" expanded="true" signature="11382:11398" ph="/*进文日期是行为日期的... " />
+                <marker date="1616381876641" expanded="true" signature="11629:11645" ph="/*上线日期是行为日期的... " />
+                <marker date="1616381876641" expanded="true" signature="11871:11887" ph="/*进文日期是行为日期的... " />
+                <marker date="1616381876641" expanded="true" signature="12714:15148" ph="select dd, t... " />
+                <marker date="1616381876641" expanded="true" signature="15287:16562" ph="select count... video_detail" />
+                <marker date="1616381876641" expanded="true" signature="16742:18609" ph="select a.*,v... dd" />
+                <marker date="1616381876641" expanded="true" signature="16840:17609" ph="select dd, $... " />
+                <marker date="1616381876641" expanded="true" signature="17648:18479" ph="select dd, $... " />
+                <marker date="1616381876641" expanded="true" signature="18707:18748" ph="select max(u... ld_video_info" />
+                <marker date="1616381876641" expanded="true" signature="18871:19020" ph="select count... videos" />
+                <marker date="1616381876641" expanded="true" signature="19148:19378" ph="select v.*, videos" />
+                <marker date="1616381876641" expanded="true" signature="19473:19604" ph="alter table ld_video_info... " />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PushLdMapper.xml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/resources/mapper/PushLdMapper.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="399">
+              <caret line="21" column="16" lean-forward="false" selection-start-line="21" selection-start-column="16" selection-end-line="21" selection-end-column="16" />
+              <folding>
+                <marker date="1616382092366" expanded="true" signature="273:433" ph="alter table ld_video_info... " />
+                <marker date="1616382092366" expanded="true" signature="528:875" ph="select count... video_id" />
+                <marker date="1616382092366" expanded="true" signature="575:860" ph="select l.vid... ld_push_user_actions" />
+                <marker date="1616382092366" expanded="true" signature="693:738" ph="select id fr... ld_video_info" />
+                <marker date="1616382092366" expanded="true" signature="998:1282" ph="select l.vid... ld_push_user_actions" />
+                <marker date="1616382092366" expanded="true" signature="1100:1145" ph="select id fr... ld_video_info" />
+                <marker date="1616382092366" expanded="true" signature="1340:1363" ph="delete from push_ld_mid... " />
+                <marker date="1616382092366" expanded="true" signature="1730:1810" ph="update videos... " />
+                <marker date="1616382092366" expanded="true" signature="2284:2359" ph="select id, n... videos_cat" />
+                <marker date="1616382092366" expanded="true" signature="2418:2459" ph="alter table ld_video_cat... " />
+                <marker date="1616382092366" expanded="true" signature="2849:2955" ph="alter table ld_push_user... " />
+                <marker date="1616382092366" expanded="true" signature="3283:3482" ph="select DISTI... ld_push_user_actions" />
+                <marker date="1616382092366" expanded="true" signature="4674:4872" ph="select DISTI... ld_push_user_actions" />
+                <marker date="1616382092366" expanded="true" signature="5099:5348" ph="select disti... ld_push_user" />
+                <marker date="1616382092366" expanded="true" signature="5850:6968" ph="insert into ld_push_user... " />
+                <marker date="1616382092366" expanded="true" signature="5935:6968" ph="select ##{dd}... ld_push_user_actions" />
+                <marker date="1616382092366" expanded="true" signature="6089:6305" ph="select DISTI... ld_push_user_actions" />
+                <marker date="1616382092366" expanded="true" signature="6529:6769" ph="select disti... ld_push_user" />
+                <marker date="1616382092366" expanded="true" signature="7296:7567" ph="select DISTI... ld_push_user_actions" />
+                <marker date="1616382092366" expanded="true" signature="7682:7922" ph="select disti... ld_push_user" />
+                <marker date="1616382092366" expanded="true" signature="8582:8628" ph="/*权限在上线后，被拆分... " />
+                <marker date="1616382092366" expanded="true" signature="8691:8728" ph="/*已开通权限(onli... " />
+                <marker date="1616382092366" expanded="true" signature="9552:9780" ph="select disti... ld_push_user" />
+                <marker date="1616382092366" expanded="true" signature="9927:9942" ph="/*不活跃天数在配置天数... " />
+                <marker date="1616382092366" expanded="true" signature="10703:10719" ph="/*签到推送-新用户-未... " />
+                <marker date="1616382092366" expanded="true" signature="10728:11531" ph="insert into ld_push_user... " />
+                <marker date="1616382092366" expanded="true" signature="10813:10997" ph="select ##{dd}... dwd_ld_user_actions_disb" />
+                <marker date="1616382092366" expanded="true" signature="11626:11644" ph="/*签到推送-活跃用户-... " />
+                <marker date="1616382092366" expanded="true" signature="11653:12375" ph="insert into ld_push_user... " />
+                <marker date="1616382092366" expanded="true" signature="11738:11922" ph="select ##{dd}... dwd_ld_user_actions_disb" />
+                <marker date="1616382092366" expanded="true" signature="12462:12507" ph="/*签到推送-活跃用户-... " />
+                <marker date="1616382092366" expanded="true" signature="12516:13471" ph="insert into ld_push_user... " />
+                <marker date="1616382092366" expanded="true" signature="12601:12785" ph="select ##{dd}... dwd_ld_user_actions_disb" />
+                <marker date="1616382092366" expanded="true" signature="13560:13586" ph="/*签到推送-活跃用户-... " />
+                <marker date="1616382092366" expanded="true" signature="13595:14332" ph="insert into ld_push_user... " />
+                <marker date="1616382092366" expanded="true" signature="13680:13864" ph="select ##{dd}... dwd_ld_user_actions_disb" />
+                <marker date="1616382092366" expanded="true" signature="14427:14440" ph="/*活动推送-新增用户*... " />
+                <marker date="1616382092366" expanded="true" signature="14449:15255" ph="insert into ld_push_user... " />
+                <marker date="1616382092366" expanded="true" signature="14534:14718" ph="select ##{dd}... dwd_ld_user_actions_disb" />
+                <marker date="1616382092366" expanded="true" signature="15354:15376" ph="/*活动推送-活跃用户-... " />
+                <marker date="1616382092366" expanded="true" signature="15385:16137" ph="insert into ld_push_user... " />
+                <marker date="1616382092366" expanded="true" signature="15470:15654" ph="select ##{dd}... dwd_ld_user_actions_disb" />
+                <marker date="1616382092366" expanded="true" signature="16225:16250" ph="/*活动推送-活跃用户-... " />
+                <marker date="1616382092366" expanded="true" signature="16259:17099" ph="insert into ld_push_user... " />
+                <marker date="1616382092366" expanded="true" signature="16344:16528" ph="select ##{dd}... dwd_ld_user_actions_disb" />
+                <marker date="1616382092366" expanded="true" signature="17174:17561" ph="insert into ld_push_user... " />
+                <marker date="1616382092366" expanded="true" signature="17259:17561" ph="select ##{dd}... ld_push_user_actions" />
+                <marker date="1616382092366" expanded="true" signature="17638:18037" ph="insert into ld_push_user... " />
+                <marker date="1616382092366" expanded="true" signature="17723:18037" ph="select ##{dd}... ld_push_user_actions" />
+                <marker date="1616382092366" expanded="true" signature="18117:18474" ph="insert into ld_push_user... " />
+                <marker date="1616382092366" expanded="true" signature="18202:18474" ph="select ##{dd}... ld_push_user_actions" />
+                <marker date="1616382092366" expanded="true" signature="18475:18490" ph="/*不活跃天数在配置天数... " />
+                <marker date="1616382092366" expanded="true" signature="18603:18912" ph="select if(ap... auto_push_config" />
+                <marker date="1616382092366" expanded="true" signature="18997:19115" ph="delete from ld_auto_push_user_video... " />
+                <marker date="1616382092366" expanded="true" signature="19203:19331" ph="INSERT into table... " />
+                <marker date="1616382092366" expanded="true" signature="19340:25993" ph="select toDat... " />
+                <marker date="1616382092366" expanded="true" signature="19649:19664" ph="/*获取播放量最高的来电... " />
+                <marker date="1616382092366" expanded="true" signature="20695:20725" ph="/*从push库中去掉用... " />
+                <marker date="1616382092366" expanded="true" signature="21057:21085" ph="/*每个用户每天最多接受... " />
+                <marker date="1616382092366" expanded="true" signature="21795:21810" ph="/*去掉用户游览过的来电... " />
+                <marker date="1616382092366" expanded="true" signature="22258:22276" ph="/*去掉一周内已经推送过... " />
+                <marker date="1616382092366" expanded="true" signature="22977:23000" ph="/*根据浏览的分类权重，... " />
+                <marker date="1616382092366" expanded="true" signature="24126:24187" ph="/*查询出用户已设置的来... " />
+                <marker date="1616382092366" expanded="true" signature="26104:26166" ph="delete from ld_auto_push_user_video... " />
+                <marker date="1616382092366" expanded="true" signature="26309:26531" ph="select disti... ld_auto_push_user_video" />
+                <marker date="1616382092366" expanded="true" signature="26674:27269" ph="select packa... ld_push_user" />
+                <marker date="1616382092366" expanded="true" signature="26847:26875" ph="/*每个用户每天最多接受... " />
+                <marker date="1616382092366" expanded="true" signature="27374:27422" ph="alter table ld_push_user... " />
+                <marker date="1616382092366" expanded="true" signature="27551:27641" ph="select count... ld_push_user_actions" />
+                <marker date="1616382092366" expanded="true" signature="27769:27857" ph="select count... ld_push_user_actions" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="FirstVideosMapper.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/mapper/FirstVideosMapper.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1007">
+              <caret line="67" column="9" lean-forward="false" selection-start-line="67" selection-start-column="9" selection-end-line="67" selection-end-column="9" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>width_height_text</find>
+      <find>onlineDate</find>
+      <find>look</find>
+      <find>mybatis</find>
+      <find>日活</find>
+      <find>defaultValue</find>
+      <find>首页游览</find>
+      <find>from ld_video_info v</find>
+      <find>batchSavePushLdMid</find>
+      <find>updatePushLdPlayCount</find>
+      <find>updatePushVideosNums</find>
+      <find>videosService</find>
+      <find>video-detail</find>
+      <find>video-info</find>
+      <find>findMaxVideoUpdatedTime</find>
+      <find>queryNewVideos</find>
+      <find>findLdVideosCatList</find>
+      <find>findMaxLdVideoUpdatedTime</find>
+      <find>countNewLdVideos</find>
+      <find>deleteLdVideoInfoById</find>
+      <find>batchInsertUpdateLdVideo</find>
+      <find>syncVideoDetail</find>
+      <find>deleteVideoDetail</find>
+      <find>syncLdVideoCat</find>
+      <find>countNewVideos</find>
+      <find>report-db</find>
+      <find>queryNewLdVideos</find>
+      <find>batchSaveVideoDetail</find>
+      <find>listPushLd</find>
+      <find>deleteVideoInfoById</find>
+    </findStrings>
+    <replaceStrings>
+      <replace>int</replace>
+      <replace>filterUserTypeList</replace>
+      <replace>10</replace>
+      <replace>${channelField}</replace>
+      <replace>Minute</replace>
+      <replace>#{startDm} and #{endDm}</replace>
+      <replace>#{startTime}</replace>
+      <replace>#{dt}</replace>
+      <replace>#{yesdt}</replace>
+      <replace>#{packageName}</replace>
+      <replace>#{userType}</replace>
+    </replaceStrings>
+    <dirStrings>
+      <dir>E:\idea_workspace\report_view_java\src\main\java\com\miguan\reportview\dto</dir>
+    </dirStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="localdev" />
+      </map>
+    </option>
+  </component>
+  <component name="GradleLocalSettings">
+    <option name="externalProjectsViewState">
+      <projects_view />
+    </option>
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/src/main/java/com/miguan/reportview/service/IChannelDataService.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/miguan/reportview/vo/AdClickNumVo.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/miguan/reportview/controller/ChannelController.java" />
+        <option value="$PROJECT_DIR$/src/main/resources/mapper/DwVideoActionsMapper.xml" />
+        <option value="$PROJECT_DIR$/src/main/java/com/miguan/reportview/mapper/DwVideoActionsMapper.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/miguan/reportview/entity/RpTotalMinute.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/miguan/reportview/vo/LdRpTotalMinute.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/miguan/reportview/service/SyncRpTotalDataService.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/miguan/reportview/mapper/SyncRpTotalDataMapper.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/miguan/reportview/service/impl/SyncRpTotalDataServiceImpl.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/miguan/reportview/vo/RealTimeStaVo.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/miguan/reportview/dto/ChannelDetailDto.java" />
+        <option value="$PROJECT_DIR$/src/main/resources/mapper/ChannelDetailMapper.xml" />
+        <option value="$PROJECT_DIR$/src/main/java/com/miguan/reportview/vo/LdRealTimeStaVo.java" />
+        <option value="$PROJECT_DIR$/src/main/resources/mapper/RpTotalHourMapper.xml" />
+        <option value="$PROJECT_DIR$/src/main/java/com/miguan/reportview/mapper/RpTotalHourMapper.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/miguan/reportview/service/impl/RealTimeStatisticsServiceImpl.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/miguan/reportview/service/IRealTimeStatisticsService.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/miguan/reportview/controller/RealTimeStatisticsController.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/miguan/reportview/common/enmus/LdPushUserEnmu.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/miguan/reportview/task/RpTotalDataTask.java" />
+        <option value="$PROJECT_DIR$/src/main/resources/mapper/SyncRpTotalDataMapper.xml" />
+        <option value="$PROJECT_DIR$/src/main/java/com/miguan/reportview/service/impl/UserKeepServiceImpl.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/miguan/reportview/task/RpUserKeepTask.java" />
+        <option value="$PROJECT_DIR$/src/main/resources/application.yml" />
+        <option value="$PROJECT_DIR$/src/main/java/com/miguan/reportview/vo/FirstVideosVo.java" />
+        <option value="$PROJECT_DIR$/src/main/resources/mapper/FirstVideosMapper.xml" />
+        <option value="$PROJECT_DIR$/src/main/java/com/miguan/reportview/service/ContentQualityService.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/miguan/reportview/service/impl/ContentQualityServiceImpl.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/miguan/reportview/dto/OnlineVideoDto.java" />
+        <option value="$PROJECT_DIR$/src/main/resources/mapper/ContentQualityMapper.xml" />
+        <option value="$PROJECT_DIR$/src/main/java/com/miguan/reportview/controller/ContentQualityController.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/miguan/reportview/service/impl/AdBehaviorServiceImpl.java" />
+        <option value="$PROJECT_DIR$/src/main/resources/mapper/SyncUserContentMapper.xml" />
+        <option value="$PROJECT_DIR$/src/main/java/com/miguan/reportview/controller/PushVideoController.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/miguan/reportview/service/impl/PushLdServiceImpl.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/miguan/reportview/controller/common/TaskController.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/miguan/reportview/controller/common/SyncDataController.java" />
+        <option value="$PROJECT_DIR$/src/main/resources/application-localdev.yml" />
+        <option value="$PROJECT_DIR$/src/main/resources/application-dev.yml" />
+        <option value="$PROJECT_DIR$/src/main/resources/mapper/PushVideoMapper.xml" />
+        <option value="$PROJECT_DIR$/src/main/java/com/miguan/reportview/vo/PushLdConfigVo.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/miguan/reportview/mapper/PushLdMapper.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/miguan/reportview/mapper/PushVideoMapper.java" />
+        <option value="$PROJECT_DIR$/src/main/resources/application-prod.yml" />
+        <option value="$PROJECT_DIR$/src/main/java/com/miguan/reportview/service/impl/PushVideoServiceImpl.java" />
+        <option value="$PROJECT_DIR$/src/main/resources/application-local.yml" />
+        <option value="$PROJECT_DIR$/src/main/java/com/miguan/reportview/task/PushLdTask.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/miguan/reportview/task/PushVideoTask.java" />
+        <option value="$PROJECT_DIR$/src/main/resources/mapper/PushLdMapper.xml" />
+        <option value="$PROJECT_DIR$/src/main/java/com/miguan/reportview/task/VideoInfoTask.java" />
+      </list>
+    </option>
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="importingSettings">
+      <MavenImportingSettings>
+        <option name="importAutomatically" value="true" />
+      </MavenImportingSettings>
+    </option>
+  </component>
+  <component name="MavenProjectNavigator">
+    <treeState>
+      <expand />
+      <select />
+    </treeState>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="978" />
+    <option name="y" value="224" />
+    <option name="width" value="862" />
+    <option name="height" value="604" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+      <manualOrder />
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="PackagesPane" />
+      <pane id="AndroidView" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="report_view_java" type="b2602c69:ProjectViewProjectNode" />
+              <item name="report_view_java" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="report_view_java" type="b2602c69:ProjectViewProjectNode" />
+              <item name="report_view_java" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="report_view_java" type="b2602c69:ProjectViewProjectNode" />
+              <item name="report_view_java" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="report_view_java" type="b2602c69:ProjectViewProjectNode" />
+              <item name="report_view_java" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="report_view_java" type="b2602c69:ProjectViewProjectNode" />
+              <item name="report_view_java" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="reportview" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="report_view_java" type="b2602c69:ProjectViewProjectNode" />
+              <item name="report_view_java" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="reportview" type="462c0819:PsiDirectoryNode" />
+              <item name="common" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="report_view_java" type="b2602c69:ProjectViewProjectNode" />
+              <item name="report_view_java" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="reportview" type="462c0819:PsiDirectoryNode" />
+              <item name="controller" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="report_view_java" type="b2602c69:ProjectViewProjectNode" />
+              <item name="report_view_java" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="reportview" type="462c0819:PsiDirectoryNode" />
+              <item name="controller" type="462c0819:PsiDirectoryNode" />
+              <item name="common" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="report_view_java" type="b2602c69:ProjectViewProjectNode" />
+              <item name="report_view_java" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="reportview" type="462c0819:PsiDirectoryNode" />
+              <item name="task" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="report_view_java" type="b2602c69:ProjectViewProjectNode" />
+              <item name="report_view_java" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="reportview" type="462c0819:PsiDirectoryNode" />
+              <item name="vo" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="report_view_java" type="b2602c69:ProjectViewProjectNode" />
+              <item name="report_view_java" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="report_view_java" type="b2602c69:ProjectViewProjectNode" />
+              <item name="report_view_java" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="mapper" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+      <pane id="Scratches" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="project.structure.last.edited" value="Project" />
+    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.0" />
+    <property name="RequestMappingsPanelWidth0" value="75" />
+    <property name="RequestMappingsPanelOrder0" value="0" />
+    <property name="RequestMappingsPanelWidth1" value="75" />
+    <property name="RequestMappingsPanelOrder1" value="1" />
+    <property name="RequestMappingsPanelWidth2" value="75" />
+    <property name="RequestMappingsPanelOrder2" value="2" />
+    <property name="Git.Branch.Popup.ShowAllRemotes" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.miguan.reportview.vo" />
+      <recent name="com.miguan.reportview.entity" />
+      <recent name="com.miguan.reportview.dto" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Spring Boot.ReportViewApplication">
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <module />
+    </configuration>
+    <configuration name="AdBehaviorServiceImpl" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="com.miguan.reportview.service.impl.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="MAIN_CLASS_NAME" value="com.miguan.reportview.service.impl.AdBehaviorServiceImpl" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="report_view_java" />
+      <envs />
+    </configuration>
+    <configuration default="true" type="Application" factoryName="Application">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="" />
+      <envs />
+    </configuration>
+    <configuration default="true" type="JUnit" factoryName="JUnit">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="%MODULE_WORKING_DIR%" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <envs />
+      <patterns />
+    </configuration>
+    <configuration default="true" type="Remote" factoryName="Remote">
+      <option name="USE_SOCKET_TRANSPORT" value="true" />
+      <option name="SERVER_MODE" value="false" />
+      <option name="SHMEM_ADDRESS" value="javadebug" />
+      <option name="HOST" value="localhost" />
+      <option name="PORT" value="5005" />
+    </configuration>
+    <configuration name="ReportViewApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.miguan.reportview.ReportViewApplication" />
+      <module name="report_view_java" />
+      <envs />
+    </configuration>
+    <configuration default="true" type="TestNG" factoryName="TestNG">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="SUITE_NAME" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="GROUP_NAME" />
+      <option name="TEST_OBJECT" value="CLASS" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="%MODULE_WORKING_DIR%" />
+      <option name="OUTPUT_DIRECTORY" />
+      <option name="ANNOTATION_TYPE" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <option name="USE_DEFAULT_REPORTERS" value="false" />
+      <option name="PROPERTIES_FILE" />
+      <envs />
+      <properties />
+      <listeners />
+    </configuration>
+    <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
+      <module name="" />
+      <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
+      <option name="PROGRAM_PARAMETERS" />
+      <predefined_log_file id="idea.log" enabled="true" />
+    </configuration>
+    <list size="2">
+      <item index="0" class="java.lang.String" itemvalue="Spring Boot.ReportViewApplication" />
+      <item index="1" class="java.lang.String" itemvalue="Application.AdBehaviorServiceImpl" />
+    </list>
+    <recent_temporary>
+      <list size="5">
+        <item index="0" class="java.lang.String" itemvalue="Application.AdBehaviorServiceImpl" />
+        <item index="1" class="java.lang.String" itemvalue="Application.AdBehaviorServiceImpl" />
+        <item index="2" class="java.lang.String" itemvalue="Application.AdBehaviorServiceImpl" />
+        <item index="3" class="java.lang.String" itemvalue="Application.AdBehaviorServiceImpl" />
+        <item index="4" class="java.lang.String" itemvalue="Application.AdBehaviorServiceImpl" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false">
+    <option name="remove_strategy" value="false" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="3e148228-4d26-4ef5-8d38-bacee8bb6a82" name="Default" comment="" />
+      <created>1602825693416</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1602825693416</updated>
+      <workItem from="1602825695130" duration="17555000" />
+      <workItem from="1603069268204" duration="93547000" />
+      <workItem from="1603677709467" duration="79505000" />
+      <workItem from="1603894354444" duration="1627000" />
+      <workItem from="1604279146418" duration="39289000" />
+      <workItem from="1604460586660" duration="1613000" />
+      <workItem from="1604468557520" duration="9815000" />
+      <workItem from="1604540968901" duration="7210000" />
+      <workItem from="1604568730588" duration="9974000" />
+      <workItem from="1604643577460" duration="3633000" />
+      <workItem from="1604892454723" duration="599000" />
+      <workItem from="1604908467750" duration="2033000" />
+      <workItem from="1604918409568" duration="13011000" />
+      <workItem from="1605063369291" duration="3099000" />
+      <workItem from="1605087181082" duration="40000" />
+      <workItem from="1605160741889" duration="1120000" />
+      <workItem from="1605162181257" duration="683000" />
+      <workItem from="1605165267600" duration="27000" />
+      <workItem from="1605167674432" duration="641000" />
+      <workItem from="1605173545661" duration="803000" />
+      <workItem from="1605237714642" duration="14000" />
+      <workItem from="1605513134172" duration="7047000" />
+      <workItem from="1605599732772" duration="76000" />
+      <workItem from="1605661655853" duration="180000" />
+      <workItem from="1605683342852" duration="296000" />
+      <workItem from="1605684859175" duration="39000" />
+      <workItem from="1605686808281" duration="365000" />
+      <workItem from="1605838019844" duration="134000" />
+      <workItem from="1606097125172" duration="28000" />
+      <workItem from="1606112606923" duration="902000" />
+      <workItem from="1606113633697" duration="8000" />
+      <workItem from="1606186466210" duration="96000" />
+      <workItem from="1606187176886" duration="109000" />
+      <workItem from="1606198895114" duration="159000" />
+      <workItem from="1606204227196" duration="12000" />
+      <workItem from="1606214147399" duration="1658000" />
+      <workItem from="1606295595490" duration="97000" />
+      <workItem from="1606297965289" duration="619000" />
+      <workItem from="1606355187356" duration="156000" />
+      <workItem from="1606373630977" duration="269000" />
+      <workItem from="1606439742760" duration="215000" />
+      <workItem from="1606440387821" duration="40000" />
+      <workItem from="1606444628866" duration="710000" />
+      <workItem from="1606715459555" duration="1073000" />
+      <workItem from="1606716971475" duration="64000" />
+      <workItem from="1606731112516" duration="645000" />
+      <workItem from="1606793541483" duration="648000" />
+      <workItem from="1607305755600" duration="5816000" />
+      <workItem from="1607325302286" duration="1255000" />
+      <workItem from="1607327871182" duration="835000" />
+      <workItem from="1607390131687" duration="2345000" />
+      <workItem from="1607401785023" duration="1006000" />
+      <workItem from="1607409960234" duration="30718000" />
+      <workItem from="1607515109354" duration="22918000" />
+      <workItem from="1607593101383" duration="6014000" />
+      <workItem from="1607657937414" duration="8734000" />
+      <workItem from="1607676810622" duration="3631000" />
+      <workItem from="1607683046327" duration="48000" />
+      <workItem from="1608271900670" duration="961000" />
+      <workItem from="1608281703103" duration="3265000" />
+      <workItem from="1608512791654" duration="61904000" />
+      <workItem from="1609117456101" duration="1359000" />
+      <workItem from="1609203219064" duration="1257000" />
+      <workItem from="1609208788346" duration="2050000" />
+      <workItem from="1609234953202" duration="10000" />
+      <workItem from="1609319769792" duration="861000" />
+      <workItem from="1609833788585" duration="1927000" />
+      <workItem from="1610504467638" duration="313000" />
+      <workItem from="1610616741108" duration="667000" />
+      <workItem from="1610941521042" duration="89000" />
+      <workItem from="1611046802853" duration="3523000" />
+      <workItem from="1611215856048" duration="545000" />
+      <workItem from="1611220881080" duration="2112000" />
+      <workItem from="1611223184395" duration="256000" />
+      <workItem from="1611537848967" duration="3596000" />
+      <workItem from="1611716020522" duration="614000" />
+      <workItem from="1611899348756" duration="740000" />
+      <workItem from="1612167484443" duration="598000" />
+      <workItem from="1612170035457" duration="1242000" />
+      <workItem from="1612338117864" duration="733000" />
+      <workItem from="1612343770876" duration="94000" />
+      <workItem from="1612778769897" duration="462000" />
+      <workItem from="1614050623221" duration="781000" />
+      <workItem from="1614059462137" duration="2122000" />
+      <workItem from="1614130822870" duration="1200000" />
+      <workItem from="1614564463323" duration="67000" />
+      <workItem from="1614837274391" duration="869000" />
+      <workItem from="1615268933089" duration="718000" />
+      <workItem from="1616379808395" duration="2359000" />
+      <workItem from="1616383192681" duration="742000" />
+      <workItem from="1616461656207" duration="6657000" />
+      <workItem from="1616482009411" duration="1000" />
+      <workItem from="1616638236539" duration="823000" />
+    </task>
+    <task id="LOCAL-00062" summary="视频自动推送sql优化">
+      <created>1604486882060</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1604486882060</updated>
+    </task>
+    <task id="LOCAL-00063" summary="内容质量增加敏感词需求提价">
+      <created>1604997408517</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1604997408518</updated>
+    </task>
+    <task id="LOCAL-00064" summary="内容质量增加敏感词需求提价">
+      <created>1604998111316</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1604998111316</updated>
+    </task>
+    <task id="LOCAL-00065" summary="内容质量增加敏感词需求提价">
+      <created>1604998905532</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1604998905534</updated>
+    </task>
+    <task id="LOCAL-00066" summary="应技术部苏红及要求，同步推送记录的接口入参改成distinct _ID1,distinct _ID2,distinct _ID3:videoId1:appPackage1；格式">
+      <created>1605514498047</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1605514498049</updated>
+    </task>
+    <task id="LOCAL-00067" summary="测试需要，暂时停掉定时器">
+      <created>1606355267940</created>
+      <option name="number" value="00067" />
+      <option name="presentableId" value="LOCAL-00067" />
+      <option name="project" value="LOCAL" />
+      <updated>1606355267941</updated>
+    </task>
+    <task id="LOCAL-00068" summary="自动推送定时器恢复，测试环境">
+      <created>1606373691604</created>
+      <option name="number" value="00068" />
+      <option name="presentableId" value="LOCAL-00068" />
+      <option name="project" value="LOCAL" />
+      <updated>1606373691604</updated>
+    </task>
+    <task id="LOCAL-00069" summary="自动推送bug修改，推送重复数据">
+      <created>1607308980156</created>
+      <option name="number" value="00069" />
+      <option name="presentableId" value="LOCAL-00069" />
+      <option name="project" value="LOCAL" />
+      <updated>1607308980157</updated>
+    </task>
+    <task id="LOCAL-00070" summary="来电自动推送bug修改">
+      <created>1607311869722</created>
+      <option name="number" value="00070" />
+      <option name="presentableId" value="LOCAL-00070" />
+      <option name="project" value="LOCAL" />
+      <updated>1607311869722</updated>
+    </task>
+    <task id="LOCAL-00071" summary="来电自动推送bug修改">
+      <created>1607312018253</created>
+      <option name="number" value="00071" />
+      <option name="presentableId" value="LOCAL-00071" />
+      <option name="project" value="LOCAL" />
+      <updated>1607312018253</updated>
+    </task>
+    <task id="LOCAL-00072" summary="自动推送优化">
+      <created>1607424740014</created>
+      <option name="number" value="00072" />
+      <option name="presentableId" value="LOCAL-00072" />
+      <option name="project" value="LOCAL" />
+      <updated>1607424740014</updated>
+    </task>
+    <task id="LOCAL-00073" summary="视频自动推送方案修改">
+      <created>1607498111566</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
+      <option name="project" value="LOCAL" />
+      <updated>1607498111566</updated>
+    </task>
+    <task id="LOCAL-00074" summary="视频自动推送方案修改">
+      <created>1607504825480</created>
+      <option name="number" value="00074" />
+      <option name="presentableId" value="LOCAL-00074" />
+      <option name="project" value="LOCAL" />
+      <updated>1607504825480</updated>
+    </task>
+    <task id="LOCAL-00075" summary="视频自动推送方案修改">
+      <created>1607561140367</created>
+      <option name="number" value="00075" />
+      <option name="presentableId" value="LOCAL-00075" />
+      <option name="project" value="LOCAL" />
+      <updated>1607561140367</updated>
+    </task>
+    <task id="LOCAL-00076" summary="视频自动推送方案修改">
+      <created>1607564180489</created>
+      <option name="number" value="00076" />
+      <option name="presentableId" value="LOCAL-00076" />
+      <option name="project" value="LOCAL" />
+      <updated>1607564180489</updated>
+    </task>
+    <task id="LOCAL-00077" summary="来电自动推送优化">
+      <created>1607588012823</created>
+      <option name="number" value="00077" />
+      <option name="presentableId" value="LOCAL-00077" />
+      <option name="project" value="LOCAL" />
+      <updated>1607588012823</updated>
+    </task>
+    <task id="LOCAL-00078" summary="日志提交">
+      <created>1607593448470</created>
+      <option name="number" value="00078" />
+      <option name="presentableId" value="LOCAL-00078" />
+      <option name="project" value="LOCAL" />
+      <updated>1607593448470</updated>
+    </task>
+    <task id="LOCAL-00079" summary="bug修改">
+      <created>1607594197453</created>
+      <option name="number" value="00079" />
+      <option name="presentableId" value="LOCAL-00079" />
+      <option name="project" value="LOCAL" />
+      <updated>1607594197453</updated>
+    </task>
+    <task id="LOCAL-00080" summary="来电推送修改">
+      <created>1607651192971</created>
+      <option name="number" value="00080" />
+      <option name="presentableId" value="LOCAL-00080" />
+      <option name="project" value="LOCAL" />
+      <updated>1607651192971</updated>
+    </task>
+    <task id="LOCAL-00081" summary="来电自动推送表更换">
+      <created>1607677195402</created>
+      <option name="number" value="00081" />
+      <option name="presentableId" value="LOCAL-00081" />
+      <option name="project" value="LOCAL" />
+      <updated>1607677195403</updated>
+    </task>
+    <task id="LOCAL-00082" summary="来电自动推送推送记录表替换">
+      <created>1608283589017</created>
+      <option name="number" value="00082" />
+      <option name="presentableId" value="LOCAL-00082" />
+      <option name="project" value="LOCAL" />
+      <updated>1608283589020</updated>
+    </task>
+    <task id="LOCAL-00083" summary="自动推送，删除历史数据">
+      <created>1608532929394</created>
+      <option name="number" value="00083" />
+      <option name="presentableId" value="LOCAL-00083" />
+      <option name="project" value="LOCAL" />
+      <updated>1608532929395</updated>
+    </task>
+    <task id="LOCAL-00084" summary="删除日志">
+      <created>1608533556752</created>
+      <option name="number" value="00084" />
+      <option name="presentableId" value="LOCAL-00084" />
+      <option name="project" value="LOCAL" />
+      <updated>1608533556752</updated>
+    </task>
+    <task id="LOCAL-00085" summary="自动推送优化提交">
+      <created>1608543633797</created>
+      <option name="number" value="00085" />
+      <option name="presentableId" value="LOCAL-00085" />
+      <option name="project" value="LOCAL" />
+      <updated>1608543633798</updated>
+    </task>
+    <task id="LOCAL-00086" summary="自动推送优化提交">
+      <created>1608544451317</created>
+      <option name="number" value="00086" />
+      <option name="presentableId" value="LOCAL-00086" />
+      <option name="project" value="LOCAL" />
+      <updated>1608544451319</updated>
+    </task>
+    <task id="LOCAL-00087" summary="自动推送优化提交">
+      <created>1608601627781</created>
+      <option name="number" value="00087" />
+      <option name="presentableId" value="LOCAL-00087" />
+      <option name="project" value="LOCAL" />
+      <updated>1608601627781</updated>
+    </task>
+    <task id="LOCAL-00088" summary="来电自动推送bug修改">
+      <created>1608605924045</created>
+      <option name="number" value="00088" />
+      <option name="presentableId" value="LOCAL-00088" />
+      <option name="project" value="LOCAL" />
+      <updated>1608605924046</updated>
+    </task>
+    <task id="LOCAL-00089" summary="增加日志">
+      <created>1608606422748</created>
+      <option name="number" value="00089" />
+      <option name="presentableId" value="LOCAL-00089" />
+      <option name="project" value="LOCAL" />
+      <updated>1608606422748</updated>
+    </task>
+    <task id="LOCAL-00090" summary="增加推送日志">
+      <created>1608617767651</created>
+      <option name="number" value="00090" />
+      <option name="presentableId" value="LOCAL-00090" />
+      <option name="project" value="LOCAL" />
+      <updated>1608617767651</updated>
+    </task>
+    <task id="LOCAL-00091" summary="视频自动推送前统计改成同步方式">
+      <created>1608621735345</created>
+      <option name="number" value="00091" />
+      <option name="presentableId" value="LOCAL-00091" />
+      <option name="project" value="LOCAL" />
+      <updated>1608621735345</updated>
+    </task>
+    <task id="LOCAL-00092" summary="视频自动推送，表改成分表">
+      <created>1608627042986</created>
+      <option name="number" value="00092" />
+      <option name="presentableId" value="LOCAL-00092" />
+      <option name="project" value="LOCAL" />
+      <updated>1608627042986</updated>
+    </task>
+    <task id="LOCAL-00093" summary="视频自动推送，表改成分表">
+      <created>1608627540922</created>
+      <option name="number" value="00093" />
+      <option name="presentableId" value="LOCAL-00093" />
+      <option name="project" value="LOCAL" />
+      <updated>1608627540922</updated>
+    </task>
+    <task id="LOCAL-00094" summary="自动推送">
+      <created>1608685448925</created>
+      <option name="number" value="00094" />
+      <option name="presentableId" value="LOCAL-00094" />
+      <option name="project" value="LOCAL" />
+      <updated>1608685448925</updated>
+    </task>
+    <task id="LOCAL-00095" summary="自动推送">
+      <created>1608689761648</created>
+      <option name="number" value="00095" />
+      <option name="presentableId" value="LOCAL-00095" />
+      <option name="project" value="LOCAL" />
+      <updated>1608689761648</updated>
+    </task>
+    <task id="LOCAL-00096" summary="自动推送优化">
+      <created>1608704314621</created>
+      <option name="number" value="00096" />
+      <option name="presentableId" value="LOCAL-00096" />
+      <option name="project" value="LOCAL" />
+      <updated>1608704314622</updated>
+    </task>
+    <task id="LOCAL-00097" summary="自动推送">
+      <created>1608711028984</created>
+      <option name="number" value="00097" />
+      <option name="presentableId" value="LOCAL-00097" />
+      <option name="project" value="LOCAL" />
+      <updated>1608711028984</updated>
+    </task>
+    <task id="LOCAL-00098" summary="自动推送配置表修改（技术端迁移数据库后，没和我说，导致我这里一直用的旧配置表）">
+      <created>1608806420645</created>
+      <option name="number" value="00098" />
+      <option name="presentableId" value="LOCAL-00098" />
+      <option name="project" value="LOCAL" />
+      <updated>1608806420645</updated>
+    </task>
+    <task id="LOCAL-00099" summary="自动推送配置表修改（技术端迁移数据库后，没和我说，导致我这里一直用的旧配置表）">
+      <created>1608806590755</created>
+      <option name="number" value="00099" />
+      <option name="presentableId" value="LOCAL-00099" />
+      <option name="project" value="LOCAL" />
+      <updated>1608806590756</updated>
+    </task>
+    <task id="LOCAL-00100" summary="自动推送配置表修改（技术端迁移数据库后，没和我说，导致我这里一直用的旧配置表）">
+      <created>1608806703264</created>
+      <option name="number" value="00100" />
+      <option name="presentableId" value="LOCAL-00100" />
+      <option name="project" value="LOCAL" />
+      <updated>1608806703264</updated>
+    </task>
+    <task id="LOCAL-00101" summary="自动推送配置表修改（技术端迁移数据库后，没和我说，导致我这里一直用的旧配置表）">
+      <created>1608806915198</created>
+      <option name="number" value="00101" />
+      <option name="presentableId" value="LOCAL-00101" />
+      <option name="project" value="LOCAL" />
+      <updated>1608806915198</updated>
+    </task>
+    <task id="LOCAL-00102" summary="自动推送配置表修改（技术端迁移数据库后，没和我说，导致我这里一直用的旧配置表）">
+      <created>1608864486254</created>
+      <option name="number" value="00102" />
+      <option name="presentableId" value="LOCAL-00102" />
+      <option name="project" value="LOCAL" />
+      <updated>1608864486254</updated>
+    </task>
+    <task id="LOCAL-00103" summary="自动推送配置表修改（技术端迁移数据库后，没和我说，导致我这里一直用的旧配置表）">
+      <created>1608865499516</created>
+      <option name="number" value="00103" />
+      <option name="presentableId" value="LOCAL-00103" />
+      <option name="project" value="LOCAL" />
+      <updated>1608865499516</updated>
+    </task>
+    <task id="LOCAL-00104" summary="注释还原">
+      <created>1608865632785</created>
+      <option name="number" value="00104" />
+      <option name="presentableId" value="LOCAL-00104" />
+      <option name="project" value="LOCAL" />
+      <updated>1608865632785</updated>
+    </task>
+    <task id="LOCAL-00105" summary="分布式表 用in需要增加global">
+      <created>1608868592055</created>
+      <option name="number" value="00105" />
+      <option name="presentableId" value="LOCAL-00105" />
+      <option name="project" value="LOCAL" />
+      <updated>1608868592055</updated>
+    </task>
+    <task id="LOCAL-00106" summary="自动推送优化">
+      <created>1608889552587</created>
+      <option name="number" value="00106" />
+      <option name="presentableId" value="LOCAL-00106" />
+      <option name="project" value="LOCAL" />
+      <updated>1608889552587</updated>
+    </task>
+    <task id="LOCAL-00107" summary="来电自动推送 bug修改">
+      <created>1611049773324</created>
+      <option name="number" value="00107" />
+      <option name="presentableId" value="LOCAL-00107" />
+      <option name="project" value="LOCAL" />
+      <updated>1611049773324</updated>
+    </task>
+    <task id="LOCAL-00108" summary="自动推送模块以及迁移到 大数据部的bigdata-server服务中。此项目自动推送的定时器 停止">
+      <created>1611222165342</created>
+      <option name="number" value="00108" />
+      <option name="presentableId" value="LOCAL-00108" />
+      <option name="project" value="LOCAL" />
+      <updated>1611222165342</updated>
+    </task>
+    <task id="LOCAL-00109" summary="性能优化">
+      <created>1616381975767</created>
+      <option name="number" value="00109" />
+      <option name="presentableId" value="LOCAL-00109" />
+      <option name="project" value="LOCAL" />
+      <updated>1616381975767</updated>
+    </task>
+    <task id="LOCAL-00110" summary="模块以及迁移到 大数据部的bigdata-server服务中">
+      <created>1616467907955</created>
+      <option name="number" value="00110" />
+      <option name="presentableId" value="LOCAL-00110" />
+      <option name="project" value="LOCAL" />
+      <updated>1616467907955</updated>
+    </task>
+    <option name="localTasksCounter" value="111" />
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="490320000" />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32995737" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32703003" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32925472" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Spring" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32925472" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20735608" sideWeight="0.49361023" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Bean Validation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32995737" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2531983" sideWeight="0.5063898" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.30812013" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32925472" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32925472" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+    </layout>
+    <layout-to-restore>
+      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32995737" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32995737" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.30812013" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32925472" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32703003" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32925472" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Spring" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32925472" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23294243" sideWeight="0.49361023" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Bean Validation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32925472" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2531983" sideWeight="0.5063898" order="7" side_tool="true" content_ui="tabs" />
+    </layout-to-restore>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ORDER">
+      <list>
+        <option value="0" />
+        <option value="2" />
+        <option value="3" />
+        <option value="1" />
+      </list>
+    </option>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="视频自动推送方案修改" />
+    <MESSAGE value="来电自动推送优化" />
+    <MESSAGE value="日志提交" />
+    <MESSAGE value="bug修改" />
+    <MESSAGE value="来电推送修改" />
+    <MESSAGE value="来电自动推送表更换" />
+    <MESSAGE value="来电自动推送推送记录表替换" />
+    <MESSAGE value="自动推送，删除历史数据" />
+    <MESSAGE value="删除日志" />
+    <MESSAGE value="自动推送优化提交" />
+    <MESSAGE value="来电自动推送bug修改" />
+    <MESSAGE value="增加日志" />
+    <MESSAGE value="增加推送日志" />
+    <MESSAGE value="视频自动推送前统计改成同步方式" />
+    <MESSAGE value="视频自动推送，表改成分表" />
+    <MESSAGE value="增加索引" />
+    <MESSAGE value="自动推送" />
+    <MESSAGE value="自动推送配置表修改（技术端迁移数据库后，没和我说，导致我这里一直用的旧配置表）" />
+    <MESSAGE value="注释还原" />
+    <MESSAGE value="分布式表 用in需要增加global" />
+    <MESSAGE value="自动推送优化" />
+    <MESSAGE value="来电自动推送 bug修改" />
+    <MESSAGE value="自动推送模块以及迁移到 大数据部的bigdata-server服务中。此项目自动推送的定时器 停止" />
+    <MESSAGE value="性能优化" />
+    <MESSAGE value="模块以及迁移到 大数据部的bigdata-server服务中" />
+    <option name="LAST_COMMIT_MESSAGE" value="模块以及迁移到 大数据部的bigdata-server服务中" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/service/impl/RealTimeStatisticsServiceImpl.java</url>
+          <line>236</line>
+          <properties />
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/service/impl/PushLdServiceImpl.java</url>
+          <line>76</line>
+          <properties />
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/task/RpUserKeepTask.java</url>
+          <line>116</line>
+          <properties />
+          <option name="timeStamp" value="10" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/task/RpUserKeepTask.java</url>
+          <line>118</line>
+          <properties />
+          <option name="timeStamp" value="11" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/controller/common/SyncDataController.java</url>
+          <line>81</line>
+          <properties />
+          <option name="timeStamp" value="16" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/service/impl/PushLdServiceImpl.java</url>
+          <line>116</line>
+          <properties />
+          <option name="timeStamp" value="21" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/service/impl/PushLdServiceImpl.java</url>
+          <line>131</line>
+          <properties />
+          <option name="timeStamp" value="22" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/service/impl/PushLdServiceImpl.java</url>
+          <line>130</line>
+          <properties />
+          <option name="timeStamp" value="23" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/service/impl/VideosServiceImpl.java</url>
+          <line>186</line>
+          <properties />
+          <option name="timeStamp" value="24" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/service/impl/VideosServiceImpl.java</url>
+          <line>170</line>
+          <properties />
+          <option name="timeStamp" value="25" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/task/PushVideoTask.java</url>
+          <line>84</line>
+          <properties />
+          <option name="timeStamp" value="26" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/task/PushVideoTask.java</url>
+          <line>90</line>
+          <properties />
+          <option name="timeStamp" value="27" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/service/impl/PushVideoServiceImpl.java</url>
+          <line>235</line>
+          <properties />
+          <option name="timeStamp" value="28" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/task/PushVideoTask.java</url>
+          <line>52</line>
+          <properties />
+          <option name="timeStamp" value="29" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/service/impl/PushLdServiceImpl.java</url>
+          <line>609</line>
+          <properties />
+          <option name="timeStamp" value="30" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/service/impl/PushLdServiceImpl.java</url>
+          <line>180</line>
+          <properties />
+          <option name="timeStamp" value="31" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/service/impl/PushLdServiceImpl.java</url>
+          <line>209</line>
+          <properties />
+          <option name="timeStamp" value="32" />
+        </line-breakpoint>
+      </breakpoints>
+      <option name="time" value="34" />
+    </breakpoint-manager>
+    <watches-manager />
+  </component>
+  <component name="debuggerHistoryManager">
+    <expressions id="evaluateExpression">
+      <expression>
+        <expression-string>DateUtil.dateStr2(calendar.getTime())</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>!&quot;localdev&quot;.equals(activeProfiles)</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>!&quot;prod&quot;.equals(activeProfiles)</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>&quot;localdev&quot;.equals(activeProfiles)</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>&quot;prod&quot;.equals(activeProfiles)</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>one[1]</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>entry.getValue()</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>e.getShowValue()</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>list</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+    </expressions>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/mapper/PushLdMapper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3230">
+          <caret line="177" column="29" lean-forward="false" selection-start-line="177" selection-start-column="29" selection-end-line="177" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/service/impl/UserKeepServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4218">
+          <caret line="253" column="0" lean-forward="false" selection-start-line="253" selection-start-column="0" selection-end-line="253" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/controller/common/TaskController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="171">
+          <caret line="23" column="41" lean-forward="false" selection-start-line="23" selection-start-column="41" selection-end-line="23" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/vo/PushConfigVo.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="95">
+          <caret line="5" column="13" lean-forward="false" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/common/enmus/PushUserEnmu.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="18" column="4" lean-forward="false" selection-start-line="18" selection-start-column="4" selection-end-line="18" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/mapper/DwUserActionsMapper.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="8075">
+          <caret line="425" column="27" lean-forward="false" selection-start-line="425" selection-start-column="27" selection-end-line="425" selection-end-column="27" />
+          <folding>
+            <marker date="1616381876615" expanded="true" signature="4456:5600" ph="(select * fr... " />
+            <marker date="1616381876615" expanded="true" signature="4457:5586" ph="select * fro... *" />
+            <marker date="1616381876615" expanded="true" signature="4480:5450" ph="select * fro... *" />
+            <marker date="1616381876615" expanded="true" signature="4503:5312" ph="select * fro... *" />
+            <marker date="1616381876615" expanded="true" signature="4526:5175" ph="select * fro... *" />
+            <marker date="1616381876615" expanded="true" signature="4549:5040" ph="select * fro... *" />
+            <marker date="1616381876615" expanded="true" signature="4572:4904" ph="select * fro... *" />
+            <marker date="1616381876615" expanded="true" signature="4595:4766" ph="select * fro... GLOBAL" />
+            <marker date="1616381876615" expanded="true" signature="5722:5916" ph="select * fro... GLOBAL" />
+            <marker date="1616381876615" expanded="true" signature="6009:6505" ph="( select sum... " />
+            <marker date="1616381876615" expanded="true" signature="6011:6448" ph="select sum(p... dw_video_actions_aggregation" />
+            <marker date="1616381876615" expanded="true" signature="6572:6901" ph="( select sum... " />
+            <marker date="1616381876615" expanded="true" signature="6574:6851" ph="select sum(p... dw_video_actions_aggregation" />
+            <marker date="1616381876615" expanded="true" signature="6965:7254" ph="(select coun... " />
+            <marker date="1616381876615" expanded="true" signature="6966:7196" ph="select count... dw_video_actions_aggregation" />
+            <marker date="1616381876615" expanded="true" signature="7318:7601" ph="(select coun... " />
+            <marker date="1616381876615" expanded="true" signature="7319:7543" ph="select count... dw_video_actions_aggregation" />
+            <marker date="1616381876615" expanded="true" signature="7667:7955" ph="(select coun... " />
+            <marker date="1616381876615" expanded="true" signature="7668:7897" ph="select count... dw_video_actions_aggregation" />
+            <marker date="1616381876615" expanded="true" signature="8019:8304" ph="(select coun... " />
+            <marker date="1616381876615" expanded="true" signature="8020:8246" ph="select count... dw_video_actions_aggregation" />
+            <marker date="1616381876615" expanded="true" signature="8367:8652" ph="(select coun... " />
+            <marker date="1616381876615" expanded="true" signature="8368:8594" ph="select count... dw_video_actions_aggregation" />
+            <marker date="1616381876615" expanded="true" signature="8719:9005" ph="(select coun... " />
+            <marker date="1616381876615" expanded="true" signature="8720:8955" ph="select count... dw_video_actions_aggregation" />
+            <marker date="1616381876615" expanded="true" signature="9071:9341" ph="(select coun... " />
+            <marker date="1616381876615" expanded="true" signature="9072:9292" ph="select count... dw_user_simple" />
+            <marker date="1616381876615" expanded="true" signature="9467:10616" ph="SELECT dd, p... user_content_operation" />
+            <marker date="1616381876615" expanded="true" signature="10785:12075" ph="SELECT dd, a... ld_user_content_operation" />
+            <marker date="1616381876615" expanded="true" signature="12260:17173" ph="select toDat... laidian_user_action_view_old" />
+            <marker date="1616381876615" expanded="true" signature="15061:15075" ph="/*设置来电秀成功用户数... " />
+            <marker date="1616381876615" expanded="true" signature="15320:15333" ph="/*设置锁屏成功用户数*... " />
+            <marker date="1616381876615" expanded="true" signature="15574:15587" ph="/*设置壁纸成功用户数*... " />
+            <marker date="1616381876615" expanded="true" signature="15818:15831" ph="/*设置皮肤成功用户数*... " />
+            <marker date="1616381876615" expanded="true" signature="16216:16229" ph="/*浏览铃声页面用户数*... " />
+            <marker date="1616381876615" expanded="true" signature="16553:16566" ph="/*成功设置铃声次数 *... " />
+            <marker date="1616381876615" expanded="true" signature="17342:19284" ph="select a.*, sum" />
+            <marker date="1616381876615" expanded="true" signature="17405:18683" ph="select sum(p... dw_video_actions_aggregation" />
+            <marker date="1616381876615" expanded="true" signature="18756:19164" ph="select count... dw_user_actions" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/mapper/DwAppVersionDictMapper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="304">
+          <caret line="21" column="17" lean-forward="false" selection-start-line="21" selection-start-column="17" selection-end-line="21" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/service/impl/AppVersionSetServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="380">
+          <caret line="30" column="24" lean-forward="false" selection-start-line="30" selection-start-column="24" selection-end-line="30" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/controller/common/CommonController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="779">
+          <caret line="65" column="53" lean-forward="false" selection-start-line="65" selection-start-column="43" selection-end-line="65" selection-end-column="53" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/service/impl/AdPlatServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="304">
+          <caret line="25" column="13" lean-forward="false" selection-start-line="25" selection-start-column="13" selection-end-line="25" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.12/lombok-1.18.12.jar!/lombok/Setter.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="95">
+          <caret line="5" column="14" lean-forward="false" selection-start-line="5" selection-start-column="8" selection-end-line="5" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/common/utils/NumCalculationUtil.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3059">
+          <caret line="161" column="9" lean-forward="false" selection-start-line="161" selection-start-column="9" selection-end-line="161" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/common/enmus/LdPushUserEnmu.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="475">
+          <caret line="25" column="23" lean-forward="false" selection-start-line="25" selection-start-column="4" selection-end-line="25" selection-end-column="23" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/task/ViewLeaderboardTask.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1168">
+          <caret line="22" column="13" lean-forward="false" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/task/XyVideoPlayoverTask.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="114">
+          <caret line="14" column="13" lean-forward="false" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/task/UserContentTask.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="209">
+          <caret line="21" column="13" lean-forward="false" selection-start-line="21" selection-start-column="13" selection-end-line="21" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/task/StatVideoAddAndOffline.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-522">
+          <caret line="28" column="13" lean-forward="false" selection-start-line="28" selection-start-column="13" selection-end-line="28" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/task/RpUserKeepTask.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="114">
+          <caret line="20" column="13" lean-forward="false" selection-start-line="20" selection-start-column="13" selection-end-line="20" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/task/RpTotalDataTask.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="228">
+          <caret line="24" column="13" lean-forward="false" selection-start-line="24" selection-start-column="13" selection-end-line="24" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/task/ExportAdpositionTask.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="209">
+          <caret line="22" column="13" lean-forward="false" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/task/ClickhouseHourTask.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="114">
+          <caret line="23" column="13" lean-forward="false" selection-start-line="23" selection-start-column="13" selection-end-line="23" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/task/ChannelDetailTask.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="57">
+          <caret line="16" column="13" lean-forward="false" selection-start-line="16" selection-start-column="13" selection-end-line="16" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/application-prod.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-61">
+          <caret line="46" column="51" lean-forward="false" selection-start-line="46" selection-start-column="51" selection-end-line="46" selection-end-column="51" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/vo/FirstVideosVo.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2299">
+          <caret line="9" column="13" lean-forward="false" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/vo/LdVideosVo.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="95">
+          <caret line="8" column="13" lean-forward="false" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/application-local.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="19">
+          <caret line="46" column="18" lean-forward="false" selection-start-line="46" selection-start-column="18" selection-end-line="46" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/controller/ContentQualityController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="779">
+          <caret line="78" column="5" lean-forward="false" selection-start-line="78" selection-start-column="5" selection-end-line="78" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/controller/PushVideoController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="247">
+          <caret line="32" column="90" lean-forward="true" selection-start-line="32" selection-start-column="90" selection-end-line="32" selection-end-column="90" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/mapper/PushVideoMapper.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="38">
+          <caret line="2" column="58" lean-forward="false" selection-start-line="2" selection-start-column="58" selection-end-line="2" selection-end-column="58" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/controller/PushLdController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1007">
+          <caret line="64" column="88" lean-forward="false" selection-start-line="64" selection-start-column="88" selection-end-line="64" selection-end-column="88" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/mapper/DwAdActionsMapper.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4693">
+          <caret line="247" column="26" lean-forward="false" selection-start-line="247" selection-start-column="26" selection-end-line="247" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/service/impl/PushVideoServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="589">
+          <caret line="46" column="39" lean-forward="false" selection-start-line="46" selection-start-column="16" selection-end-line="46" selection-end-column="39" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/mapper/PushVideoMapper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="27" column="28" lean-forward="false" selection-start-line="27" selection-start-column="9" selection-end-line="27" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1862">
+          <caret line="98" column="43" lean-forward="false" selection-start-line="98" selection-start-column="43" selection-end-line="98" selection-end-column="43" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/mapper/RpTotalDayMapper.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3021">
+          <caret line="159" column="13" lean-forward="false" selection-start-line="159" selection-start-column="13" selection-end-line="159" selection-end-column="13" />
+          <folding>
+            <marker date="1603868204500" expanded="true" signature="496:2770" ph="select new_u... rp_total_hour_accumulated" />
+            <marker date="1603868204500" expanded="true" signature="3080:5310" ph="select new_u... rp_total_day" />
+            <marker date="1603868204500" expanded="true" signature="5629:7367" ph="select new_u... " />
+            <marker date="1603868204500" expanded="true" signature="7714:8505" ph="select dd,dh... ld_rp_total_hour_accumulated" />
+            <marker date="1603868204500" expanded="true" signature="8875:9676" ph="select new_u... ld_rp_total_day" />
+            <marker date="1603868204500" expanded="true" signature="10041:11992" ph="select new_u... " />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/mapper/SyncUserContentMapper.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3686">
+          <caret line="194" column="47" lean-forward="false" selection-start-line="194" selection-start-column="47" selection-end-line="194" selection-end-column="47" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/common/enmus/AdcTypeEnmu.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="133">
+          <caret line="10" column="23" lean-forward="false" selection-start-line="10" selection-start-column="12" selection-end-line="10" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/controller/ChannelController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="228">
+          <caret line="48" column="0" lean-forward="false" selection-start-line="48" selection-start-column="0" selection-end-line="48" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/mapper/DwVideoActionsMapper.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="7562">
+          <caret line="398" column="36" lean-forward="false" selection-start-line="398" selection-start-column="36" selection-end-line="398" selection-end-column="36" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/dto/AdBehaviorDto.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="171">
+          <caret line="13" column="2" lean-forward="false" selection-start-line="13" selection-start-column="2" selection-end-line="13" selection-end-column="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/task/PushLdTask.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="19">
+          <caret line="33" column="13" lean-forward="false" selection-start-line="33" selection-start-column="13" selection-end-line="33" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/application.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1197">
+          <caret line="63" column="7" lean-forward="false" selection-start-line="63" selection-start-column="0" selection-end-line="63" selection-end-column="7" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/service/impl/PushLdServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="893">
+          <caret line="58" column="54" lean-forward="false" selection-start-line="58" selection-start-column="54" selection-end-line="58" selection-end-column="54" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/service/IVideosService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="741">
+          <caret line="42" column="9" lean-forward="false" selection-start-line="42" selection-start-column="9" selection-end-line="42" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/task/PushVideoTask.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="513">
+          <caret line="46" column="74" lean-forward="false" selection-start-line="46" selection-start-column="44" selection-end-line="46" selection-end-column="74" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/controller/common/SyncDataController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3287">
+          <caret line="193" column="79" lean-forward="false" selection-start-line="193" selection-start-column="79" selection-end-line="193" selection-end-column="79" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/service/impl/VideosServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2546">
+          <caret line="163" column="53" lean-forward="false" selection-start-line="163" selection-start-column="53" selection-end-line="163" selection-end-column="53" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/mapper/FirstVideosMapper.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6498">
+          <caret line="342" column="0" lean-forward="false" selection-start-line="342" selection-start-column="0" selection-end-line="349" selection-end-column="13" />
+          <folding>
+            <element signature="e#3024#3028#0" expanded="true" />
+            <marker date="1616381876641" expanded="true" signature="328:566" ph="select count... " />
+            <marker date="1616381876641" expanded="true" signature="691:906" ph="select count... " />
+            <marker date="1616381876641" expanded="true" signature="1011:1127" ph="select count... " />
+            <marker date="1616381876641" expanded="true" signature="1262:1472" ph="select cat_i... " />
+            <marker date="1616381876641" expanded="true" signature="1607:1818" ph="select cat_i... " />
+            <marker date="1616381876641" expanded="true" signature="1947:2079" ph="select cat_i... " />
+            <marker date="1616381876641" expanded="true" signature="2214:2354" ph="select cat_i... " />
+            <marker date="1616381876641" expanded="true" signature="2450:2488" ph="select max(u... video_info" />
+            <marker date="1616381876641" expanded="true" signature="2609:2744" ph="select count... first_videos" />
+            <marker date="1616381876641" expanded="true" signature="2873:3085" ph="select v.*, first_videos" />
+            <marker date="1616381876641" expanded="true" signature="3178:3306" ph="alter table video_info... " />
+            <marker date="1616381876641" expanded="true" signature="6694:6742" ph="alter table video_detail... " />
+            <marker date="1616381876641" expanded="true" signature="6838:11053" ph="insert into video_detail... " />
+            <marker date="1616381876641" expanded="true" signature="7200:11053" ph="select id,a.... sipHash64" />
+            <marker date="1616381876641" expanded="true" signature="7659:10293" ph="select sipHa... dw_video_actions_aggregation" />
+            <marker date="1616381876641" expanded="true" signature="10331:10689" ph="select dd, v... dw_video_actions_aggregation" />
+            <marker date="1616381876641" expanded="true" signature="10768:11028" ph="select dd, s... dw_video_actions_aggregation" />
+            <marker date="1616381876641" expanded="true" signature="11259:11275" ph="/*上线日期是行为日期的... " />
+            <marker date="1616381876641" expanded="true" signature="11382:11398" ph="/*进文日期是行为日期的... " />
+            <marker date="1616381876641" expanded="true" signature="11629:11645" ph="/*上线日期是行为日期的... " />
+            <marker date="1616381876641" expanded="true" signature="11871:11887" ph="/*进文日期是行为日期的... " />
+            <marker date="1616381876641" expanded="true" signature="12714:15148" ph="select dd, t... " />
+            <marker date="1616381876641" expanded="true" signature="15287:16562" ph="select count... video_detail" />
+            <marker date="1616381876641" expanded="true" signature="16742:18609" ph="select a.*,v... dd" />
+            <marker date="1616381876641" expanded="true" signature="16840:17609" ph="select dd, $... " />
+            <marker date="1616381876641" expanded="true" signature="17648:18479" ph="select dd, $... " />
+            <marker date="1616381876641" expanded="true" signature="18707:18748" ph="select max(u... ld_video_info" />
+            <marker date="1616381876641" expanded="true" signature="18871:19020" ph="select count... videos" />
+            <marker date="1616381876641" expanded="true" signature="19148:19378" ph="select v.*, videos" />
+            <marker date="1616381876641" expanded="true" signature="19473:19604" ph="alter table ld_video_info... " />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/mapper/PushLdMapper.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="399">
+          <caret line="21" column="16" lean-forward="false" selection-start-line="21" selection-start-column="16" selection-end-line="21" selection-end-column="16" />
+          <folding>
+            <marker date="1616382092366" expanded="true" signature="273:433" ph="alter table ld_video_info... " />
+            <marker date="1616382092366" expanded="true" signature="528:875" ph="select count... video_id" />
+            <marker date="1616382092366" expanded="true" signature="575:860" ph="select l.vid... ld_push_user_actions" />
+            <marker date="1616382092366" expanded="true" signature="693:738" ph="select id fr... ld_video_info" />
+            <marker date="1616382092366" expanded="true" signature="998:1282" ph="select l.vid... ld_push_user_actions" />
+            <marker date="1616382092366" expanded="true" signature="1100:1145" ph="select id fr... ld_video_info" />
+            <marker date="1616382092366" expanded="true" signature="1340:1363" ph="delete from push_ld_mid... " />
+            <marker date="1616382092366" expanded="true" signature="1730:1810" ph="update videos... " />
+            <marker date="1616382092366" expanded="true" signature="2284:2359" ph="select id, n... videos_cat" />
+            <marker date="1616382092366" expanded="true" signature="2418:2459" ph="alter table ld_video_cat... " />
+            <marker date="1616382092366" expanded="true" signature="2849:2955" ph="alter table ld_push_user... " />
+            <marker date="1616382092366" expanded="true" signature="3283:3482" ph="select DISTI... ld_push_user_actions" />
+            <marker date="1616382092366" expanded="true" signature="4674:4872" ph="select DISTI... ld_push_user_actions" />
+            <marker date="1616382092366" expanded="true" signature="5099:5348" ph="select disti... ld_push_user" />
+            <marker date="1616382092366" expanded="true" signature="5850:6968" ph="insert into ld_push_user... " />
+            <marker date="1616382092366" expanded="true" signature="5935:6968" ph="select ##{dd}... ld_push_user_actions" />
+            <marker date="1616382092366" expanded="true" signature="6089:6305" ph="select DISTI... ld_push_user_actions" />
+            <marker date="1616382092366" expanded="true" signature="6529:6769" ph="select disti... ld_push_user" />
+            <marker date="1616382092366" expanded="true" signature="7296:7567" ph="select DISTI... ld_push_user_actions" />
+            <marker date="1616382092366" expanded="true" signature="7682:7922" ph="select disti... ld_push_user" />
+            <marker date="1616382092366" expanded="true" signature="8582:8628" ph="/*权限在上线后，被拆分... " />
+            <marker date="1616382092366" expanded="true" signature="8691:8728" ph="/*已开通权限(onli... " />
+            <marker date="1616382092366" expanded="true" signature="9552:9780" ph="select disti... ld_push_user" />
+            <marker date="1616382092366" expanded="true" signature="9927:9942" ph="/*不活跃天数在配置天数... " />
+            <marker date="1616382092366" expanded="true" signature="10703:10719" ph="/*签到推送-新用户-未... " />
+            <marker date="1616382092366" expanded="true" signature="10728:11531" ph="insert into ld_push_user... " />
+            <marker date="1616382092366" expanded="true" signature="10813:10997" ph="select ##{dd}... dwd_ld_user_actions_disb" />
+            <marker date="1616382092366" expanded="true" signature="11626:11644" ph="/*签到推送-活跃用户-... " />
+            <marker date="1616382092366" expanded="true" signature="11653:12375" ph="insert into ld_push_user... " />
+            <marker date="1616382092366" expanded="true" signature="11738:11922" ph="select ##{dd}... dwd_ld_user_actions_disb" />
+            <marker date="1616382092366" expanded="true" signature="12462:12507" ph="/*签到推送-活跃用户-... " />
+            <marker date="1616382092366" expanded="true" signature="12516:13471" ph="insert into ld_push_user... " />
+            <marker date="1616382092366" expanded="true" signature="12601:12785" ph="select ##{dd}... dwd_ld_user_actions_disb" />
+            <marker date="1616382092366" expanded="true" signature="13560:13586" ph="/*签到推送-活跃用户-... " />
+            <marker date="1616382092366" expanded="true" signature="13595:14332" ph="insert into ld_push_user... " />
+            <marker date="1616382092366" expanded="true" signature="13680:13864" ph="select ##{dd}... dwd_ld_user_actions_disb" />
+            <marker date="1616382092366" expanded="true" signature="14427:14440" ph="/*活动推送-新增用户*... " />
+            <marker date="1616382092366" expanded="true" signature="14449:15255" ph="insert into ld_push_user... " />
+            <marker date="1616382092366" expanded="true" signature="14534:14718" ph="select ##{dd}... dwd_ld_user_actions_disb" />
+            <marker date="1616382092366" expanded="true" signature="15354:15376" ph="/*活动推送-活跃用户-... " />
+            <marker date="1616382092366" expanded="true" signature="15385:16137" ph="insert into ld_push_user... " />
+            <marker date="1616382092366" expanded="true" signature="15470:15654" ph="select ##{dd}... dwd_ld_user_actions_disb" />
+            <marker date="1616382092366" expanded="true" signature="16225:16250" ph="/*活动推送-活跃用户-... " />
+            <marker date="1616382092366" expanded="true" signature="16259:17099" ph="insert into ld_push_user... " />
+            <marker date="1616382092366" expanded="true" signature="16344:16528" ph="select ##{dd}... dwd_ld_user_actions_disb" />
+            <marker date="1616382092366" expanded="true" signature="17174:17561" ph="insert into ld_push_user... " />
+            <marker date="1616382092366" expanded="true" signature="17259:17561" ph="select ##{dd}... ld_push_user_actions" />
+            <marker date="1616382092366" expanded="true" signature="17638:18037" ph="insert into ld_push_user... " />
+            <marker date="1616382092366" expanded="true" signature="17723:18037" ph="select ##{dd}... ld_push_user_actions" />
+            <marker date="1616382092366" expanded="true" signature="18117:18474" ph="insert into ld_push_user... " />
+            <marker date="1616382092366" expanded="true" signature="18202:18474" ph="select ##{dd}... ld_push_user_actions" />
+            <marker date="1616382092366" expanded="true" signature="18475:18490" ph="/*不活跃天数在配置天数... " />
+            <marker date="1616382092366" expanded="true" signature="18603:18912" ph="select if(ap... auto_push_config" />
+            <marker date="1616382092366" expanded="true" signature="18997:19115" ph="delete from ld_auto_push_user_video... " />
+            <marker date="1616382092366" expanded="true" signature="19203:19331" ph="INSERT into table... " />
+            <marker date="1616382092366" expanded="true" signature="19340:25993" ph="select toDat... " />
+            <marker date="1616382092366" expanded="true" signature="19649:19664" ph="/*获取播放量最高的来电... " />
+            <marker date="1616382092366" expanded="true" signature="20695:20725" ph="/*从push库中去掉用... " />
+            <marker date="1616382092366" expanded="true" signature="21057:21085" ph="/*每个用户每天最多接受... " />
+            <marker date="1616382092366" expanded="true" signature="21795:21810" ph="/*去掉用户游览过的来电... " />
+            <marker date="1616382092366" expanded="true" signature="22258:22276" ph="/*去掉一周内已经推送过... " />
+            <marker date="1616382092366" expanded="true" signature="22977:23000" ph="/*根据浏览的分类权重，... " />
+            <marker date="1616382092366" expanded="true" signature="24126:24187" ph="/*查询出用户已设置的来... " />
+            <marker date="1616382092366" expanded="true" signature="26104:26166" ph="delete from ld_auto_push_user_video... " />
+            <marker date="1616382092366" expanded="true" signature="26309:26531" ph="select disti... ld_auto_push_user_video" />
+            <marker date="1616382092366" expanded="true" signature="26674:27269" ph="select packa... ld_push_user" />
+            <marker date="1616382092366" expanded="true" signature="26847:26875" ph="/*每个用户每天最多接受... " />
+            <marker date="1616382092366" expanded="true" signature="27374:27422" ph="alter table ld_push_user... " />
+            <marker date="1616382092366" expanded="true" signature="27551:27641" ph="select count... ld_push_user_actions" />
+            <marker date="1616382092366" expanded="true" signature="27769:27857" ph="select count... ld_push_user_actions" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/mapper/FirstVideosMapper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1007">
+          <caret line="67" column="9" lean-forward="false" selection-start-line="67" selection-start-column="9" selection-end-line="67" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/miguan/reportview/task/VideoInfoTask.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="371">
+          <caret line="67" column="17" lean-forward="true" selection-start-line="67" selection-start-column="17" selection-end-line="67" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ArtifactsStructureConfigurable.UI">
+        <settings>
+          <artifact-editor />
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="FacetStructureConfigurable.UI">
+        <settings>
+          <last-edited>Spring</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="GlobalLibrariesConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="JdkListConfigurable.UI">
+        <settings>
+          <last-edited>1.8</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ModuleStructureConfigurable.UI">
+        <settings>
+          <last-edited>report_view_java</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+                <option value="0.6" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectJDKs.UI">
+        <settings>
+          <last-edited>1.8</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectLibrariesConfigurable.UI">
+        <settings>
+          <last-edited>Maven: ch.qos.logback:logback-classic:1.2.3</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>

@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.reportview.mapper.ContentQualityMapper">
+
+    <!--线上短视频库-->
+    <select id="listOnlineVideo" resultType="com.miguan.reportview.dto.OnlineVideoDto" parameterType="map">
+        select * from (
+            select a.*,
+                  round((play_rate - cat_play_rate),2) cat_play_rate,  /*分类播放率*/
+                  round((vplay_rate - cat_vplay_rate),2) cat_vplay_rate,   /*分类平均有效播放率*/
+                  round((all_play_rate - cat_all_play_rate),2) cat_all_play_rate   /*分类平均完播率*/
+            from (
+                select
+                    anyLast(i.id) video_id,  /*视频id*/
+                    (${video_source_type}) videos_source,  /*内容源*/
+                    anyLast(title) title,    /*视频标题*/
+                    anyLast(cat_id) cat_id,  /*分类id*/
+                    anyLast(cat_name) cat_name ,   /*分类名称*/
+                    anyLast(bsy_url) bsy_url,
+                    anyLast(sensitive) sensitive,  /*敏感词*/
+                    anyLast(bsy_img_url) bsy_img_url,
+                    anyLast(video_time) video_time,  /*视频时长*/
+                    anyLast(online_date) online_time,  /*上线日期*/
+                    anyLast(updated_at) updated_at,  /*更新日期*/
+                    sum(v.show_count) show_count,  /*曝光数*/
+                    sum(v.play_count) play_count,  /*播放数*/
+                    if(show_count=0,0,round(play_count*100/show_count,2)) play_rate, /*播放率*/
+                    sum(v.vplay_count) vplay_count, /*有效播放次数*/
+                    if(play_count=0,0,round(vplay_count*100/play_count,2)) vplay_rate, /*有效播放率*/
+                    sum(v.all_play_count) all_play_count,  /*完博数*/
+                    if(play_count=0,0,round(all_play_count*100/play_count,2)) all_play_rate, /*完播率*/
+                    sum(v.play_time_real) play_time_real,
+                    if(show_count=0,0,round(play_time_real/60000/show_count,2)) pre_show_time /*平均每曝光播放时长*/
+                from video_info i left join (<include refid="queryVideoDetail" />) v on i.id=v.video_id
+                where 1=1
+                <include refid="onlineVideoWhereSql" />
+                group by i.id
+            ) a inner join (
+                select
+                    i.cat_id cat_id,
+                    sum(v.show_count) show_count,
+                    sum(v.play_count) play_count,
+                    if(show_count=0,0,play_count*100/show_count) cat_play_rate, /*分类播放率*/
+                    sum(v.vplay_count) vplay_count,
+                    if(play_count=0,0,vplay_count*100/play_count) cat_vplay_rate, /*分类平均有效播放率*/
+                    sum(v.all_play_count) all_play_count,  /*完博数*/
+                    if(play_count=0,0,all_play_count*100/play_count) cat_all_play_rate /*分类平均完播率*/
+                from video_info i left join (<include refid="queryVideoDetail" />) v on i.id=v.video_id
+                where 1=1
+                group by i.cat_id
+            ) b on a.cat_id = b.cat_id
+            ${orderByField}
+        ) r
+        where 1=1
+        <if test="playEffect == 1"><!-- 高于平均播放率，低于平均有效播放率，低于平均完播率 -->
+            <![CDATA[ and cat_play_rate > 0 and cat_vplay_rate <= 0 and cat_all_play_rate <= 0 ]]>
+        </if>
+        <if test="playEffect == 2"><!-- 高于平均播放率，高于平均有效播放率，低于平均完播率 -->
+            <![CDATA[ and cat_play_rate > 0 and cat_vplay_rate > 0 and cat_all_play_rate <= 0 ]]>
+        </if>
+        <if test="playEffect == 3"><!-- 低于平均播放率，高于平均有效播放率，高于平均完播率 -->
+            <![CDATA[ and cat_play_rate <= 0 and cat_vplay_rate > 0 and cat_all_play_rate > 0 ]]>
+        </if>
+        <if test="playEffect == 4"><!-- 低于平均播放率，高于平均有效播放率，低于平均完播率 -->
+            <![CDATA[ and cat_play_rate <= 0 and cat_vplay_rate > 0 and cat_all_play_rate <= 0 ]]>
+        </if>
+        <if test="playEffect == 5"><!-- 低于平均播放率，低于平均有效播放率，低于平均完播率 -->
+            <![CDATA[ and cat_play_rate <= 0 and cat_vplay_rate <= 0 and cat_all_play_rate <= 0 ]]>
+        </if>
+        <if test="playEffect == 6"><!-- 高于平均播放率，高于平均有效播放率，高于平均完播率 -->
+            <![CDATA[ and cat_play_rate > 0 and cat_vplay_rate > 0 and cat_all_play_rate > 0 ]]>
+        </if>
+        <if test="playEffect == 7"><!-- 高于平均播放率，低于平均有效播放率，高于平均完播率 -->
+            <![CDATA[ and cat_play_rate > 0 and cat_vplay_rate <= 0 and cat_all_play_rate > 0 ]]>
+        </if>
+        <if test="playEffect == 8"><!-- 低于平均播放率，低于平均有效播放率，高于平均完播率 -->
+            <![CDATA[ and cat_play_rate <= 0 and cat_vplay_rate <= 0 and cat_all_play_rate > 0 ]]>
+        </if>
+        ${orderByField}
+    </select>
+
+    <sql id="onlineVideoWhereSql">
+        and i.state = 1
+        <if test="video_ids != null">
+            and i.id in <foreach collection="video_ids" item="video_id" separator="," open="(" close=")">${video_id}</foreach>
+        </if>
+        <if test="video_title != null and video_title != ''">
+            and i.title like CONCAT('%',#{video_title},'%')
+        </if>
+        <if test="video_source != null and video_source != ''">
+            and i.videos_source = #{video_source}
+        </if>
+        <if test="cat_id != null and cat_id != ''">
+            and i.cat_id = #{cat_id}
+        </if>
+        <if test="gather_id != null and gather_id != ''">
+            and i.gather_id = #{gather_id}
+        </if>
+        <if test="startUpdateDate != null and startUpdateDate != ''">
+            and toDate(i.updated_at) BETWEEN #{startUpdateDate} and #{endUpdateDate}
+        </if>
+        <if test="startOnlineDate != null and startOnlineDate != ''">
+            and toDate(i.online_date) BETWEEN #{startOnlineDate} and #{endOnlineDate}
+        </if>
+        <if test="ascription_application != null and ascription_application != ''">
+            and ascription_application like ${ascription_application}
+        </if>
+        <if test="sensitive != null and sensitive != ''">
+            and i.sensitive = #{sensitive}
+        </if>
+    </sql>
+
+    <sql id="queryVideoDetail">
+        select dd,package_name,video_id,show_count,play_count,vplay_count,all_play_count,play_time_real
+        from video_detail
+        where 1=1
+        <if test="startStaDate != null and startStaDate != ''">
+            and dd BETWEEN #{startStaDate} and #{endStaDate}
+        </if>
+        <!--<if test="package_name != null and package_name != ''">-->
+            <!--and package_name = #{package_name}-->
+        <!--</if>-->
+    </sql>
+
+    <!-- 线上短视频-数据对比 -->
+    <select id="listOnlineDataContrast" resultType="com.miguan.reportview.dto.OnlineDataContrastDto" parameterType="map">
+         select
+            dd,  /*数据统计日期*/
+            if(dd=toString(toDate(updated_at)),toString(updated_at),'/') updated_at, /*修改日期*/
+            v.show_count show_count,  /*曝光数*/
+            v.play_count play_count,  /*播放数曝光数*/
+            if(show_count=0,0,round(play_count*100/show_count,2)) play_rate /*播放率*/
+        from video_info i inner join (<include refid="queryVideoDetail" />) v on i.id=v.video_id
+        where 1=1
+        and i.id = #{video_id}
+        order by dd desc
+    </select>
+
+    <!-- 内容质量评估报表 -->
+    <select id="listContentQuality" resultType="com.miguan.reportview.dto.ContentQualityDto" parameterType="map">
+        select
+            anyLast(i.ascription_application) package_name,
+            anyLast(i.cat_id) cat_id,
+            anyLast(cat_name) cat_name,
+            (${video_source_type}) videos_source,  /*内容源*/
+            sum(v.show_count) show_count,  /*曝光数*/
+            if(#{totalShowCount}=0,0,round(show_count*100/#{totalShowCount},2)) show_rate, /*曝光占比*/
+            ifnull(count(DISTINCT if(toDate(i.online_date) BETWEEN #{startStaDate} and #{endStaDate} and v.show_count >20, i.id, null)),0) online_vshow_count,  /*上线进文量曝光数>20的视频数*/
+            ifnull(count(DISTINCT if(toDate(i.online_date) BETWEEN #{startStaDate} and #{endStaDate}, i.id, null)),0) online_count,  /*上线进文量*/
+            if(online_count=0,0,round(online_vshow_count*100/online_count,2)) vshow_rate, /*有效曝光率占比*/
+            sum(v.play_count) play_count,  /*播放数*/
+            if(show_count=0,0,round(play_count*100/show_count,2)) play_rate, /*播放率*/
+            sum(v.vplay_count) vplay_count, /*有效播放次数*/
+            if(play_count=0,0,round(vplay_count*100/play_count,2)) vplay_rate, /*有效播放率*/
+            sum(v.all_play_count) all_play_count,  /*完博数*/
+            if(play_count=0,0,round(all_play_count*100/play_count,2)) all_play_rate, /*完播率*/
+            sum(v.play_time_real) play_time_real,
+            if(show_count=0,0,round(play_time_real/60000/show_count,2)) pre_show_time, /*平均每曝光播放时长*/
+            anyLast(video_count) video_count, /*分类下的视频总数*/
+            anyLast(cat_jw_count) cat_jw_count, /*分类进文量*/
+            anyLast(cat_online_count) cat_online_count, /*分类内容源上线进文量*/
+            anyLast(t_cat_online_count) t_cat_online_count, /*分类上线进文量*/
+            <![CDATA[
+            ifnull(count(DISTINCT if(if(sta_show_count=0,0,sta_play_count/sta_show_count)>=cat_play_rate,i.id,null)),0) gt_play_count, /*某分类某视频来源下视频播放率高于该分类（不分视频来源）下的平均播放率的视频数量*/
+            groupUniqArray(if(if(sta_show_count=0,0,sta_play_count/sta_show_count)>=cat_play_rate,i.id,null)) gt_play_video_id, /*某分类某视频来源下视频播放率高于该分类（不分视频来源）下的平均播放率的视频id*/
+            if(t_cat_online_count=0,0,round(gt_play_count*100/t_cat_online_count,2)) gt_play_rate, /*高于分类平均播放率的视频占比*/
+            ifnull(count(DISTINCT if(if(sta_show_count=0,0,sta_play_count/sta_show_count)<cat_play_rate,i.id,null)),0) lt_play_count, /*某分类某视频来源下视频播放率低于该分类（不分视频来源）下的平均播放率的视频数量*/
+            groupUniqArray(if(if(sta_show_count=0,0,sta_play_count/sta_show_count)<cat_play_rate,i.id,null)) lt_play_video_id, /*某分类某视频来源下视频播放率高于该分类（不分视频来源）下的平均播放率的视频id*/
+            if(t_cat_online_count=0,0,round(lt_play_count*100/t_cat_online_count,2)) lt_play_rate,  /*低于分类平均播放率的视频占比*/
+            ifnull(count(DISTINCT if(if(sta_play_count=0,0,sta_vplay_count/sta_play_count)<cat_vplay_rate,i.id,null)),0) lt_vplay_count, /*某分类某视频来源下视频有效播放率低于该分类（不分视频来源）下的平均有效播放率的视频数量*/
+            groupUniqArray(if(if(sta_play_count=0,0,sta_vplay_count/sta_play_count)<cat_vplay_rate,i.id,null)) lt_vplay_video_id, /*某分类某视频来源下视频有效播放率低于该分类（不分视频来源）下的平均有效播放率的视频id*/
+            if(t_cat_online_count=0,0,round(lt_vplay_count*100/t_cat_online_count,2)) lt_vplay_rate, /*低于平均有效播放率的视频占比*/
+            ifnull(count(DISTINCT if(if(sta_play_count=0,0,sta_all_play_count/sta_play_count)<cat_all_play_rate,i.id,null)),0) lt_all_play_count, /*某分类某视频来源下视频完播率低于该分类（不分视频来源）下的平均完播率的视频数量*/
+            groupUniqArray(if(if(sta_play_count=0,0,sta_all_play_count/sta_play_count)<cat_all_play_rate,i.id,null)) lt_all_play_video_id, /*某分类某视频来源下视频完播率低于该分类（不分视频来源）下的平均完播率的视频id*/
+            ]]>
+            if(t_cat_online_count=0,0,round(lt_all_play_count*100/t_cat_online_count,2)) lt_all_play_rate /*低于平均完播率的视频占比*/
+        from video_info i left join (<include refid="queryVideoDetail" />) v on i.id=v.video_id
+        inner join (
+            select
+                cat_id,
+                sum(v.show_count) show_count,
+                sum(v.play_count) play_count,
+                if(show_count=0,0,play_count/show_count) cat_play_rate, /*分类播放率*/
+                sum(v.vplay_count) vplay_count,
+                if(play_count=0,0,vplay_count/play_count) cat_vplay_rate, /*分类平均有效播放率*/
+                sum(v.all_play_count) all_play_count,  /*完博数*/
+                if(play_count=0,0,all_play_count/play_count) cat_all_play_rate /*分类平均完播率*/
+            from video_info i left join (<include refid="queryVideoDetail" />) v on i.id=v.video_id
+            where 1=1
+            <include refid="qualityWhereSql" />
+            group by i.cat_id
+        ) c on i.cat_id = c.cat_id
+        inner join (
+            select cat_id, count(1) video_count  /*分类数据来源下在线的视频总数*/
+            from video_info
+            where state = 1
+            group by cat_id
+        ) d on i.cat_id = d.cat_id
+        inner join (
+            select
+                i.id id,
+                sum(v.show_count) sta_show_count,
+                sum(v.play_count) sta_play_count,
+                sum(v.vplay_count) sta_vplay_count,
+                sum(v.all_play_count) sta_all_play_count
+            from video_info i left join (<include refid="queryVideoDetail" />) v on i.id=v.video_id
+            where 1=1
+            <include refid="qualityWhereSql" />
+            group by i.id
+        ) e on i.id = e.id
+        inner join (
+            select cat_id, count(1) t_cat_online_count  /*分类源上线进文量*/
+            from video_info i
+            where 1=1
+            <include refid="qualityWhereSql" />
+            group by cat_id
+        ) f on i.cat_id = f.cat_id
+        inner join (
+            select cat_id,
+                   videos_source,
+                   ifnull(count(DISTINCT i.id),0) cat_jw_count,  /*分类内容源进文量*/
+                   ifnull(count(DISTINCT if(state=1, i.id, null)),0) cat_online_count  /*分类内容源上线进文量*/
+            from video_info i
+            where 1=1
+            <if test="video_source != null and video_source != ''">
+                and i.videos_source = #{video_source}
+            </if>
+            <if test="cat_id != null and cat_id != ''">
+                and i.cat_id = #{cat_id}
+            </if>
+            <if test="startOnlineDate != null and startOnlineDate != ''">
+                and toDate(i.created_at) BETWEEN #{startOnlineDate} and #{endOnlineDate}
+            </if>
+            <if test="ascription_application != null and ascription_application != ''">
+                and i.ascription_application like ${ascription_application}
+            </if>
+            group by cat_id,videos_source
+        ) g on i.cat_id = g.cat_id and i.videos_source = g.videos_source
+        where 1=1
+        <include refid="qualityWhereSql" />
+        group by i.cat_id ,i.videos_source
+        ${orderByField}
+    </select>
+
+    <sql id="qualityWhereSql">
+        and i.state = 1
+        <if test="video_source != null and video_source != ''">
+            and i.videos_source = #{video_source}
+        </if>
+        <if test="cat_id != null and cat_id != ''">
+            and i.cat_id = #{cat_id}
+        </if>
+        <if test="startOnlineDate != null and startOnlineDate != ''">
+            and toDate(i.created_at) BETWEEN #{startOnlineDate} and #{endOnlineDate}
+        </if>
+        <if test="ascription_application != null and ascription_application != ''">
+            and i.ascription_application like ${ascription_application}
+        </if>
+    </sql>
+
+    <select id="totalShowCount" parameterType="map" resultType="java.lang.Long">
+        select sum(v.show_count) all_show_count
+        from video_info i
+        inner join (<include refid="queryVideoDetail" />) v on i.id=v.video_id
+        where 1=1
+        <include refid="qualityWhereSql" />
+    </select>
+
+    <select id="listVideoSource" resultType="map">
+      select source_key,source_name from video_source
+    </select>
+
+</mapper>

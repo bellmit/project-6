@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.reportview.mapper.BannerDataTotalNameMapper">
+    <sql id="groupShowColumsql">
+        <if test="groups != null">
+            <foreach collection="groups" item="groupi" separator="" open="" close="">
+                , ${groupi}
+            </foreach>
+        </if>
+    </sql>
+    <sql id="wheresql">
+        and date between #{startDate} and #{endDate}
+        <if test="appPackages != null">
+            and app_package in
+            <foreach collection="appPackages" item="appPackage" separator="," open="(" close=")">
+                #{appPackage}
+            </foreach>
+        </if>
+        <if test="spaceKeys != null">
+            and position_type in
+            <foreach collection="spaceKeys" item="spaceKey" separator="," open="(" close=")">
+                #{spaceKey}
+            </foreach>
+        </if>
+        <if test="appAdspaces != null">
+            and
+            <foreach collection="appAdspaces" item="appAdspace" separator="or" open="(" close=")">
+                (app_package = #{appAdspace.appPackage} and position_type = #{appAdspace.spaceKey})
+            </foreach>
+        </if>
+        <if test="plates != null">
+            and plat_form in
+            <foreach collection="plates" item="plat" separator="," open="(" close=")">
+                #{plat}
+            </foreach>
+        </if>
+    </sql>
+    <select id="getData" parameterType="map" resultType="com.miguan.reportview.vo.AdTotalVo">
+        select SUM(revenue) as revenue, date as dd
+        <include refid="groupShowColumsql"/>
+        from (
+        select m.revenue,
+        aa.app_package,
+        ad.position_type,
+        m.plat_form,
+        m.date
+        from banner_data_total_name m
+        left join app_ad aa on m.app_id = aa.app_id and aa.client_id = m.client_id
+        left join ad_advert_position ad on ad.total_name = m.ad_space and ad.app_package = aa.app_package
+        where 1=1
+        <if test="appType != null">
+            and app_type = #{appType}
+        </if>
+        ) t
+        <where>
+            <include refid="wheresql"/>
+        </where>
+        group by date
+        <include refid="groupShowColumsql"/>
+    </select>
+</mapper>

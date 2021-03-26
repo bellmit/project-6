@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.reportview.mapper.AppCostMapper">
+
+    <select id="getCostForDate" parameterType="map" resultType="com.miguan.reportview.vo.CostVo">
+        select sum(cost) as cost, date
+        from app_cost
+        where app_id != 4
+          and date between #{startDate} and #{endDate}
+        GROUP BY date
+    </select>
+</mapper>

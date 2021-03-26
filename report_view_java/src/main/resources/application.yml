@@ -1,0 +1,81 @@
+server:
+  port: 8203
+  max-post-size: -1
+  max-http-header-size: 402400
+spring:
+  profiles:
+    active: local
+  main:
+    allow-bean-definition-overriding: true
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 100MB
+  datasource:
+    dynamic:
+      primary: report-db
+      hikari:
+        connection-test-query: SELECT 1
+        connectionTimeout: 180000
+        maxLifetime: 60000
+        validationTimeout: 8000
+        idleTimeout: 50000
+        min-idle: 20
+        max-pool-size: 1500
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+  mapper-locations: classpath:/mapper/*.xml
+logging:
+  level:
+    com.github.xiaoymin: off
+    com.miguan.report: debug
+    com.cgcg: debug
+cgcg:
+  rest:
+    read-timeout: 300000
+    connect-timeout: 300000
+    connection-request-timeout: 300000
+  swagger:
+    name: report-在线文档
+    desc: Http Online Documentation
+    headers: token
+    contact-url: http://gitlab.miguan.com/video/report_java.git
+    contact-name: zhicong.lin
+    version: 1.0.0
+  format:
+    response-data: true
+    response-data-ignore:  ##接口返回值不需要在包裹一层data的接口
+      - /api/skypay/payoutQueuePayout
+    des3: S5EXCbIx98nrWA7a
+    class-name: com.miguan.reportview.dto.ResponseEntity
+  interceptor:
+    ignore:
+      auth-ignore:  ##不需要token拦截接口
+        - /api/login
+        - /api/xy/*
+        - /api/videoView/*
+
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/*Mapper.xml
+  global-config:
+    db-config:
+      id-type: auto
+    datacenter-id: ${nodeId:${spring.nodeId:1}}
+    worker-id: ${nodeId:${spring.nodeId:1}}
+    banner: false
+  configuration:
+    jdbc-type-for-null: null
+
+swagger:
+  enable: false
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql

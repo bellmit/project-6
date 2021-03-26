@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.reportview.mapper.DwAdActionsMapper">
+    <sql id="groupShowColumsql">
+        <if test="groups != null">
+            <foreach collection="groups" item="groupi" separator="" open="" close="">
+                , ${groupi}
+            </foreach>
+        </if>
+    </sql>
+    <sql id="wheresql">
+        and dt between toYYYYMMDD(toDate(#{startDate})) and toYYYYMMDD(toDate(#{endDate}))
+        <if test="appType == 1">
+            and package_name != 'com.mg.phonecall'
+        </if>
+        <if test="appType == 2">
+            and package_name = 'com.mg.phonecall'
+        </if>
+        <if test="showType != null">
+            and is_new_app = #{showType}
+        </if>
+        <if test="appPackages != null">
+            and package_name in
+            <foreach collection="appPackages" item="appPackage" separator="," open="(" close=")">
+                #{appPackage}
+            </foreach>
+        </if>
+        <if test="appVersions != null">
+            and app_version in
+            <foreach collection="appVersions" item="appVersion" separator="," open="(" close=")">
+                #{appVersion}
+            </foreach>
+        </if>
+        <if test="pChannelIds != null">
+            and father_channel in
+            <foreach collection="pChannelIds" item="pChannelId" separator="," open="(" close=")">
+                #{pChannelId}
+            </foreach>
+        </if>
+        <if test="channelIds != null">
+            and channel in
+            <foreach collection="channelIds" item="channelId" separator="," open="(" close=")">
+                #{channelId}
+            </foreach>
+        </if>
+        <if test="spaceKeys != null">
+            and ad_key in
+            <foreach collection="spaceKeys" item="spaceKey" separator="," open="(" close=")">
+                #{spaceKey}
+            </foreach>
+        </if>
+        <if test="adcodes != null">
+            and ad_id in
+            <foreach collection="adcodes" item="adcode" separator="," open="(" close=")">
+                #{adcode}
+            </foreach>
+        </if>
+        <if test="plates != null">
+            and ad_source in
+            <foreach collection="plates" item="plat" separator="," open="(" close=")">
+                #{plat}
+            </foreach>
+        </if>
+        <if test="appAdspaces != null">
+            and
+            <foreach collection="appAdspaces" item="appAdspace" separator="or" open="(" close=")">
+                (package_name = #{appAdspace.appPackage} and ad_key = #{appAdspace.spaceKey})
+            </foreach>
+        </if>
+    </sql>
+    <!--<sql id="joinSql">
+        <foreach collection="jto.split(',')">
+            (select * from
+        </foreach>
+        <include refid="${jt}"/>
+        <foreach collection="jto.split(',')" item="rid" index="seq">
+            GLOBAL LEFT OUTER JOIN
+            <if test="seq == 0">
+                <include refid="activeUser"/>
+            </if>
+            <if test="seq == 1">
+                <include refid="clickUser"/>
+            </if>
+            USING (dd<include refid="groupShowColumsql"/>)
+            ) jc${seq}
+        </foreach>
+    </sql>-->
+    <sql id="joinSql">
+        (select * from
+        (select * from
+        <include refid="vshowUser"/>
+        GLOBAL LEFT OUTER JOIN
+        <include refid="activeUser"/>
+        USING (dd<include refid="groupShowColumsql"/>)
+        ) jc1
+        GLOBAL LEFT OUTER JOIN
+        <include refid="clickUser"/>
+        USING (dd<include refid="groupShowColumsql"/>)
+        ) jc2
+    </sql>
+    <select id="getData" parameterType="map" resultType="com.miguan.reportview.vo.AdBehaviorDataVo">
+        select * from
+        <include refid="mainSql"/>
+        GLOBAL LEFT OUTER JOIN
+        <include refid="joinSql">
+            <property name="jt" value="vshowUser"/>
+            <property name="jto" value="activeUser,clickUser"/>
+        </include>
+        USING (dd<include refid="groupShowColumsql"/>) order by dd desc
+    </select>
+    <sql id="mainSql">
+        ( select
+        sum(request) as req,
+        sum(response) as res,
+        sum(show) as vshow,
+        sum(click) as vclick,
+        sum(stock) as stock,
+        sum(zone_show) as zoneShow,
+        sum(zone_click) as zoneClick,
+        dd
+        <include refid="groupShowColumsql"/>
+        from dw_ad_actions where 1=1
+        <include refid="wheresql"/>
+        group by dd
+        <include refid="groupShowColumsql"/>
+        ) m
+    </sql>
+    <sql id="vshowUser">
+        <!--有效爆光用户-->
+        (select count (distinct distinct_id) as vshowUser,
+        dd
+        <include refid="groupShowColumsql"/>
+        from dw_ad_actions
+        where show=1
+        <include refid="wheresql"/>
+        group by dd
+        <include refid="groupShowColumsql"/>) vs
+    </sql>
+    <sql id="activeUser">
+        <!--活跃用户-->
+        (select count (distinct distinct_id) as activeUser,
+        dd
+        <include refid="groupShowColumsql"/>
+        from dw_ad_actions
+        where 1=1
+        <include refid="wheresql"/>
+        group by dd
+        <include refid="groupShowColumsql"/>) au
+    </sql>
+    <sql id="clickUser">
+        <!--广告点击用户-->
+        (select count (distinct distinct_id) as clickUser,
+        dd
+        <include refid="groupShowColumsql"/>
+        from dw_ad_actions
+        where click=1
+        <include refid="wheresql"/>
+        group by dd
+        <include refid="groupShowColumsql"/>) cu
+    </sql>
+
+    <select id="getNewData" parameterType="map" resultType="com.miguan.reportview.vo.AdBehaviorDataVo">
+        select
+            dd,
+            <if test='groups != null and groups.contains("package_name")'>
+                package_name,
+            </if>
+            <if test='groups != null and groups.contains("app_version")'>
+                app_version,
+            </if>
+            <if test='groups != null and groups.contains("is_new_app")'>
+                is_new_app is_new,
+            </if>
+            <if test='groups != null and groups.contains("channel")'>
+                channel,
+            </if>
+            <if test='groups != null and groups.contains("father_channel")'>
+                father_channel,
+            </if>
+            <if test='groups != null and groups.contains("ad_key")'>
+                ad_key,
+            </if>
+            <if test='groups != null and groups.contains("ad_id")'>
+                ad_id,
+            </if>
+            <if test='groups != null and groups.contains("ad_source")'>
+                ad_source,
+            </if>
+            sum(request) as req,
+            sum(response) as res,
+            sum(show) as vshow,
+            sum(click) as vclick,
+            sum(stock) as stock,
+            sum(zone_show) as zoneShow,
+            sum(zone_click) as zoneClick,
+            count(DISTINCT if(show = 1, distinct_id, null)) vshowUser,
+            count(DISTINCT if(click = 1, distinct_id, null)) clickUser,
+            count(DISTINCT distinct_id) activeUser
+        from dw_ad_actions
+        where 1=1
+        <include refid="wheresql"/>
+        group by dd<include refid="groupShowColumsql"/>
+        order by dd desc
+    </select>
+
+    <select id="getSonData" parameterType="java.util.Map" resultType="com.miguan.reportview.vo.AdBehaviorSonDataVo">
+        select dd date,package_name,adPostion,ad_source,render_type_str render_type,adc_type_str adc_type,q_id_str q_id,reqNum,showNum,clickNum,stock,validShowNum,validClickNum,showUser,activeUser
+        from (
+                <foreach collection="qIds" item="qId" separator=" union all " >
+                    select dd,package_name,ad_key adPostion,ad_source,
+                           groupUniqArray(substr(render_type,locate(render_type,'_' )+1)) render_type_str,
+                           groupUniqArray(case when adc_type in ('小图（1图2文）','大图（2图2文）','组图（3小图）','大图','小图','图片','竖版图片','大图','组图','未知类型') then '图片'
+                                          when adc_type in ('竖版视频','视频') then '视频' else adc_type end) adc_type_str,
+                           #{qId} q_id_str,
+                           sum(request) reqNum, sum(zone_show) showNum, sum(zone_click) clickNum, sum(stock) stock, sum(show) validShowNum, sum(click) validClickNum,
+                           count(distinct if(show=1,distinct_id,null)) showUser,
+                           count(distinct distinct_id) activeUser
+                    from dw_ad_actions
+                    where dt BETWEEN toYYYYMMDD(toDate(#{startDate})) and toYYYYMMDD(toDate(#{endDate}))
+                    <if test="appType == 1">
+                        and package_name in ('com.mg.xyvideo','com.mg.westVideo')
+                        and ad_key in ('personalPage','lockAppScreenDeblocking','searchDetailPosition','detailPage','albumInformationFlowPosition')
+                    </if>
+                    <if test="appType == 2">
+                        and package_name = 'com.mg.phonecall'
+                        and ad_key in ('callList','callDetails')
+                    </if>
+
+                    <if test="qId != ''">
+                        and q_id ${qId}   <!-- 位置查询条件 -->
+                    </if>
+                    <if test="appPackages != null">
+                        and package_name in <foreach collection="appPackages" item="appPackage" separator="," open="(" close=")">#{appPackage}</foreach>
+                    </if>
+                    <if test="adKeys != null">
+                        and ad_key in <foreach collection="adKeys" item="adKey" separator="," open="(" close=")">#{adKey}</foreach>
+                    </if>
+                    <if test="adSources != null">
+                        and ad_source in <foreach collection="adSources" item="adSource" separator="," open="(" close=")">#{adSource}</foreach>
+                    </if>
+                    <if test="renderTypes != null">
+                        and <foreach collection="renderTypes" item="renderType" separator=" or " open="(" close=")">locate(render_type,#{renderType}) > 0 </foreach>
+                    </if>
+                    <if test="adcTypes != null">
+                        and adc_type in <foreach collection="adcTypes" item="adcType" separator="," open="(" close=")">#{adcType}</foreach>
+                    </if>
+                    group by (dd,package_name,ad_key,ad_source)
+                </foreach>
+              ) a order by date desc, package_name,ad_source,adPostion
+    </select>
+
+    <select id="findEarlyWarnList" resultType="com.miguan.reportview.dto.EarlyWarningDto" parameterType="map">
+        select package_name_zw,ad_key_name, sum(show) show, sum(stock) stock, if(stock =0,0, round(show/stock,4)*100) show_stock_rate
+        from dw_ad_actions d,dd_threshold dt
+        where d.package_name = dt.package_name and d.ad_key = dt.ad_key
+        and dt=toYYYYMMDD(toDate(#{dd}))
+        and receive_time BETWEEN #{startTime} and #{endTime}
+        and dt.package_name != 'com.mg.phonecall'
+        group by package_name_zw, ad_key_name
+        <if test="type == 1">
+            having show_stock_rate &lt; any(value)
+            order by show_stock_rate
+        </if>
+        <if test="type == 3">
+            having stock =0
+        </if>
+    </select>
+</mapper>

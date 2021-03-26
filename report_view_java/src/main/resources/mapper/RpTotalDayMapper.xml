@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.reportview.mapper.RpTotalDayMapper">
+    <!--实时统计小方格-->
+    <select id="getCheckereddata" parameterType="map" resultType="com.miguan.reportview.vo.RealTimeStaVo">
+        <!-- 1=新增用户2=活跃用户3=播放用户4=有效播放用户5=广告展现用户6=广告点击用户7=视频播放数8=有效播放数9=广告展现
+      10=完播用户11=人均有效播放数12=人均播放时长13=广告有效点击量14=广告点击率15=人均广告展示16=人均广告点击-->
+        select
+        <if test='showTypes.contains("1")'>
+            new_user as newUser,
+        </if>
+        <if test='showTypes.contains("2")'>
+            user as suser,
+        </if>
+        <if test='showTypes.contains("3")'>
+            play_user as playUser,
+        </if>
+        <if test='showTypes.contains("4")'>
+            valid_play_user as validPlayUser,
+        </if>
+        <if test='showTypes.contains("5")'>
+            ad_show_user as adShowUser,
+        </if>
+        <if test='showTypes.contains("6")'>
+            ad_click_user as adClickUser,
+        </if>
+        <if test='showTypes.contains("7")'>
+            play_count as playCount,
+        </if>
+        <if test='showTypes.contains("8")'>
+            valid_play_count as validPlayCount,
+        </if>
+        <if test='showTypes.contains("9")'>
+            ad_show_count as adShowCount,
+        </if>
+        <if test='showTypes.contains("10")'>
+            <!--完播用户-->
+            end_play_user as endPlayUser,
+        </if>
+        <if test='showTypes.contains("11")'>
+            <!--人均有效播放数-->
+            valid_play_count/user as vperPlayCount,
+        </if>
+        <if test='showTypes.contains("12")'>
+            <!--人均播放时长-->
+            play_time_total/user as perPlayTime,
+        </if>
+        <if test='showTypes.contains("13")'>
+            <!--广告点击量-->
+            ad_click_count as adClickCount,
+        </if>
+        <if test='showTypes.contains("14")'>
+            <!--广告点击率-->
+            ad_click_count/ad_show_count as adClickRate,
+        </if>
+        <if test='showTypes.contains("15")'>
+            <!--人均广告展示-->
+            ad_show_count/user as perAdShowCount,
+        </if>
+        <if test='showTypes.contains("16")'>
+            <!--人均广告点击-->
+            ad_click_count/user as perAdclickCount,
+        </if>
+        <if test='showTypes.contains("17")'>
+            <!--每曝光播放时长=播放总时长(分)/曝光总数-->
+            play_time_total/60000/show_count as preShowTime,
+        </if>
+        <if test='showTypes.contains("18")'>
+            <!--每播放播放时长=播放总时长(分)/播放视频数-->
+            play_time_total/60000/play_count as prePlayTime,
+        </if>
+        dd
+        from rp_total_hour_accumulated
+        where
+        dh = #{todayH} or dh = #{yesendDateH}
+        order by dd desc;
+    </select>
+
+    <select id="getRealTimeCheckereddata" parameterType="map" resultType="com.miguan.reportview.vo.RealTimeStaVo">
+        <!-- 1=新增用户2=活跃用户3=播放用户4=有效播放用户5=广告展现用户6=广告点击用户7=视频播放数8=有效播放数9=广告展现
+        10=完播用户11=人均有效播放数12=人均播放时长13=广告有效点击量14=广告点击率15=人均广告展示16=人均广告点击17=每曝光播放时长18=每播放播放时长-->
+        select
+        <if test='showTypes.contains("1")'>
+            new_user as newUser,
+        </if>
+        <if test='showTypes.contains("2")'>
+            user as suser,
+        </if>
+        <if test='showTypes.contains("3")'>
+            play_user as playUser,
+        </if>
+        <if test='showTypes.contains("4")'>
+            valid_play_user as validPlayUser,
+        </if>
+        <if test='showTypes.contains("5")'>
+            ad_show_user as adShowUser,
+        </if>
+        <if test='showTypes.contains("6")'>
+            ad_click_user as adClickUser,
+        </if>
+        <if test='showTypes.contains("7")'>
+            play_count as playCount,
+        </if>
+        <if test='showTypes.contains("8")'>
+            valid_play_count as validPlayCount,
+        </if>
+        <if test='showTypes.contains("9")'>
+            ad_show_count as adShowCount,
+        </if>
+        <if test='showTypes.contains("10")'>
+            <!--完播用户-->
+            end_play_user as endPlayUser,
+        </if>
+        <if test='showTypes.contains("11")'>
+            <!--人均有效播放数-->
+            valid_play_count/user as vperPlayCount,
+        </if>
+        <if test='showTypes.contains("12")'>
+            <!--人均播放时长-->
+            play_time_total/user as perPlayTime,
+        </if>
+        <if test='showTypes.contains("13")'>
+            <!--广告点击量-->
+            ad_click_count as adClickCount,
+        </if>
+        <if test='showTypes.contains("14")'>
+            <!--广告点击率-->
+            ad_click_count/ad_show_count as adClickRate,
+        </if>
+        <if test='showTypes.contains("15")'>
+            <!--人均广告展示-->
+            ad_show_count/user as perAdShowCount,
+        </if>
+        <if test='showTypes.contains("16")'>
+            <!--人均广告点击-->
+            ad_click_count/user as perAdclickCount,
+        </if>
+        <if test='showTypes.contains("17")'>
+            <!--每曝光播放时长=播放总时长(分)/曝光总数-->
+            round(play_time_total/60000/show_count,2) as preShowTime,
+        </if>
+        <if test='showTypes.contains("18")'>
+            <!--每播放播放时长=播放总时长(分)/播放视频数-->
+            round(play_time_total/60000/play_count,2) as prePlayTime,
+        </if>
+        dd
+        from rp_total_day
+        where
+        dd = #{qdate}
+    </select>
+
+    <select id="getOverallTrendData" parameterType="map" resultType="com.miguan.reportview.vo.OverallTrendVo">
+        <!--
+        1=新增用户2=活跃用户3=播放视频数4=日活用户价值5=日活客单成本6=新用户次留率7=活跃用户次留率
+        8=人均有效播放数9=广告展现量10=广告点击量11=广告点击率12=人均广告展示13=人均广告点击14=平均日使用时长15=人均播放时长16=每曝光播放时长17=每播放播放时长
+        -->
+        select
+        <if test='showTypes.contains("1")'>
+            new_user as newUser,
+        </if>
+        <if test='showTypes.contains("2")'>
+            user,
+        </if>
+        <if test='showTypes.contains("3")'>
+            play_count as playCount,
+        </if>
+        <if test='showTypes.contains("6")'>
+            new_user,
+        </if>
+        <if test='showTypes.contains("7")'>
+            user,
+        </if>
+        <if test='showTypes.contains("8")'>
+            valid_play_count/user as duvpc,
+        </if>
+        <if test='showTypes.contains("9")'>
+            ad_show_count as adShowCount,
+        </if>
+        <if test='showTypes.contains("10")'>
+            ad_click_count as adClickCount,
+        </if>
+        <if test='showTypes.contains("11")'>
+            ad_click_count/ad_show_count as adClickRate,
+        </if>
+        <if test='showTypes.contains("12")'>
+            ad_show_count/user as duAdshow,
+        </if>
+        <if test='showTypes.contains("13")'>
+            ad_click_count/user as duAdClick,
+        </if>
+        <if test='showTypes.contains("14")'>
+            app_time_total/user as duAppTime,
+        </if>
+        <if test='showTypes.contains("15")'>
+            play_time_total/user as perPlayTime,
+        </if>
+        <if test='showTypes.contains("16")'>
+            <!--每曝光播放时长=播放总时长(分)/曝光总数-->
+            round(play_time_total/60000/show_count,2) as preShowTime,
+        </if>
+        <if test='showTypes.contains("17")'>
+            <!--每播放播放时长=播放总时长(分)/播放视频数-->
+            round(play_time_total/60000/play_count,2) as prePlayTime,
+        </if>
+        dd as date
+        from rp_total_day
+        where
+        dd between #{startDate} and #{endDate}
+        order by dd desc;
+    </select>
+
+    <!--来电实时统计小方格-->
+    <select id="getLdCheckereddata" parameterType="map" resultType="com.miguan.reportview.vo.LdRealTimeStaVo">
+        <!-- 1=新增用户,2=活跃用户,3=详情页播放用户,4=设置用户,5=成功设置用户,6=人均观看次数,7=人均设置次数,8=人均成功设置次数,9=广告展现用户,
+             10=广告点击用户,11=广告展现量,12=广告点击量,13=人均广告展现,14=人均广告点击,15=广告点击率,16=广告点击用户占比,17=人均APP启动次数-->
+        select dd,dh,user,new_user,detail_play_user,detail_play_count,set_user,set_confirm_user,
+               app_start,ad_show,ad_click,ad_show_user,ad_click_user,set_count,set_confirm_count,
+               round(detail_play_count/user, 2) prePlayCount,
+               round(set_count/user, 2) preSetCount,
+               round(set_confirm_count/user, 2) preSetConfirmCount,
+               round(ad_show/user, 2) preAdShow,
+               round(ad_click/user, 2) preAdClick,
+               round(ad_click*100/ad_show, 2)  as adClickRate,
+               round(ad_click_user*100/ad_show_user, 2)  as adClickShowRate,
+               round(app_start/user, 2) as preAppStart
+        from ld_rp_total_hour_accumulated
+        where
+        dh = #{todayH} or dh = #{yesendDateH}
+        order by dd desc;
+    </select>
+
+    <select id="getLdRealTimeCheckereddata" parameterType="map" resultType="com.miguan.reportview.vo.LdRealTimeStaVo">
+        <!-- 1=新增用户,2=活跃用户,3=详情页播放用户,4=设置用户,5=成功设置用户,6=人均观看次数,7=人均设置次数,8=人均成功设置次数,9=广告展现用户,
+             10=广告点击用户,11=广告展现量,12=广告点击量,13=人均广告展现,14=人均广告点击,15=广告点击率,16=广告点击用户占比,17=人均APP启动次数,
+             18=活跃用户留存率,19=新增用户留存率-->
+        select
+            new_user,
+            user,
+            detail_play_user,
+            set_user,
+            set_confirm_user,
+            round(detail_play_count/user, 2) prePlayCount,
+            round(set_count/user, 2) preSetCount,
+            round(set_confirm_count/user, 2) preSetConfirmCount,
+            ad_show_user,
+            ad_click_user,
+            ad_show,
+            ad_click,
+            round(ad_show/user, 2) preAdShow,
+            round(ad_click/user, 2) preAdClick,
+            round(ad_click*100/ad_show, 2) as adClickRate,
+            round(ad_click_user*100/ad_show_user, 2) as adClickShowRate,
+            round(app_start/user, 2) as preAppStart,
+            user_retention,
+            new_user_retention
+        from ld_rp_total_day
+        where
+        dd = #{qdate}
+    </select>
+
+    <select id="getLdOverallTrendData" parameterType="map" resultType="com.miguan.reportview.vo.LdOverallTrendVo">
+        <!-- 1=新增用户,2=活跃用户,3=详情页播放用户,4=设置用户,5=成功设置用户,6=人均观看次数,7=人均设置次数,8=人均成功设置次数,9=广告展现用户,
+             10=广告点击用户,11=广告展现量,12=广告点击量,13=人均广告展现,14=人均广告点击,15=广告点击率,16=广告点击用户占比,17=人均APP启动次数,
+             18=活跃用户留存率,19=新增用户留存率-->
+        select
+        <if test='showTypes.contains("1")'>
+            new_user,
+        </if>
+        <if test='showTypes.contains("2")'>
+            user,
+        </if>
+        <if test='showTypes.contains("3")'>
+            detail_play_user,
+        </if>
+        <if test='showTypes.contains("4")'>
+            set_user,
+        </if>
+        <if test='showTypes.contains("5")'>
+            set_confirm_user,
+        </if>
+        <if test='showTypes.contains("6")'>
+            if(user=0, 0, round(detail_play_count/user, 4)) as prePlayCount,
+        </if>
+        <if test='showTypes.contains("7")'>
+            if(user=0, 0, round(set_count/user, 4)) as preSetCount,
+        </if>
+        <if test='showTypes.contains("8")'>
+            if(user=0, 0, round(set_confirm_count/user, 2)) as preSetConfirmCount,
+        </if>
+        <if test='showTypes.contains("9")'>
+            ad_show_user,
+        </if>
+        <if test='showTypes.contains("10")'>
+            ad_click_user,
+        </if>
+        <if test='showTypes.contains("11")'>
+            ad_show,
+        </if>
+        <if test='showTypes.contains("12")'>
+            ad_click,
+        </if>
+        <if test='showTypes.contains("13")'>
+            if(user=0, 0, round(ad_show/user, 4)) as preAdShow,
+        </if>
+        <if test='showTypes.contains("14")'>
+            if(user=0, 0, round(ad_click/user, 4)) as preAdClick,
+        </if>
+        <if test='showTypes.contains("15")'>
+            if(ad_show=0, 0, round(ad_click/ad_show, 4)*100) as adClickRate,
+        </if>
+        <if test='showTypes.contains("16")'>
+            if(ad_show_user=0, 0, round(ad_click_user/ad_show_user, 4)*100) as adClickShowRate,
+        </if>
+        <if test='showTypes.contains("17")'>
+            if(user=0, 0, round(app_start/user, 4)) as preAppStart,
+        </if>
+        dd as date
+        from ld_rp_total_day
+        where
+        dd between #{startDate} and #{endDate}
+        order by dd desc;
+    </select>
+</mapper>

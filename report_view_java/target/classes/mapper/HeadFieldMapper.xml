@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.reportview.mapper.HeadFieldMapper">
+
+    <select id="findByTableCode" parameterType="java.lang.String" resultType="com.miguan.reportview.dto.HeadFieldDto">
+        select * from report_table_head
+        where table_code =#{tableCode}
+        order by sort
+    </select>
+
+    <update id="modifyShowById" parameterType="java.lang.Integer">
+        update report_table_head
+        set is_show = #{isShow}
+        where id = #{id}
+    </update>
+
+    <update id="modifyHeadFieldInfo" parameterType="map">
+        update report_table_head
+        <set>
+            <if test="tableCode != null">
+                table_code = #{tableCode},
+            </if>
+            <if test="tableName != null">
+                table_name = #{tableName},
+            </if>
+            <if test="fieldCode != null">
+                field_code = #{fieldCode},
+            </if>
+            <if test="fieldname != null">
+                field_name = #{fieldname},
+            </if>
+            <if test="fieldType != null">
+                field_type = #{fieldType},
+            </if>
+            <if test="showType != null">
+                show_type = #{showType},
+            </if>
+            <if test="fieldRemark != null">
+                field_remark = #{fieldRemark},
+            </if>
+            <if test="isShow != null">
+                is_show = #{isShow},
+            </if>
+            <if test="sort != null">
+                sort = #{sort},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <insert id="addHeadFieldInfo">
+        INSERT INTO report_table_head(table_code, table_name, field_code, field_name, field_type, show_type, field_remark, is_show, sort)
+        VALUES (#{tableCode},#{tableName},#{fieldCode},#{fieldName},#{fieldType},#{showType},#{fieldRemark},#{isShow},#{sort})
+    </insert>
+
+    <delete id="deleteHeadFieldInfo">
+        delete from report_table_head where id = #{id}
+    </delete>
+</mapper>

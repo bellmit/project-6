@@ -1,0 +1,114 @@
+
+logging:
+  level:
+    com.miguan: debug
+    com.cgcg: debug
+    com.baomidou.dynamic: debug
+    org.springframework.data.mongodb: debug
+spring:
+  data:
+    mongodb:
+      bury:
+        uri: mongodb://liyu:9OxClDKGIMNcCFQw@112.74.179.254:53333/bury
+      log:
+        uri: mongodb://liyu:9OxClDKGIMNcCFQw@112.74.179.254:53333/log
+  redis:
+    host: 112.74.179.254
+    port: 6379
+    password: e8cFnj3CoWZdUFyXg8Dkv9Vp66c=
+    timeout: 15000
+    database: 9
+    jedis:
+      pool:
+        max-active: 10000
+        max-idle: 100
+        min-idle: 20
+        max-wait: 3000
+  datasource:
+    dynamic:
+      datasource:
+        report-db:
+          url: jdbc:mysql://112.74.179.254:3306/ballvideoreport?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+          username: zhangbinglin
+          password: 5wMdNa45FS2xAMCj
+#          url: jdbc:mysql://192.168.100.10:3306/ballvideoreport?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+#          username: bdrep_java
+#          password: XYU6hWevd6Nt9cT0
+          driverClassName: com.mysql.cj.jdbc.Driver
+        ad-db:
+#          url: jdbc:mysql://112.74.179.254:3306/ballvideoadv?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+#          username: ballvideo_java
+#          password: e7I8vpV7H6FZohOj
+#          driverClassName: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://192.168.100.10:3306/ballvideoadv?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+          username: bdrep_java
+          password: XYU6hWevd6Nt9cT0
+          driverClassName: com.mysql.cj.jdbc.Driver
+        mofang-db:
+#          url: jdbc:mysql://112.74.179.254:3306/channel_tool_mofang?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+#          username: ballvideo_java
+#          password: e7I8vpV7H6FZohOj
+#          driverClassName: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://192.168.100.10:3306/channel_tool_mofang?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+          username: bdrep_java
+          password: XYU6hWevd6Nt9cT0
+          driverClassName: com.mysql.cj.jdbc.Driver
+        video-db:
+          url: jdbc:mysql://112.74.179.254:3306/ballvideo_dev?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+          username: ballvideo_java
+          password: e7I8vpV7H6FZohOj
+          driverClassName: com.mysql.cj.jdbc.Driver
+#          url: jdbc:mysql://192.168.100.10:3306/ballvideo?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+#          username: bdrep_java
+#          password: XYU6hWevd6Nt9cT0
+#          driverClassName: com.mysql.cj.jdbc.Driver
+        ld-db:
+#          url: jdbc:mysql://112.74.179.254:3306/laidian?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull
+#          username: laidian_java
+#          password: D3jmV5u9Ccc6fRVz
+#          driverClassName: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://112.74.179.254:3306/laidian?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull
+          username: laidian_java
+          password: D3jmV5u9Ccc6fRVz
+          driverClassName: com.mysql.cj.jdbc.Driver
+        data-server:
+          url: jdbc:mysql://192.168.100.10:3306/data_server?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+          username: bdrep_java
+          password: XYU6hWevd6Nt9cT0
+          driverClassName: com.mysql.cj.jdbc.Driver
+        npush:
+          url: jdbc:mysql://192.168.100.10:3306/npush?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+          username: bdrep_java
+          password: XYU6hWevd6Nt9cT0
+          driverClassName: com.mysql.cj.jdbc.Driver
+        clickhouse:
+#          url: jdbc:clickhouse://192.168.100.10:8123/default?socket_timeout=300000
+#          username: default
+#          password: 98du123#
+#          driverClassName: ru.yandex.clickhouse.ClickHouseDriver
+          url: jdbc:clickhouse://47.112.117.200:8123/ballvideostream?socket_timeout=300000
+          username: default
+          password: J7WnvXVM56kTSfqF
+          driverClassName: ru.yandex.clickhouse.ClickHouseDriver
+task:
+  scheduled:
+    cron:
+      #每天凌晨5点
+      export-adposition: 0 0 5 * * ?
+      sta-video-add-offline: 0 0/20 * * * ?
+      sync-rp-total-data: 0 0/20 * * * ?
+      user-content-operation: 0 10,40 * * * ?
+      user-ldcontent-operation: 0 17,57 * * * ?
+      sync-user-keep: 0 0,30 * * * ?
+      sync-lduser-keep: 0 20,50 * * * ?
+      statistics-day-view: 1 0 0 * * ?
+      statistics-hour-view: 0 0 0/1 * * ?
+      sync-ldrp-total-data: 0 0/5 * * * ?
+      sync-channel-detail: 0 5,35 * * * ?
+      video-info: 0 0/10 * * * ?
+      video-detail: 0 25,55 * * * ?
+      pushresult: 0 0/8 * * * ?
+swagger:
+  enable: true
+server:
+  port: 8203

@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.reportview.mapper.RpTotalHourMapper">
+
+    <select id="getData" parameterType="map" resultType="com.miguan.reportview.vo.RealTimeStaVo">
+        <!-- 1=新增用户2=活跃用户3=播放用户4=有效播放用户5=广告展现用户6=广告点击用户7=视频播放数8=有效播放数9=广告展现-->
+        select
+        <if test='showTypes.contains("1")'>
+            new_user as showValue,
+        </if>
+        <if test='showTypes.contains("2")'>
+            user as showValue,
+        </if>
+        <if test='showTypes.contains("3")'>
+            play_user as showValue,
+        </if>
+        <if test='showTypes.contains("4")'>
+            valid_play_user as showValue,
+        </if>
+        <if test='showTypes.contains("5")'>
+            ad_show_user as showValue,
+        </if>
+        <if test='showTypes.contains("6")'>
+            ad_click_user as showValue,
+        </if>
+        <if test='showTypes.contains("7")'>
+            play_count as showValue,
+        </if>
+        <if test='showTypes.contains("8")'>
+            valid_play_count as showValue,
+        </if>
+        <if test='showTypes.contains("9")'>
+            ad_show_count as showValue,
+        </if>
+        <if test='showTypes.contains("10")'>
+            <!--完播用户-->
+            end_play_user as showValue,
+        </if>
+        <if test='showTypes.contains("11")'>
+            <!--人均有效播放数-->
+            valid_play_count/user as showValue,
+        </if>
+        <if test='showTypes.contains("12")'>
+            <!--人均播放时长-->
+            round(play_time_total/(user * 60 * 1000), 2) as showValue,
+        </if>
+        <if test='showTypes.contains("13")'>
+            <!--广告点击量-->
+            ad_click_count as showValue,
+        </if>
+        <if test='showTypes.contains("14")'>
+            <!--广告点击率-->
+            ad_click_count/ad_show_count as showValue,
+        </if>
+        <if test='showTypes.contains("15")'>
+            <!--人均广告展示-->
+            ad_show_count/user as showValue,
+        </if>
+        <if test='showTypes.contains("16")'>
+            <!--人均广告点击-->
+            ad_click_count/user as showValue,
+        </if>
+        <if test='showTypes.contains("17")'>
+            <!--每曝光播放时长=播放总时长(分)/曝光总数-->
+            round(play_time_total/60000/show_count,2) as showValue,
+        </if>
+        <if test='showTypes.contains("18")'>
+            <!--每播放播放时长=播放总时长(分)/播放视频数-->
+            round(play_time_total/60000/play_count,2) as showValue,
+        </if>
+        dd,
+        dh
+        from rp_total_hour
+        where
+        <foreach collection="dates" item="qdate" open="(" close=")" separator="or">
+            dd = #{qdate}
+        </foreach>
+        order by dd desc, dh asc;
+    </select>
+
+    <select id="getMinuteData" parameterType="map" resultType="com.miguan.reportview.vo.RealTimeStaVo">
+        <!-- 1=新增用户2=活跃用户3=播放用户4=有效播放用户5=广告展现用户6=广告点击用户7=视频播放数8=有效播放数9=广告展现-->
+        select
+        <if test='showTypes.contains("1")'>
+            new_user as showValue,
+        </if>
+        <if test='showTypes.contains("2")'>
+            user as showValue,
+        </if>
+        <if test='showTypes.contains("3")'>
+            play_user as showValue,
+        </if>
+        <if test='showTypes.contains("4")'>
+            valid_play_user as showValue,
+        </if>
+        <if test='showTypes.contains("5")'>
+            ad_show_user as showValue,
+        </if>
+        <if test='showTypes.contains("6")'>
+            ad_click_user as showValue,
+        </if>
+        <if test='showTypes.contains("7")'>
+            play_count as showValue,
+        </if>
+        <if test='showTypes.contains("8")'>
+            valid_play_count as showValue,
+        </if>
+        <if test='showTypes.contains("9")'>
+            ad_show_count as showValue,
+        </if>
+        <if test='showTypes.contains("10")'>
+            <!--完播用户-->
+            end_play_user as showValue,
+        </if>
+        <if test='showTypes.contains("11")'>
+            <!--人均有效播放数-->
+            valid_play_count/user as showValue,
+        </if>
+        <if test='showTypes.contains("12")'>
+            <!--人均播放时长-->
+            round(play_time_total/(user * 60 * 1000), 2) as showValue,
+        </if>
+        <if test='showTypes.contains("13")'>
+            <!--广告点击量-->
+            ad_click_count as showValue,
+        </if>
+        <if test='showTypes.contains("14")'>
+            <!--广告点击率-->
+            round(ad_click_count*100/ad_show_count,2) as showValue,
+        </if>
+        <if test='showTypes.contains("15")'>
+            <!--人均广告展示-->
+            round(ad_show_count/user,2) as showValue,
+        </if>
+        <if test='showTypes.contains("16")'>
+            <!--人均广告点击-->
+            round(ad_click_count/user,2) as showValue,
+        </if>
+        <if test='showTypes.contains("17")'>
+            <!--每曝光播放时长=播放总时长(分)/曝光总数-->
+            round(play_time_total/60000/show_count,2) as showValue,
+        </if>
+        <if test='showTypes.contains("18")'>
+            <!--每播放播放时长=播放总时长(分)/播放视频数-->
+            round(play_time_total/60000/play_count,2) as showValue,
+        </if>
+        dd,
+        show_minute
+        from rp_total_minute
+        where
+        <foreach collection="dates" item="qdate" open="(" close=")" separator="or">
+            dd = #{qdate}
+        </foreach>
+        order by dd desc, show_minute asc;
+    </select>
+
+    <delete id="deleteHourAccumulated">
+        alter table rp_total_hour_accumulated delete where dh=#{dh}
+    </delete>
+
+    <insert id="staData" parameterType="map">
+        insert into rp_total_hour_accumulated(dd,dh,new_user,user,play_count,valid_play_count,end_play_count,play_user,valid_play_user,end_play_user,
+        	                                  play_time_total,ad_show_count,ad_click_count,ad_show_user,ad_click_user,app_time_total,app_time_total_r,id,show_count)
+        select
+            a.dd dd,
+            #{timeEndDh} dh,
+            new_user,
+            user,
+            play_count,
+            valid_play_count,
+            end_play_count,
+            play_user,
+            valid_play_user,
+            end_play_user,
+            play_time_total,
+            ad_show_count,
+            ad_click_count,
+            ad_show_user,
+            ad_click_user,
+            app_time_total,
+            app_time_total_r,
+            sipHash64(toYYYYMMDDhhmmss(now()), dh) as id,
+            show_count
+        from (
+            select dd,
+            sum(play_start) play_count,  /*播放数*/
+            sum(show) show_count,  /*曝光数*/
+            sum(is_play_valid) valid_play_count,  /*有效播放数*/
+            sum(is_play_end) end_play_count,  /*完播数*/
+            count(distinct if(play_start=1,distinct_id,null)) play_user,  /*播放用户数*/
+            count(distinct if(is_play_valid=1,distinct_id,null)) valid_play_user,  /*有效播放用户数*/
+            count(distinct if(is_play_end=1,distinct_id,null)) end_play_user,  /*完播用户数*/
+            sum(if(v.is_play_time=1,play_time_r,0)) play_time_total   /*总播放时长，毫秒为单位*/
+            from dw_video_actions_aggregation v
+            where dh BETWEEN #{timeBeginDh} and #{timeEndDh} and package_name != 'com.mg.phonecall'
+            GROUP BY dd
+        ) a left join (
+            select
+	            dd,
+	            count(distinct distinct_id) as `user`,   /*活跃用户数*/
+	            count(distinct if(is_new_app=1,distinct_id,null)) new_user  /*新增用户数*/
+            from dw_user_simple
+            where dt BETWEEN toYYYYMMDD(toDate(#{startDate}))  AND toYYYYMMDD(toDate(#{endDate})) AND  dh BETWEEN #{timeBeginDh} and #{timeEndDh} and package_name != 'com.mg.phonecall'
+            GROUP BY dd
+        ) b on a.dd = b.dd
+        left join (
+            select
+	            dd,
+	            sum(show) ad_show_count, /*广告曝光量*/
+	            sum(click) ad_click_count, /*广告点击量*/
+	            count(distinct if(show=1,distinct_id,null)) ad_show_user,  /*广告曝光用户数*/
+	            count(distinct if(click=1,distinct_id,null)) ad_click_user  /*广告点击用户数*/
+            from dw_ad_actions
+            where dt BETWEEN toYYYYMMDD(toDate(#{startDate}))  AND toYYYYMMDD(toDate(#{endDate})) AND dh BETWEEN #{timeBeginDh} and #{timeEndDh} and package_name != 'com.mg.phonecall'
+            group by dd
+        ) c on a.dd=c.dd
+        left join (
+            select toDate(receive_time) AS dd,
+            ifnull(SUM(if(action_id='app_end',play_time,0)),0) app_time_total,  /*应用总使用时长，毫秒为单位*/
+            ifnull(SUM(if(action_id='pageview_end',play_time,0)),0) app_time_total_r  /*应用实际使用时长，毫秒为单位*/
+            from dw.dwd_user_actions_disb duad
+            where dt=#{dt}
+            and receive_time BETWEEN #{startDate,jdbcType=TIMESTAMP} and #{endDate,jdbcType=TIMESTAMP} and package_name != 'com.mg.phonecall'
+            group by toDate(receive_time)
+        ) d on a.dd = d.dd
+    </insert>
+
+    <delete id="deleteLdHourAccumulated">
+      alter table ld_rp_total_hour_accumulated delete where dh=#{dh}
+    </delete>
+
+    <insert id="staLdData" parameterType="java.lang.Integer">
+        insert into ld_rp_total_hour_accumulated (dd,dh,user,new_user,detail_play_user,detail_play_count,set_count,set_user,set_confirm_count,set_confirm_user,
+                                                  app_start,ad_show,ad_click,ad_show_user,ad_click_user, id)
+        select a.dd,#{showDh} dh,user,new_user,detail_play_user,detail_play_count,set_count,set_user,set_confirm_count,set_confirm_user,app_start,
+               ad_show,ad_click,ad_show_user,ad_click_user,sipHash64(toYYYYMMDDhhmmss(now()), dh) as id
+        from (
+            select
+                toDate(receive_time) dd,
+                ifnull(count(DISTINCT distinct_id),0) user,
+                ifnull(count(DISTINCT if(is_new_app=1,distinct_id,null)),0) new_user,
+                sum(if(action_id='into_fodder_detail' and type=1,1,0)) detail_play_count,
+                ifnull(count(DISTINCT if(action_id='into_fodder_detail' and type=1,distinct_id,null)),0) detail_play_user,
+                sum(if(action_id='click_tab_type',1,0)) set_count, /* 设置次数*/
+                ifnull(count(DISTINCT if(action_id='click_tab_type',distinct_id,null)),0) set_user,
+                sum(if(action_id='tab_confirm' and is_success=1, 1,0)) set_confirm_count, /* 成功设置次数 */
+                ifnull(count(DISTINCT if(action_id='tab_confirm' and is_success=1, distinct_id,null)),0) set_confirm_user,
+                sum(if(action_id='app_start',1,0)) app_start
+            from dw.laidian_user_action_view_old
+            where dt between subString(toString(#{startDh}),1,8) and subString(toString(#{endDh}),1,8)
+            group by toDate(receive_time)
+        ) a left JOIN (
+            select dd,
+                   sum(show) ad_show,    /*广告展现量 */
+                   sum(click) ad_click,  /*广告点击量 */
+                   ifnull(count(DISTINCT if(show=1,distinct_id,null)), 0) ad_show_user,    /*广告展现用户 */
+                   ifnull(count(DISTINCT if(click=1,distinct_id,null)), 0) ad_click_user    /*广告点击用户 */
+            from dw_ad_actions
+            where dt between subString(toString(#{startDh}),1,8) and subString(toString(#{endDh}),1,8) and dh BETWEEN #{startDh} and #{endDh}
+            and package_name='com.mg.phonecall'
+            group by dd
+        ) b on a.dd = b.dd
+    </insert>
+
+    <select id="getLdData" parameterType="map" resultType="com.miguan.reportview.vo.LdRealTimeStaVo">
+        <!-- 1=新增用户,2=活跃用户,3=详情页播放用户,4=设置用户,5=成功设置用户,6=人均观看次数,7=人均设置次数,
+             8=人均成功设置次数,9=广告展现用户,10=广告点击用户,11=广告展现量,12=广告点击量,13=人均广告展现,14=人均广告点击,
+             15=广告点击率,16=广告点击用户占比,17=人均APP启动次数-->
+        select
+        <if test='showTypes.contains("1")'>
+            new_user as showValue,
+        </if>
+        <if test='showTypes.contains("2")'>
+            user as showValue,
+        </if>
+        <if test='showTypes.contains("3")'>
+            detail_play_user as showValue,
+        </if>
+        <if test='showTypes.contains("4")'>
+            set_user as showValue,
+        </if>
+        <if test='showTypes.contains("5")'>
+            set_confirm_user as showValue,
+        </if>
+        <if test='showTypes.contains("6")'>
+            if(user=0, 0, round(detail_play_count/user, 4)) as showValue,
+        </if>
+        <if test='showTypes.contains("7")'>
+            if(user=0, 0, round(set_count/user, 4)) as showValue,
+        </if>
+        <if test='showTypes.contains("8")'>
+            if(user=0, 0, round(set_confirm_count/user, 4)) as showValue,
+        </if>
+        <if test='showTypes.contains("9")'>
+            ad_show_user as showValue,
+        </if>
+        <if test='showTypes.contains("10")'>
+            ad_click_user as showValue,
+        </if>
+        <if test='showTypes.contains("11")'>
+            ad_show as showValue,
+        </if>
+        <if test='showTypes.contains("12")'>
+            ad_click as showValue,
+        </if>
+        <if test='showTypes.contains("13")'>
+            if(user=0, 0, round(ad_show/user, 4)) as showValue,
+        </if>
+        <if test='showTypes.contains("14")'>
+            if(user=0, 0,  round(ad_click/user, 4)) as showValue,
+        </if>
+        <if test='showTypes.contains("15")'>
+            if(ad_show=0, 0, round(ad_click/ad_show, 4)*100) as showValue,
+        </if>
+        <if test='showTypes.contains("16")'>
+            if(ad_show_user=0, 0, round(ad_click_user/ad_show_user, 4)*100) as showValue,
+        </if>
+        <if test='showTypes.contains("17")'>
+            if(user=0, 0, round(app_start/user, 4)) as showValue,
+        </if>
+        dd,
+        dh
+        from ld_rp_total_hour
+        where
+        <foreach collection="dates" item="qdate" open="(" close=")" separator="or">
+            dd = #{qdate}
+        </foreach>
+        order by dd desc, dh asc;
+    </select>
+
+    <select id="getLdMinuteData" parameterType="map" resultType="com.miguan.reportview.vo.LdRealTimeStaVo">
+        <!-- 1=新增用户,2=活跃用户,3=详情页播放用户,4=设置用户,5=成功设置用户,6=人均观看次数,7=人均设置次数,
+             8=人均成功设置次数,9=广告展现用户,10=广告点击用户,11=广告展现量,12=广告点击量,13=人均广告展现,14=人均广告点击,
+             15=广告点击率,16=广告点击用户占比,17=人均APP启动次数-->
+        select
+        <if test='showTypes.contains("1")'>
+            new_user as showValue,
+        </if>
+        <if test='showTypes.contains("2")'>
+            user as showValue,
+        </if>
+        <if test='showTypes.contains("3")'>
+            detail_play_user as showValue,
+        </if>
+        <if test='showTypes.contains("4")'>
+            set_user as showValue,
+        </if>
+        <if test='showTypes.contains("5")'>
+            set_confirm_user as showValue,
+        </if>
+        <if test='showTypes.contains("6")'>
+            if(user=0, 0, round(detail_play_count/user, 4)) as showValue,
+        </if>
+        <if test='showTypes.contains("7")'>
+            if(user=0, 0, round(set_count/user, 4)) as showValue,
+        </if>
+        <if test='showTypes.contains("8")'>
+            if(user=0, 0, round(set_confirm_count/user, 4)) as showValue,
+        </if>
+        <if test='showTypes.contains("9")'>
+            ad_show_user as showValue,
+        </if>
+        <if test='showTypes.contains("10")'>
+            ad_click_user as showValue,
+        </if>
+        <if test='showTypes.contains("11")'>
+            ad_show as showValue,
+        </if>
+        <if test='showTypes.contains("12")'>
+            ad_click as showValue,
+        </if>
+        <if test='showTypes.contains("13")'>
+            if(user=0, 0, round(ad_show/user, 4)) as showValue,
+        </if>
+        <if test='showTypes.contains("14")'>
+            if(user=0, 0,  round(ad_click/user, 4)) as showValue,
+        </if>
+        <if test='showTypes.contains("15")'>
+            if(ad_show=0, 0, round(ad_click/ad_show, 4)*100) as showValue,
+        </if>
+        <if test='showTypes.contains("16")'>
+            if(ad_show_user=0, 0, round(ad_click_user/ad_show_user, 4)*100) as showValue,
+        </if>
+        <if test='showTypes.contains("17")'>
+            if(user=0, 0, round(app_start/user, 4)) as showValue,
+        </if>
+        dd,
+        show_minute
+        from ld_rp_total_minute
+        where
+        <foreach collection="dates" item="qdate" open="(" close=")" separator="or">
+            dd = #{qdate}
+        </foreach>
+        order by dd desc, show_minute asc;
+    </select>
+</mapper>

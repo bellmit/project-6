@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.reportview.mapper.ChannelCostMapper">
+
+    <select id="list" parameterType="map" resultType="com.miguan.reportview.dto.ChannelCostDto">
+        <if test="groups == null">
+            select id,a.date,app_type,package_name,a.father_channel,owner,rebate,cost,new_user_um
+            ,new_user_num as pure_new_user,round(ad_click_num/new_user_num,2) as ad_click_num,morrow_retention_num/new_user_num as keep1
+            ,round(cost/(1+rebate),2) as real_cost
+            ,round(round(cost/(1+rebate),2)/new_user_num,2) AS pure_new_user_price
+            ,round(round(cost/(1+rebate),2)/new_user_um,2) AS new_user_um_price
+        </if>
+        <if test="groups != null">
+            select 1
+            <foreach collection="groups" item="groupi" separator="" open="" close="">
+                , ${groupi}
+            </foreach>
+            ,0 as rebate,sum(cost) as cost,sum(new_user_um) as new_user_um,sum(new_user_num) as pure_new_user,round(sum(ad_click_num)/sum(new_user_num),2) as ad_click_num,sum(morrow_retention_num)/sum(new_user_num) as keep1
+            ,sum(cost/(1+rebate)) AS real_cost
+            ,round(sum(cost/(1+rebate))/sum(new_user_num),2) AS pure_new_user_price
+            ,round(sum(cost/(1+rebate))/sum(new_user_um),2) AS new_user_um_price
+        </if>
+        from(
+            select id,date,app_type,package_name,father_channel,owner,rebate,cost
+            from dm_channel_cost_enter
+            where date BETWEEN #{startDate} and #{endDate}
+            <if test="appType != null">
+                and app_type = #{appType}
+            </if>
+            <if test="appPackages != null">
+                and package_name in<foreach collection="appPackages" item="appPackage" separator="," open="(" close=")">#{appPackage}</foreach>
+            </if>
+            <if test="channelIds != null">
+                and father_channel in
+                <foreach collection="channelIds" item="channelId" separator="," open="(" close=")">
+                    #{channelId}
+                </foreach>
+            </if>
+            <if test="owner != null">
+                and owner = #{owner}
+            </if>
+        )a left join (
+            select dt,father_channel,new_user_num,new_stock_user_num,morrow_retention_num,ad_click_num
+            from calc_new_stock_user_data
+            where dt BETWEEN #{startDate} and #{endDate}
+        )c on a.father_channel=c.father_channel and a.date=c.dt
+        left join (
+            select date as dt,father_channel,sum(new_user) as new_user_um
+            from umeng_channel_data
+            where date BETWEEN #{startDate} and #{endDate}
+            group by  date,father_channel
+        )b on a.father_channel=b.father_channel and a.date=b.dt
+        <if test="groups != null">
+            group by 1
+            <foreach collection="groups" item="groupi" separator="" open="" close="">
+                , ${groupi}
+            </foreach>
+        </if>
+        <if test="limit!=null and limit!=''"> limit #{limit} </if>
+        <if test="offset!=null and offset!=''"> offset #{offset} </if>
+    </select>
+
+
+    <select id="getChannelCostCount" parameterType="map" resultType="int">
+        select count(1) from(
+            <if test="groups == null">
+                select id,a.date,a.father_channel
+            </if>
+            <if test="groups != null">
+                select 1
+                <foreach collection="groups" item="groupi" separator="" open="" close="">
+                    , ${groupi}
+                </foreach>
+             </if>
+            from(
+                select id,date,app_type,package_name,father_channel,owner,rebate,cost
+                from dm_channel_cost_enter
+                where date BETWEEN #{startDate} and #{endDate}
+                <if test="appType != null">
+                    and app_type = #{appType}
+                </if>
+                <if test="appPackages != null">
+                    and package_name in<foreach collection="appPackages" item="appPackage" separator="," open="(" close=")">#{appPackage}</foreach>
+                </if>
+                <if test="channelIds != null">
+                    and father_channel in
+                    <foreach collection="channelIds" item="channelId" separator="," open="(" close=")">
+                        #{channelId}
+                    </foreach>
+                </if>
+                <if test="owner != null">
+                    and owner = #{owner}
+                </if>
+            )a left join (
+                select dt,father_channel,new_user_num,new_stock_user_num,morrow_retention_num,ad_click_num
+                from calc_new_stock_user_data
+                where dt BETWEEN #{startDate} and #{endDate}
+            )c on a.father_channel=c.father_channel and a.date=c.dt
+            <if test="groups != null">
+                group by 1
+                <foreach collection="groups" item="groupi" separator="" open="" close="">
+                    , ${groupi}
+                </foreach>
+            </if>
+        )t
+    </select>
+
+    <insert id="dateCostGenerate" >
+        insert into dm_channel_cost_enter(date,app_type,package_name,father_channel,owner,rebate,cost,new_user_um)
+        select date,ifnull(c.app_type,0) as app_type,ifnull(c.package_name,0) as package_name,a.father_channel,owner,rebate,0 as cost,0 as new_user_um
+        from(
+            select date_format(date_add(curdate(), interval -1 day),'%Y-%c-%d') as date,father_channel,owner,rebate
+            from dim_father_channel where status=1
+        )a left join (
+            select
+                app_type,
+                package_name,
+                father_channel
+            from
+                calc_new_stock_user_data
+            where
+                dt >=date_format(date_add(curdate(), interval -1 day),'%Y-%c-%d')
+                and  father_channel not in('-','')
+                group by app_type,package_name,father_channel
+        ) c on a.father_channel = c.father_channel
+    </insert>
+
+
+    <update id="updateCost" parameterType="map">
+        update dm_channel_cost_enter set new_user_um=new_user_um
+        <if test="cost != null">
+            , cost=#{cost}
+        </if>
+        <if test="rebate != null">
+            , rebate = #{rebate}
+        </if>
+        where id=#{id}
+    </update>
+
+    <insert id="addFatherChannelCost" parameterType="com.miguan.reportview.entity.FatherChannel">
+        insert into dm_channel_cost_enter(date,app_type,package_name,father_channel,owner,rebate,cost,new_user_um)
+        select a.date,ifnull(c.app_type,0) as app_type,ifnull(c.package_name,0),a.father_channel,owner,rebate,0 as cost,0 as new_user_um
+        from(
+        select date_format(date_add(curdate(), interval -1 day),'%Y-%c-%d') as date,father_channel,owner,rebate
+        from dim_father_channel where id = #{id}
+        )a left join (
+            select
+                app_type,
+                package_name,
+                father_channel
+            from
+                calc_new_stock_user_data
+            where
+                dt >=date_format(date_add(curdate(), interval -1 day),'%Y-%c-%d')
+                and  father_channel not in('-','')
+                group by app_type,package_name,father_channel
+        ) c on a.father_channel = c.father_channel
+    </insert>
+
+
+</mapper>

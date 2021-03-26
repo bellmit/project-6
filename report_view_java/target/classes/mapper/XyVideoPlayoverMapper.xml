@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.reportview.mapper.XyVideoPlayoverMapper">
+
+    <insert id="saveBatch" parameterType="java.util.List">
+        insert into xy_video_playover
+        (uuid ,package_name ,app_version ,channel ,change_channel ,is_new ,is_new_app ,model ,distinct_id ,
+          receive_time ,creat_time ,country ,province ,city ,video_id ,catid ,video_time ,play_time ,play_time_r  )
+        VALUES
+        <foreach collection="data" item="p" index="index" separator=",">
+            (#{p.uuid},#{p.package_name},#{p.app_version},#{p.channel},#{p.change_channel},#{p.is_new},#{p.is_new_app},#{p.model},
+            #{p.distinct_id},#{p.receive_time},#{p.creat_time},#{p.country},#{p.province},#{p.city},#{p.video_id},#{p.catid},
+            #{p.video_time},#{p.play_time},#{p.play_time_r})
+        </foreach>
+    </insert>
+</mapper>

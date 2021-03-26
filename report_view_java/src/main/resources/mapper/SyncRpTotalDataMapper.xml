@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.reportview.mapper.SyncRpTotalDataMapper">
+
+    <select id="listTotalHour" resultType="com.miguan.reportview.entity.RpTotalHour">
+        select
+            a.dd dd,
+            a.dh dh,
+            user,
+            new_user,
+            play_count,
+            show_count,
+            valid_play_count,
+            end_play_count,
+            play_user,
+            valid_play_user,
+            end_play_user,
+            play_time_total,
+            ad_show_count,
+            ad_click_count,
+            ad_show_user,
+            ad_click_user,
+            app_time_total,
+            app_time_total_r
+        from (
+            select dd,
+            dh,
+            sum(play_start) play_count,  /*播放数*/
+            sum(show) show_count,  /*曝光数*/
+            sum(is_play_valid) valid_play_count,  /*有效播放数*/
+            sum(is_play_end) end_play_count,  /*完播数*/
+            count(distinct if(play_start=1,distinct_id,null)) play_user,  /*播放用户数*/
+            count(distinct if(is_play_valid=1,distinct_id,null)) valid_play_user,  /*有效播放用户数*/
+            count(distinct if(is_play_end=1,distinct_id,null)) end_play_user,  /*完播用户数*/
+            sum(if(v.is_play_time=1,play_time_r,0)) play_time_total   /*总播放时长，毫秒为单位*/
+            from dw_video_actions_aggregation v
+            where 1=1
+            and dd between #{startDay} and #{endDay}
+            and dh between #{startDh} and #{endDh}
+            and package_name != 'com.mg.phonecall'
+            GROUP BY dd,dh
+        ) a left join (
+            select dd,
+            dh,
+            count(distinct distinct_id) as `user`,   /*活跃用户数*/
+            count(distinct if(is_new_app=1,distinct_id,null)) new_user  /*新增用户数*/
+            from dw_user_simple
+            where 1=1
+            and dt between toYYYYMMDD(toDate(#{startDay})) and toYYYYMMDD(toDate(#{endDay}))
+            and dh between #{startDh} and #{endDh}
+            and package_name != 'com.mg.phonecall'
+            GROUP BY dd,dh
+        ) b on a.dd = b.dd and a.dh = b.dh
+        left join (
+            select dd,
+            dh,
+            sum(show) ad_show_count, /*广告曝光量*/
+            sum(click) ad_click_count, /*广告点击量*/
+            count(distinct if(show=1,distinct_id,null)) ad_show_user,  /*广告曝光用户数*/
+            count(distinct if(click=1,distinct_id,null)) ad_click_user  /*广告点击用户数*/
+            from dw_ad_actions
+            where 1=1
+            and dt between toYYYYMMDD(toDate(#{startDay})) and toYYYYMMDD(toDate(#{endDay}))
+            and dh between #{startDh} and #{endDh}
+            and package_name != 'com.mg.phonecall'
+            group by dd,dh
+        ) c on a.dd=c.dd  and a.dh = c.dh
+        left join (
+            select toDate(receive_time) AS dd,
+            toUInt32(formatDateTime(receive_time,'%Y%m%d%H')) AS dh,
+            SUM(if(action_id='app_end',play_time,0)) app_time_total,  /*应用总使用时长，毫秒为单位*/
+            SUM(if(action_id='pageview_end',play_time,0)) app_time_total_r  /*应用实际使用时长，毫秒为单位*/
+            from dw.dwd_user_actions_disb
+            where dt BETWEEN toUInt32(#{startDh}/100) and toUInt32(#{endDh}/100)
+            and dh between #{startDh} and #{endDh} and package_name != 'com.mg.phonecall'
+            group by toDate(receive_time),toUInt32(formatDateTime(receive_time,'%Y%m%d%H'))
+        ) d on a.dd = d.dd and a.dh = d.dh
+    </select>
+
+    <delete id="deleteTotalHour">
+        delete from rp_total_hour where dh BETWEEN #{startDh} and #{endDh}
+    </delete>
+
+    <insert id="batchSaveTotalHour" parameterType="java.util.List">
+        INSERT INTO rp_total_hour(dd, dh, user, new_user, play_count,show_count, valid_play_count, end_play_count, play_user, valid_play_user, end_play_user, play_time_total, ad_show_count, ad_click_count, ad_show_user, ad_click_user, app_time_total, app_time_total_r)
+        VALUES
+        <foreach collection="lists" item="hour" separator=",">
+            (DATE_FORMAT(#{hour.dd},'%Y-%m-%d'),#{hour.dh},#{hour.user},#{hour.newUser},#{hour.playCount},#{hour.showCount},#{hour.validPlayCount},#{hour.endPlayCount},#{hour.playUser},#{hour.validPlayUser},#{hour.endPlayUser},#{hour.playTimeTotal},#{hour.adShowCount},#{hour.adClickCount},#{hour.adShowUser},#{hour.adClickUser},#{hour.appTimeTotal},#{hour.appTimeTotalR})
+        </foreach>
+    </insert>
+
+    <select id="listTotalDay" parameterType="java.util.Map" resultType="com.miguan.reportview.entity.RpTotalDay">
+        select
+            a.dd dd,
+            user,
+            new_user,
+            play_count,
+            show_count,
+            valid_play_count,
+            end_play_count,
+            play_user,
+            valid_play_user,
+            end_play_user,
+            play_time_total,
+            ad_show_count,
+            ad_click_count,
+            ad_show_user,
+            ad_click_user,
+            app_time_total,
+            app_time_total_r
+        from (
+            select dd,
+            sum(play_start) play_count, /*播放数*/
+            sum(show) show_count, /*曝光数*/
+            sum(is_play_valid) valid_play_count, /*有效播放数*/
+            sum(is_play_end) end_play_count, /*完播数*/
+            count(distinct if(play_start=1,distinct_id,null)) play_user, /*播放用户数*/
+            count(distinct if(is_play_valid=1,distinct_id,null)) valid_play_user, /*有效播放用户数*/
+            count(distinct if(is_play_end=1,distinct_id,null)) end_play_user, /*完播用户数*/
+            sum(if(v.is_play_time=1,play_time_r,0)) play_time_total /*总播放时长，毫秒为单位*/
+            from dw_video_actions_aggregation v
+            where dd BETWEEN #{startDate} and #{endDate} and package_name != 'com.mg.phonecall'
+            GROUP BY dd
+        ) a left join (
+            select dd,
+            count(distinct distinct_id) as `user`, /*活跃用户数*/
+            count(distinct if(is_new_app=1,distinct_id,null)) new_user /*新增用户数*/
+            from dw_user_simple
+            where dt BETWEEN toYYYYMMDD(toDate(#{startDate})) and toYYYYMMDD(toDate(#{endDate})) and package_name != 'com.mg.phonecall'
+            GROUP BY dd
+        ) b on a.dd = b.dd
+        left join (
+            select dd,
+            sum(show) ad_show_count, /*广告曝光量*/
+            sum(click) ad_click_count, /*广告点击量*/
+            count(distinct if(show=1,distinct_id,null)) ad_show_user, /*广告曝光用户数*/
+            count(distinct if(click=1,distinct_id,null)) ad_click_user /*广告点击用户数*/
+            from dw_ad_actions
+            where dt BETWEEN toYYYYMMDD(toDate(#{startDate})) and toYYYYMMDD(toDate(#{endDate})) and package_name != 'com.mg.phonecall'
+            group by dd
+        ) c on a.dd=c.dd
+        left join (
+            select toDate(receive_time) AS dd,
+            SUM(if(action_id='app_end',play_time,0)) app_time_total, /*应用总使用时长，毫秒为单位*/
+            SUM(if(action_id='pageview_end',play_time,0)) app_time_total_r /*应用实际使用时长，毫秒为单位*/
+            from dw.dwd_user_actions_disb
+            where dt BETWEEN toUInt32(replace(#{startDate},'-','')) and toUInt32(replace(#{endDate},'-','')) and package_name != 'com.mg.phonecall'
+            group by toDate(receive_time)
+        ) d on a.dd = d.dd
+    </select>
+
+    <delete id="deleteTotalDay">
+        delete from rp_total_day where dd BETWEEN #{startDate} and #{endDate}
+    </delete>
+
+    <insert id="batchSaveTotalDay" parameterType="java.util.List">
+        INSERT INTO rp_total_day(dd, user, new_user, play_count,show_count, valid_play_count, end_play_count, play_user, valid_play_user, end_play_user, play_time_total, ad_show_count, ad_click_count, ad_show_user, ad_click_user, app_time_total, app_time_total_r)
+        VALUES
+        <foreach collection="lists" item="day" separator=",">
+            (DATE_FORMAT(#{day.dd},'%Y-%m-%d'),#{day.user},#{day.newUser},#{day.playCount},#{day.showCount},#{day.validPlayCount},#{day.endPlayCount},#{day.playUser},#{day.validPlayUser},#{day.endPlayUser},#{day.playTimeTotal},#{day.adShowCount},#{day.adClickCount},#{day.adShowUser},#{day.adClickUser},#{day.appTimeTotal},#{day.appTimeTotalR})
+        </foreach>
+    </insert>
+
+    <select id="listTotalMinute" parameterType="map" resultType="com.miguan.reportview.entity.RpTotalMinute">
+        select
+            a.dd dd,
+            a.dm dm,
+            a.show_minute show_minute,
+            user,
+            new_user,
+            play_count,
+            show_count,
+            valid_play_count,
+            end_play_count,
+            play_user,
+            valid_play_user,
+            end_play_user,
+            play_time_total,
+            ad_show_count,
+            ad_click_count,
+            ad_show_user,
+            ad_click_user,
+            app_time_total,
+            app_time_total_r
+        from (
+            select dd,
+            toUInt64(formatDateTime(receive_time,'%Y%m%d%H%M')) dm,
+            max(formatDateTime(receive_time,'%H:%M')) show_minute,
+            sum(play_start) play_count,  /*播放数*/
+            sum(show) show_count,  /*曝光数*/
+            sum(is_play_valid) valid_play_count,  /*有效播放数*/
+            sum(is_play_end) end_play_count,  /*完播数*/
+            count(distinct if(play_start=1,distinct_id,null)) play_user,  /*播放用户数*/
+            count(distinct if(is_play_valid=1,distinct_id,null)) valid_play_user,  /*有效播放用户数*/
+            count(distinct if(is_play_end=1,distinct_id,null)) end_play_user,  /*完播用户数*/
+            sum(if(v.is_play_time=1,play_time_r,0)) play_time_total   /*总播放时长，毫秒为单位*/
+            from dw_video_actions_aggregation v
+            where 1=1
+            and dd between #{startDay} and #{endDay}
+            and dm between #{startDm} and #{endDm}
+            and package_name != 'com.mg.phonecall'
+            GROUP BY dd,dm
+        ) a left join (
+            select dd,
+            toUInt64(formatDateTime(receive_time,'%Y%m%d%H%M')) dm,
+            count(distinct distinct_id) as `user`,   /*活跃用户数*/
+            count(distinct if(is_new_app=1,distinct_id,null)) new_user  /*新增用户数*/
+            from dw_user_simple
+            where 1=1
+            and dt between toYYYYMMDD(toDate(#{startDay})) and toYYYYMMDD(toDate(#{endDay}))
+            and dm between #{startDm} and #{endDm}
+            and package_name != 'com.mg.phonecall'
+            GROUP BY dd,dm
+        ) b on a.dd = b.dd and a.dm = b.dm
+        left join (
+            select dd,
+            toUInt64(formatDateTime(receive_time,'%Y%m%d%H%M')) dm,
+            sum(show) ad_show_count, /*广告曝光量*/
+            sum(click) ad_click_count, /*广告点击量*/
+            count(distinct if(show=1,distinct_id,null)) ad_show_user,  /*广告曝光用户数*/
+            count(distinct if(click=1,distinct_id,null)) ad_click_user  /*广告点击用户数*/
+            from dw_ad_actions
+            where 1=1
+            and dt between toYYYYMMDD(toDate(#{startDay})) and toYYYYMMDD(toDate(#{endDay}))
+            and dm between #{startDm} and #{endDm}
+            and package_name != 'com.mg.phonecall'
+            group by dd,dm
+        ) c on a.dd = c.dd and a.dm = c.dm
+        left join (
+            select toDate(receive_time) AS dd,
+            toUInt64(formatDateTime(receive_time,'%Y%m%d%H%M')) dm,
+            SUM(if(action_id='app_end',play_time,0)) app_time_total,  /*应用总使用时长，毫秒为单位*/
+            SUM(if(action_id='pageview_end',play_time,0)) app_time_total_r  /*应用实际使用时长，毫秒为单位*/
+            from dw.dwd_user_actions_disb
+            where 1=1
+            and dt BETWEEN toUInt32(#{startDm}/10000) and toUInt32(#{endDm}/1000)
+            and dm between #{startDm} and #{endDm}
+            and package_name != 'com.mg.phonecall'
+            group by dd, dm
+        ) d  on a.dd = d.dd and a.dm = d.dm
+    </select>
+
+    <delete id="deleteTotalMinute">
+        delete from rp_total_minute where dm BETWEEN #{startDm} and #{endDm}
+    </delete>
+
+    <insert id="batchSaveTotalMinute" parameterType="java.util.List">
+        INSERT INTO rp_total_minute(dd,dm,show_minute, user, new_user, play_count,show_count, valid_play_count, end_play_count, play_user, valid_play_user, end_play_user, play_time_total, ad_show_count, ad_click_count, ad_show_user, ad_click_user, app_time_total, app_time_total_r)
+        VALUES
+        <foreach collection="lists" item="minute" separator=",">
+            (DATE_FORMAT(#{minute.dd},'%Y-%m-%d'),#{minute.dm},#{minute.showMinute},#{minute.user},#{minute.newUser},#{minute.playCount},#{minute.showCount},#{minute.validPlayCount},#{minute.endPlayCount},#{minute.playUser},#{minute.validPlayUser},#{minute.endPlayUser},#{minute.playTimeTotal},#{minute.adShowCount},#{minute.adClickCount},#{minute.adShowUser},#{minute.adClickUser},#{minute.appTimeTotal},#{minute.appTimeTotalR})
+        </foreach>
+    </insert>
+
+    <select id="maxDmTotalMinute" resultType="java.lang.Long">
+        select max(dm) from rp_total_minute
+    </select>
+
+    <select id="listLdTotalHour" parameterType="java.lang.Integer" resultType="com.miguan.reportview.vo.LdRpTotalHour">
+        select a.*,
+               b.ad_show ad_show,
+               b.ad_click ad_click,
+               b.ad_show_user ad_show_user,
+               b.ad_click_user ad_click_user
+        from (
+            select
+                toDate(receive_time) dd,
+                toUInt32(formatDateTime(receive_time,'%Y%m%d%H')) dh,
+                ifnull(count(DISTINCT distinct_id),0) user,
+                ifnull(count(DISTINCT if(is_new_app=1,distinct_id,null)),0) new_user,
+                sum(if(action_id='into_fodder_detail' and type=1,1,0)) detail_play_count,
+                ifnull(count(DISTINCT if(action_id='into_fodder_detail' and type=1,distinct_id,null)),0) detail_play_user,
+                sum(if(action_id='click_tab_type',1,0)) set_count, /* 设置次数*/
+                ifnull(count(DISTINCT if(action_id='click_tab_type',distinct_id,null)),0) set_user,
+                sum(if(action_id='tab_confirm' and is_success=1, 1,0)) set_confirm_count, /* 成功设置次数 */
+                ifnull(count(DISTINCT if(action_id='tab_confirm' and is_success=1, distinct_id,null)),0) set_confirm_user,
+                sum(if(action_id='app_start',1,0)) app_start
+            from dw.laidian_user_action_view_old
+            where dt between subString(toString(#{startDh}),1,8) and subString(toString(#{endDh}),1,8) AND toUInt32(formatDateTime(receive_time,'%Y%m%d%H')) BETWEEN #{startDh} and #{endDh}
+            group by toDate(receive_time),toUInt32(formatDateTime(receive_time,'%Y%m%d%H'))
+        ) a left JOIN (
+            select dd,
+                   dh, 
+                   sum(show) ad_show,
+                   sum(click) ad_click,
+                   ifnull(count(DISTINCT if(show=1,distinct_id,null)),0) ad_show_user,
+                   ifnull(count(DISTINCT if(click=1,distinct_id,null)),0) ad_click_user
+            from dw_ad_actions
+            where dt between subString(toString(#{startDh}),1,8) and subString(toString(#{endDh}),1,8)  and dh BETWEEN #{startDh} and #{endDh}
+            and package_name='com.mg.phonecall'
+            group by dd,dh 
+        ) b on a.dd = b.dd and a.dh=b.dh
+    </select>
+
+    <delete id="deleteLdTotalHour">
+        delete from ld_rp_total_hour where dh BETWEEN #{startDh} and #{endDh}
+    </delete>
+
+    <insert id="batchSaveLdTotalHour" parameterType="java.util.List">
+        INSERT INTO ld_rp_total_hour(dd, dh, user, new_user, detail_play_user, detail_play_count, set_count, set_user, set_confirm_count,set_confirm_user, app_start, ad_show, ad_click, ad_show_user, ad_click_user, create_time)
+        VALUES
+        <foreach collection="lists" item="hour" separator=",">
+            (#{hour.dd},#{hour.dh},#{hour.user},#{hour.newUser},#{hour.detailPlayUser},#{hour.detailPlayCount},#{hour.setCount},#{hour.setUser},#{hour.setConfirmCount},#{hour.setConfirmUser},#{hour.appStart},#{hour.adShow},#{hour.adClick},#{hour.adShowUser},#{hour.adClickUser},now())
+        </foreach>
+    </insert>
+
+    <select id="listLdTotalDay" parameterType="java.lang.String" resultType="com.miguan.reportview.vo.LdRpTotalDay">
+        select a.*,
+               b.ad_show ad_show,
+               b.ad_click ad_click,
+               b.ad_show_user ad_show_user,
+               b.ad_click_user ad_click_user
+        from (
+            select
+                toDate(receive_time) dd,
+                ifnull(count(DISTINCT distinct_id),0) user,
+                ifnull(count(DISTINCT if(is_new_app=1,distinct_id,null)),0) new_user,
+                sum(if(action_id='into_fodder_detail' and type=1,1,0)) detail_play_count,
+                ifnull(count(DISTINCT if(action_id='into_fodder_detail' and type=1,distinct_id,null)),0) detail_play_user,
+                sum(if(action_id='click_tab_type',1,0)) set_count, /* 设置次数*/
+                ifnull(count(DISTINCT if(action_id='click_tab_type',distinct_id,null)),0) set_user,
+                sum(if(action_id='tab_confirm' and is_success=1, 1,0)) set_confirm_count, /* 成功设置次数 */
+                ifnull(count(DISTINCT if(action_id='tab_confirm' and is_success=1, distinct_id,null)),0) set_confirm_user,
+                sum(if(action_id='app_start',1,0)) app_start
+            from dw.laidian_user_action_view_old
+            where dt between toYYYYMMDD(toDate(#{startDate})) and toYYYYMMDD(toDate(#{endDate}))
+            group by toDate(receive_time)
+        ) a left JOIN (
+            select dd,
+                   sum(show) ad_show,
+                   sum(click) ad_click,
+                   ifnull(count(DISTINCT if(show=1,distinct_id,null)),0) ad_show_user,
+                   ifnull(count(DISTINCT if(click=1,distinct_id,null)),0) ad_click_user
+            from dw_ad_actions
+            where dt between toYYYYMMDD(toDate(#{startDate})) and toYYYYMMDD(toDate(#{endDate}))
+            and package_name='com.mg.phonecall'
+            group by dd
+        ) b on a.dd = b.dd
+        order by a.dd
+    </select>
+
+    <delete id="deleteLdTotalDay">
+        delete from ld_rp_total_day where dd BETWEEN #{startDate} and #{endDate}
+    </delete>
+
+    <insert id="batchSaveLdTotalDay" parameterType="java.util.List">
+        INSERT INTO ld_rp_total_day(dd, user, new_user, detail_play_user, detail_play_count,set_count,set_user, set_confirm_count,set_confirm_user, app_start, ad_show, ad_click, ad_show_user, ad_click_user,user_retention,new_user_retention, create_time)
+        VALUES
+        <foreach collection="lists" item="hour" separator=",">
+            (#{hour.dd},#{hour.user},#{hour.newUser},#{hour.detailPlayUser},#{hour.detailPlayCount},#{hour.setCount},#{hour.setUser},#{hour.setConfirmCount},#{hour.setConfirmUser},#{hour.appStart},#{hour.adShow},#{hour.adClick},#{hour.adShowUser},#{hour.adClickUser},#{hour.userRetention},#{hour.newUserRetention},now())
+        </foreach>
+    </insert>
+
+    <select id="listLdTotalMinute" parameterType="map" resultType="com.miguan.reportview.vo.LdRpTotalMinute">
+       select a.*,
+               b.ad_show ad_show,
+               b.ad_click ad_click,
+               b.ad_show_user ad_show_user,
+               b.ad_click_user ad_click_user
+        from (
+            select
+                toDate(receive_time) dd,
+                toUInt64(formatDateTime(receive_time,'%Y%m%d%H%M')) dm,
+                max(formatDateTime(receive_time,'%H:%M')) show_minute,
+                ifnull(count(DISTINCT distinct_id),0) user,
+                ifnull(count(DISTINCT if(is_new_app=1,distinct_id,null)),0) new_user,
+                sum(if(action_id='into_fodder_detail' and type=1,1,0)) detail_play_count,
+                ifnull(count(DISTINCT if(action_id='into_fodder_detail' and type=1,distinct_id,null)),0) detail_play_user,
+                sum(if(action_id='click_tab_type',1,0)) set_count, /* 设置次数*/
+                ifnull(count(DISTINCT if(action_id='click_tab_type',distinct_id,null)),0) set_user,
+                sum(if(action_id='tab_confirm' and is_success=1, 1,0)) set_confirm_count, /* 成功设置次数 */
+                ifnull(count(DISTINCT if(action_id='tab_confirm' and is_success=1, distinct_id,null)),0) set_confirm_user,
+                sum(if(action_id='app_start',1,0)) app_start
+            from dw.laidian_user_action_view_old
+            where 1=1
+            and dt between toYYYYMMDD(toDate(#{startDay})) and toYYYYMMDD(toDate(#{endDay}))
+            and dm between #{startDm} and #{endDm}
+            group by dd,dm
+        ) a left JOIN (
+            select dd,
+                   toUInt64(formatDateTime(receive_time,'%Y%m%d%H%M')) dm,
+                   sum(show) ad_show,
+                   sum(click) ad_click,
+                   ifnull(count(DISTINCT if(show=1,distinct_id,null)),0) ad_show_user,
+                   ifnull(count(DISTINCT if(click=1,distinct_id,null)),0) ad_click_user
+            from dw_ad_actions
+            where 1=1
+            and dt between toYYYYMMDD(toDate(#{startDay})) and toYYYYMMDD(toDate(#{endDay}))
+            and dm between #{startDm} and #{endDm}
+            and package_name='com.mg.phonecall'
+            group by dd,dm 
+        ) b on a.dd = b.dd and a.dm=b.dm
+    </select>
+
+
+    <delete id="deleteLdTotalMinute">
+        delete from ld_rp_total_minute where dm BETWEEN #{startDm} and #{endDm}
+    </delete>
+
+    <insert id="batchSaveLdTotalMinute" parameterType="java.util.List">
+        INSERT INTO ld_rp_total_minute(dd, dm, show_minute, user, new_user, detail_play_user, detail_play_count,set_count,set_user, set_confirm_count,set_confirm_user, app_start, ad_show, ad_click, ad_show_user, ad_click_user, create_time)
+        VALUES
+        <foreach collection="lists" item="minute" separator=",">
+            (#{minute.dd},#{minute.dm},#{minute.showMinute},#{minute.user},#{minute.newUser},#{minute.detailPlayUser},#{minute.detailPlayCount},#{minute.setCount},#{minute.setUser},#{minute.setConfirmCount},#{minute.setConfirmUser},#{minute.appStart},#{minute.adShow},#{minute.adClick},#{minute.adShowUser},#{minute.adClickUser},now())
+        </foreach>
+    </insert>
+
+    <select id="maxDmLdTotalMinute" resultType="java.lang.Long">
+        select max(dm) from ld_rp_total_minute
+    </select>
+
+    <select id="countUserRetention" resultType="java.util.Map" parameterType="java.lang.String">
+        select count(if(b2.distinct_id='',null,1)) nowNum,
+               count(a2.distinct_id) yesNum,
+               if(yesNum=0,0,nowNum/yesNum) userRetention
+        from (
+            select DISTINCT distinct_id, toDate(receive_time) dd from dw.laidian_user_action_view_old where dt=toYYYYMMDD(toDate(#{yesDay}))
+        ) a2 left join (select DISTINCT distinct_id, toDate(receive_time) dd from dw.laidian_user_action_view_old where dt=toYYYYMMDD(toDate(#{nowDay}))) b2 on a2.distinct_id = b2.distinct_id
+    </select>
+
+    <select id="countNewUserRetention" resultType="java.util.Map" parameterType="java.lang.String">
+        select count(if(b2.distinct_id='',null,1)) nowNum,
+               count(a2.distinct_id) yesNum,
+               if(yesNum=0,0,nowNum/yesNum) newUserRetention
+        from (
+            select DISTINCT distinct_id, toDate(receive_time) dd from dw.laidian_user_action_view_old where dt=toYYYYMMDD(toDate(#{yesDay})) and is_new_app=1
+        ) a2 left join (select DISTINCT distinct_id, toDate(receive_time) dd from dw.laidian_user_action_view_old where dt=toYYYYMMDD(toDate(#{nowDay})) and is_new_app=1) b2 on a2.distinct_id = b2.distinct_id
+    </select>
+</mapper>

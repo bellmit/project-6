@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.reportview.mapper.DwAdErrorMapper">
+    <sql id="groupShowColumsqlExclude">
+        <if test="groups != null">
+            <foreach collection="groups" item="groupi" separator="" open="" close="">
+                <if test="groupi != 'msg'">
+                    , ${groupi}
+                </if>
+            </foreach>
+        </if>
+    </sql>
+    <sql id="groupShowColumsql">
+        <if test="groups != null">
+            <foreach collection="groups" item="groupi" separator="" open="" close="">
+                , ${groupi}
+            </foreach>
+        </if>
+    </sql>
+    <sql id="wheresql">
+            and dd between #{startDate} and #{endDate}
+        <if test="showType != null">
+            and is_new = #{showType}
+        </if>
+        <if test="appType == 1">
+            and package_name != 'com.mg.phonecall'
+        </if>
+        <if test="appType == 2">
+            and package_name = 'com.mg.phonecall'
+        </if>
+        <if test="appPackages != null">
+            and package_name in
+            <foreach collection="appPackages" item="appPackage" separator="," open="(" close=")">
+                #{appPackage}
+            </foreach>
+        </if>
+        <if test="appVersions != null">
+            and app_version in
+            <foreach collection="appVersions" item="appVersion" separator="," open="(" close=")">
+                #{appVersion}
+            </foreach>
+        </if>
+        <if test="channelIds != null">
+            and channel in
+            <foreach collection="channelIds" item="channelId" separator="," open="(" close=")">
+                #{channelId}
+            </foreach>
+        </if>
+        <if test="spaceKeys != null">
+            and ad_key in
+            <foreach collection="spaceKeys" item="spaceKey" separator="," open="(" close=")">
+                #{spaceKey}
+            </foreach>
+        </if>
+        <if test="adcodes != null">
+            and ad_id in
+            <foreach collection="adcodes" item="adcode" separator="," open="(" close=")">
+                #{adcode}
+            </foreach>
+        </if>
+        <if test="plates != null">
+            and ad_source in
+            <foreach collection="plates" item="plat" separator="," open="(" close=")">
+                #{plat}
+            </foreach>
+        </if>
+        <if test="modeles != null">
+            and model in
+            <foreach collection="modeles" item="modele" separator="," open="(" close=")">
+                #{modele}
+            </foreach>
+        </if>
+        <if test="appAdspaces != null">
+            and
+            <foreach collection="appAdspaces" item="appAdspace" separator="or" open="(" close=")">
+                (package_name = #{appAdspace.appPackage} and ad_key = #{appAdspace.spaceKey})
+            </foreach>
+        </if>
+    </sql>
+    <sql id="joinSql">
+        (select * from
+        (select * from
+        <include refid="reqCount"/>
+        GLOBAL LEFT OUTER JOIN
+        <include refid="activeUser"/>
+        USING (dd<include refid="groupShowColumsqlExclude"/>)
+        ) jc1
+        GLOBAL LEFT OUTER JOIN
+        <include refid="deviceCount"/>
+        USING (dd<include refid="groupShowColumsql"/>)
+        ) jc2
+    </sql>
+    <select id="getData" parameterType="map" resultType="com.miguan.reportview.vo.AdErrorDataVo">
+        select * from
+        <include refid="mainsql"/>
+        GLOBAL LEFT OUTER JOIN
+        <include refid="joinSql"/>
+        USING (dd<include refid="groupShowColumsql"/>) order by dd desc
+    </select>
+    <sql id="mainsql">
+        ( select
+        count() as errCount,
+        dd
+        <include refid="groupShowColumsql"/>
+        from dw_ad_errors
+        where 1=1
+        <include refid="wheresql"/>
+        group by dd
+        <include refid="groupShowColumsql"/>
+        ) m
+    </sql>
+    <sql id="reqCount">
+        <!--请求量-->
+        (select
+        <if test='groups != null and groups.contains("msg")'>
+            0 as reqCount,
+        </if>
+        <if test='groups == null or !groups.contains("msg")'>
+            sum(request) as reqCount,
+        </if>
+        dd
+        <include refid="groupShowColumsql"/>
+        from
+        <if test='groups != null and groups.contains("msg")'>
+            dw_ad_errors
+        </if>
+        <if test='groups == null or !groups.contains("msg")'>
+            dw_ad_actions
+        </if>
+        where 1=1
+        <include refid="wheresql"/>
+        group by dd
+        <include refid="groupShowColumsql"/>) rc
+    </sql>
+    <sql id="activeUser">
+        <!--活跃用户-->
+        (select count (distinct distinct_id) as activeUser,
+        dd
+        <include refid="groupShowColumsqlExclude"/>
+        from
+        <if test='groups != null and groups.contains("msg")'>
+            dw_ad_errors
+        </if>
+        <if test='groups == null or !groups.contains("msg")'>
+            dw_ad_actions
+        </if>
+        where 1=1
+        <include refid="wheresql"/>
+        group by dd
+        <include refid="groupShowColumsqlExclude"/>) au
+    </sql>
+    <sql id="deviceCount">
+        <!--错误设备数-->
+        (select count (distinct distinct_id) as deviceCount,
+        dd
+        <include refid="groupShowColumsql"/>
+        from dw_ad_errors
+        where 1=1
+        <include refid="wheresql"/>
+        group by dd
+        <include refid="groupShowColumsql"/>) dc
+    </sql>
+
+
+</mapper>

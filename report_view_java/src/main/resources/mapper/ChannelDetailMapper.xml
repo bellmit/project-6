@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.reportview.mapper.ChannelDetailMapper">
+
+    <select id="listChannelDetail" parameterType="map" resultType="com.miguan.reportview.dto.ChannelDetailDto">
+        select dd,distinct_id,imei,model,package_name,app_version,channel,change_channel,play_count,vplay_count,round(play_time_real/60000, 2) play_time_real,
+        vad_show_count,vad_click_count
+        from channel_detail
+        where dd BETWEEN #{startDate} and #{endDate}
+        <if test="appPackages != null">
+            and package_name in<foreach collection="appPackages" item="appPackage" separator="," open="(" close=")">#{appPackage}</foreach>
+        </if>
+        <if test="appVersions != null">
+            and app_version in<foreach collection="appVersions" item="appVersion" separator="," open="(" close=")">#{appVersion}</foreach>
+        </if>
+        <if test="channelIds != null">
+            and channel in
+            <foreach collection="channelIds" item="channelId" separator="," open="(" close=")">
+                #{channelId}
+            </foreach>
+        </if>
+        order by ${orderByField}
+    </select>
+
+    <insert id="batchSaveChannelDetail" parameterType="java.util.List">
+        insert into channel_detail(dd,distinct_id,imei,model,package_name,app_version,channel,change_channel,play_count,vplay_count,play_time_real,vad_show_count,vad_click_count)
+        select a.*, b.vAdShowCount, b.vAdClickCount
+        from (
+            select
+                dd,
+                distinct_id,   /*设备id*/
+                anyLast(imei) imei,
+                anyLast(model) model,   /*手机型号*/
+                anyLast(package_name) package_name,
+                anyLast(app_version) app_version,
+                anyLast(channel) channel,
+                argMax(change_channel,receive_time) change_channel,
+                sum(play_start) playCount,
+                sum(is_play_valid) vplayCount,
+                sum(if(is_play_time=1,play_time_r,0)) playTimeReal
+            from dw_video_actions_aggregation a
+            where dd = #{day}
+            group by dd,distinct_id
+        ) a left join (
+            SELECT
+              toDate(parseDateTimeBestEffort(toString(dt))) AS dd,
+              distinct_id,  /*设备id*/
+             sum(if(action_id = 'ad_zone_exposure', 1, 0)) AS vAdShowCount, /*广告有效展示*/
+            sum(if(action_id = 'ad_zone_valid_click', 1, 0)) AS vAdClickCount /*广告有效点击*/
+           FROM dw.dwd_ad_actions_disb AS a
+          WHERE (dt = toYYYYMMDD(toDate(#{day}))) AND (a.package_name != 'com.mg.phonecall') AND (action_id IN ('ad_zone_valid_click', 'ad_zone_exposure'))
+             GROUP BY dd,distinct_id
+        ) b on a.dd=b.dd and a.distinct_id=b.distinct_id
+    </insert>
+
+    <delete id="deleteChannelDetail">
+        alter table channel_detail delete where dd = #{day}
+    </delete>
+
+
+
+    <select id="getRoiEstimate" parameterType="map" resultType="com.miguan.reportview.dto.ChannelRoiEstimateDto">
+        select a.dt,father_channel,new_users,actual_roi,predicted_roi,today_roi,seven_roi,avg_today_roi,avg_actual_roi,avg_seven_roi
+        from(
+            select dt,father_channel,new_users,actual_roi,predicted_roi,today_roi,seven_roi
+            from calc_roi
+            where update_dt =#{updateDt}
+            and dt BETWEEN #{startDate} and #{endDate}
+            and app_type = #{appType} and status=1
+            <if test="channelIds != null">
+                and father_channel in
+                <foreach collection="channelIds" item="channelId" separator="," open="(" close=")">
+                    #{channelId}
+                </foreach>
+            </if>
+        ) a left join (
+            select dt,round(sum(today_profit)/sum(cost),2) as avg_today_roi
+            ,round(sum(actual_profit)/sum(cost),2) as avg_actual_roi
+            ,round(sum(seven_profit)/sum(cost),2) as avg_seven_roi
+            from calc_roi where update_dt =#{updateDt}
+            and dt BETWEEN #{startDate} and #{endDate}
+            and app_type = #{appType} and status=1
+            group by dt
+        ) b on a.dt=b.dt
+        order by dt,actual_roi desc
+        <if test="limit!=null and limit!=''"> limit #{limit} </if>
+        <if test="offset!=null and offset!=''"> offset #{offset} </if>
+    </select>
+
+    <select id="getRoiEstimateCount" parameterType="map" resultType="int">
+        select count(1)
+        from(
+            select dt,father_channel,new_users,actual_roi,predicted_roi,today_roi
+            from calc_roi
+            where update_dt =#{updateDt}
+            and dt BETWEEN #{startDate} and #{endDate}
+            and app_type = #{appType} and status=1
+            <if test="channelIds != null">
+                and father_channel in
+                <foreach collection="channelIds" item="channelId" separator="," open="(" close=")">
+                    #{channelId}
+                </foreach>
+            </if>
+        ) a
+    </select>
+
+
+    <select id="getRoiPrognosis" parameterType="map" resultType="com.miguan.reportview.dto.ChannelRoiPrognosisDto">
+        select father_channel,day_num,customer_cost,pack_cycle,marginal_roi,amount_limit,new_user_num
+        from calc_investment_decision
+        where update_dt =#{updateDt}
+        and app_type = #{appType} and status=1
+        <if test="dayNum != null">
+            and day_num = #{dayNum}
+        </if>
+        <if test="channelIds != null">
+            and father_channel in
+            <foreach collection="channelIds" item="channelId" separator="," open="(" close=")">
+                #{channelId}
+            </foreach>
+        </if>
+        order by marginal_roi desc
+        <if test="limit!=null and limit!=''"> limit #{limit} </if>
+        <if test="offset!=null and offset!=''"> offset #{offset} </if>
+    </select>
+
+    <select id="getRoiPrognosisCount" parameterType="map" resultType="int">
+        select count(1)
+        from calc_investment_decision
+        where update_dt =#{updateDt}
+        and app_type = #{appType} and status=1
+        <if test="dayNum != null">
+            and day_num = #{dayNum}
+        </if>
+        <if test="channelIds != null">
+            and father_channel in
+            <foreach collection="channelIds" item="channelId" separator="," open="(" close=")">
+                #{channelId}
+            </foreach>
+        </if>
+    </select>
+
+
+    <select id="getRoiEstimateDate" resultType="string">
+        select max(update_dt) from calc_roi
+    </select>
+
+    <select id="getRoiPrognosisDate" resultType="string">
+        select max(update_dt) from calc_investment_decision
+    </select>
+
+
+
+</mapper>

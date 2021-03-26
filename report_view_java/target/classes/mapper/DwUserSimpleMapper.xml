@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.reportview.mapper.DwUserSimpleMapper">
+    <select id="countYesterDayUserKeep" parameterType="map" resultType="java.lang.Integer">
+        SELECT
+            COUNT(1)
+        from
+            (
+            SELECT
+              if(a.package_name = '', '-1', a.package_name) as package_name,
+              if(a.app_version = '', '-1', a.app_version) as app_version ,
+              if(a.change_channel = '', '-1', a.change_channel) as change_channel ,
+              if(a.father_channel = '', '-1', a.father_channel) as father_channel ,
+              a.is_new_app-1 as is_new_app,
+              COUNT(DISTINCT a.distinct_id) as user ,
+              COUNT(DISTINCT b.distinct_id) AS luser
+            from
+              (
+              SELECT
+              if(package_name = '', 'unknow', package_name) as package_name,
+              if(app_version = '', 'unknow', app_version) as app_version ,
+              if(change_channel = '', 'unknow', change_channel) as change_channel ,
+              if(father_channel = '', 'unknow', father_channel) as father_channel ,
+              distinct_id ,
+              if(is_new_app = 1,2,1) as is_new_app
+              from
+                dw_user_simple dus
+              where dus.dt = toYYYYMMDD(toDate(#{yesterday}))
+                and package_name != 'com.mg.phonecall'
+              GROUP by
+                package_name , app_version , change_channel , father_channel, distinct_id , is_new_app ) a
+            LEFT JOIN (
+              SELECT
+                DISTINCT distinct_id
+              from
+                dw_user_simple
+              where dt = toYYYYMMDD(toDate(#{today})) and package_name != 'com.mg.phonecall') b on
+              a.distinct_id = b.distinct_id
+            GROUP by
+              CUBE (a.package_name , a.app_version , a.change_channel , a.is_new_app , a.father_channel) )
+    </select>
+
+    <select id="findYesterDayUserKeep" parameterType="map" resultType="java.util.Map">
+        SELECT
+        if(a.package_name = '', '-1', a.package_name) as package_name,
+        if(a.app_version = '', '-1', a.app_version) as app_version ,
+        if(a.change_channel = '', '-1', a.change_channel) as change_channel ,
+        if(a.father_channel = '', '-1', a.father_channel) as father_channel ,
+        a.is_new_app-1 as is_new_app,
+        COUNT(DISTINCT a.distinct_id) as user ,
+        COUNT(DISTINCT b.distinct_id) AS luser
+        from
+        (
+        SELECT
+        if(package_name = '', 'unknow', package_name) as package_name,
+        if(app_version = '', 'unknow', app_version) as app_version ,
+        if(change_channel = '', 'unknow', change_channel) as change_channel ,
+        if(father_channel = '', 'unknow', father_channel) as father_channel ,
+        distinct_id ,
+        if(is_new_app = 1,2,1) as is_new_app
+        from
+        dw_user_simple dus
+        where dus.dt = toYYYYMMDD(toDate(#{yesterday}))
+        and package_name != 'com.mg.phonecall'
+        GROUP by
+        package_name , app_version , change_channel , father_channel, distinct_id , is_new_app ) a
+        LEFT JOIN (
+        SELECT
+        DISTINCT distinct_id
+        from
+        dw_user_simple
+        where
+        dt = toYYYYMMDD(toDate(#{today})) and package_name != 'com.mg.phonecall') b on
+        a.distinct_id = b.distinct_id
+        GROUP by
+        CUBE (a.package_name , a.app_version , a.change_channel , a.is_new_app , a.father_channel)
+        ORDER by
+        a.package_name ASC ,
+        a.app_version ASC ,
+        a.change_channel ASC ,
+        a.is_new_app ASC ,
+        a.father_channel ASC
+        limit #{startRow}, #{pageSize}
+    </select>
+
+    <select id="countLdDayUserKeep" parameterType="map" resultType="java.lang.Integer">
+        SELECT count(1)
+        FROM (
+            SELECT
+                package_name
+            from
+            (
+                SELECT
+                    if(package_name = '', 'unknow', package_name) as package_name,
+                    if(app_version = '', 'unknow', app_version) as app_version ,
+                    if(channel = '', if(change_channel = '','unknow', change_channel), channel) as channel ,
+                    if(father_channel = '', 'unknow', father_channel) as father_channel ,
+                    distinct_id ,
+                    if(is_new_app = 1,2,1) as is_new_app
+                from dw.laidian_user_action_view_old
+                where dt = toYYYYMMDD(toDate(#{dateList[0]}))
+                GROUP by package_name , app_version , channel , father_channel, distinct_id , is_new_app
+            ) a
+            GROUP by CUBE (a.package_name , a.app_version , a.channel , a.is_new_app , a.father_channel)
+        )
+    </select>
+
+    <select id="findLdDayUserKeep" parameterType="java.util.Map" resultType="com.miguan.reportview.entity.RpUserKeep">
+        SELECT
+            #{dd} dd,
+            if(a.package_name = '', '-1', a.package_name) as package_name,
+            if(a.app_version = '', '-1', a.app_version) as app_version ,
+            if(a.channel = '', '-1', a.channel) as change_channel ,
+            if(a.father_channel = '', '-1', a.father_channel) as father_channel ,
+            a.is_new_app-1 as is_new,
+            #{sd} sd,
+            ifnull(COUNT(DISTINCT a.distinct_id),0) as user ,
+            ifnull(COUNT(DISTINCT b.distinct_id),0) AS keep_1,
+            ifnull(COUNT(DISTINCT c.distinct_id),0) AS keep_2,
+            ifnull(COUNT(DISTINCT d.distinct_id),0) AS keep_3,
+            ifnull(COUNT(DISTINCT e.distinct_id),0) AS keep_4,
+            ifnull(COUNT(DISTINCT f.distinct_id),0) AS keep_5,
+            ifnull(COUNT(DISTINCT g.distinct_id),0) AS keep_6,
+            ifnull(COUNT(DISTINCT h.distinct_id),0) AS keep_7,
+            ifnull(COUNT(DISTINCT i.distinct_id),0) AS keep_14,
+            ifnull(COUNT(DISTINCT j.distinct_id),0) AS keep_30,
+            2 app_type
+        from
+        (
+            SELECT
+                if(package_name = '', 'unknow', package_name) as package_name,
+                if(app_version = '', 'unknow', app_version) as app_version ,
+                if(channel = '', if(change_channel = '','unknow', change_channel), channel) as channel ,
+                if(father_channel = '', 'unknow', father_channel) as father_channel ,
+                distinct_id ,
+                if(is_new_app = 1,2,1) as is_new_app
+            from dw.laidian_user_action_view_old
+            where dt = toYYYYMMDD(toDate(#{dateList[0]}))
+            GROUP by package_name , app_version , channel , father_channel, distinct_id , is_new_app
+        ) a
+        LEFT JOIN (
+            SELECT DISTINCT if(distinct_id='',null, distinct_id) distinct_id
+            from dw.laidian_user_action_view_old
+            where dt = toYYYYMMDD(toDate(#{dateList[1]}))
+        ) b on a.distinct_id = b.distinct_id
+        LEFT JOIN (
+            SELECT DISTINCT if(distinct_id='',null, distinct_id) distinct_id
+            from dw.laidian_user_action_view_old
+            where dt = toYYYYMMDD(toDate(#{dateList[2]}))
+        ) c on a.distinct_id = c.distinct_id
+        LEFT JOIN (
+            SELECT DISTINCT if(distinct_id='',null, distinct_id) distinct_id
+            from dw.laidian_user_action_view_old
+            where dt = toYYYYMMDD(toDate(#{dateList[3]}))
+        ) d on a.distinct_id = d.distinct_id
+        LEFT JOIN (
+            SELECT DISTINCT if(distinct_id='',null, distinct_id) distinct_id
+            from dw.laidian_user_action_view_old
+            where dt = toYYYYMMDD(toDate(#{dateList[4]}))
+        ) e on a.distinct_id = e.distinct_id
+        LEFT JOIN (
+            SELECT DISTINCT if(distinct_id='',null, distinct_id) distinct_id
+            from dw.laidian_user_action_view_old
+            where dt = toYYYYMMDD(toDate(#{dateList[5]}))
+        ) f on a.distinct_id = f.distinct_id
+        LEFT JOIN (
+            SELECT DISTINCT if(distinct_id='',null, distinct_id) distinct_id
+            from dw.laidian_user_action_view_old
+            where dt = toYYYYMMDD(toDate(#{dateList[6]}))
+        ) g on a.distinct_id = g.distinct_id
+        LEFT JOIN (
+            SELECT DISTINCT if(distinct_id='',null, distinct_id) distinct_id
+            from dw.laidian_user_action_view_old
+            where dt = toYYYYMMDD(toDate(#{dateList[7]}))
+        ) h on a.distinct_id = h.distinct_id
+        LEFT JOIN (
+            SELECT DISTINCT if(distinct_id='',null, distinct_id) distinct_id
+            from dw.laidian_user_action_view_old
+            where dt = toYYYYMMDD(toDate(#{dateList[8]}))
+        ) i on a.distinct_id = i.distinct_id
+        LEFT JOIN (
+            SELECT DISTINCT if(distinct_id='',null, distinct_id) distinct_id
+            from dw.laidian_user_action_view_old
+            where dt = toYYYYMMDD(toDate(#{dateList[9]}))
+        ) j on a.distinct_id = j.distinct_id
+        GROUP by CUBE (a.package_name , a.app_version , a.channel , a.is_new_app , a.father_channel)
+        limit #{startRow}, #{pageSize}
+    </select>
+</mapper>

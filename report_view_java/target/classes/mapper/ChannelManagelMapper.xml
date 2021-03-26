@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.reportview.mapper.ChannelManageMapper">
+
+    <select id="listFatherChannel" parameterType="map" resultType="com.miguan.reportview.entity.FatherChannel">
+        select id,father_channel,owner,rebate,status,status_time
+        from dim_father_channel
+        where 1=1
+        <if test="fatherChannel != null">
+            and father_channel like '%${fatherChannel}%'
+        </if>
+        <if test="limit!=null and limit!=''">  limit #{limit} </if>
+        <if test="offset!=null and offset!=''">  offset #{offset} </if>
+    </select>
+
+    <select id="getFatherChannelCount" parameterType="map" resultType="int">
+        select count(1)
+        from dim_father_channel
+        where 1=1
+        <if test="fatherChannel != null">
+            and father_channel like '%${fatherChannel}%'
+        </if>
+    </select>
+
+
+    <select id="getFatherChannel" parameterType="map" resultType="com.miguan.reportview.entity.FatherChannel">
+        select id,father_channel,owner,rebate,status,status_time
+        from dim_father_channel
+        where id=#{id}
+    </select>
+
+    <insert id="addFatherChannel" parameterType="com.miguan.reportview.entity.FatherChannel" useGeneratedKeys="true" keyProperty="id">
+        insert into dim_father_channel(father_channel,owner,rebate,status)
+	    values (#{fatherChannel}, #{owner}, #{rebate}, #{status})
+    </insert>
+
+    <delete id="deleteFatherChannel">
+        delete from dim_father_channel where id = #{id}
+    </delete>
+
+
+    <update id="updateFatherChannel" parameterType="com.miguan.reportview.entity.FatherChannel">
+        update dim_father_channel set father_channel=#{fatherChannel},owner=#{owner},rebate=#{rebate},status=#{status},status_time=#{statusTime}
+        where id=#{id}
+    </update>
+
+
+    <select id="listFatherChannelYm" resultType="String">
+        select father_channel from dim_father_channel group by father_channel
+    </select>
+
+    <select id="listOwner" resultType="String">
+        select `owner` from dim_father_channel group by `owner`
+    </select>
+
+
+
+</mapper>
