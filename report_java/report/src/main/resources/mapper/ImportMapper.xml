@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.report.mapper.ImportMapper">
+
+    <delete id="deleteBannerDataByDateAndPlatForm">
+        DELETE
+        FROM banner_data
+        WHERE date = #{date}
+          and plat_form = #{platForm}
+    </delete>
+
+    <delete id="deleteBannerDataTotalNameByDateAndPlatForm">
+        DELETE
+        FROM banner_data_total_name
+        WHERE date = #{date}
+          and plat_form = #{platForm}
+    </delete>
+
+    <delete id="deleteBannerDataUserBehaviorByDate">
+        DELETE
+        FROM banner_data_user_behavior
+        WHERE date = #{date}
+    </delete>
+
+    <insert id="addBannerData" parameterType="list">
+        insert into banner_data (access_mode, active, active_value, ad_filling, ad_request, ad_return, ad_space,
+        ad_space_filling, ad_space_id, ad_space_request, ad_space_return, ad_space_type, ad_style, ad_type, app_id,
+        app_name, app_type, click_number, click_price, click_rate, client_id, cpm, created_at, cut_app_name, date,
+        earnings, err_num, err_rate, error_rate, exposure_rate, plat_form, pre_show_num, profit, rule_ad_space, rule_id,
+        show_number, total_name, updated_at)
+
+        values
+        <foreach collection="datas" item="item" index="index" separator=",">
+            (#{item.accessMode},#{item.active},#{item.activeValue},#{item.adFilling},#{item.adRequest},#{item.adReturn},#{item.adSpace},#{item.adSpaceFilling},#{item.adSpaceId},#{item.adSpaceRequest},#{item.adSpaceReturn},#{item.adSpaceType},#{item.adStyle},#{item.adType},#{item.appId},#{item.appName},#{item.appType},#{item.clickNumber},#{item.clickPrice},#{item.clickRate},#{item.clientId},#{item.cpm},#{item.createdAt},#{item.cutAppName},#{item.date},#{item.earnings},#{item.errNum},#{item.errRate},#{item.errorRate},#{item.exposureRate},#{item.platForm},#{item.preShowNum},#{item.profit},#{item.ruleAdSpace},#{item.ruleId},#{item.showNumber},#{item.totalName},#{item.updatedAt})
+        </foreach>
+    </insert>
+    <insert id="addBannerDataTotalName" parameterType="list">
+        insert into banner_data_total_name (active, active_value, ad_space, ad_style, ad_type, app_id, app_name,
+        app_type, click_number, click_price, click_rate, client_id, cpm, created_at,
+        date, plat_form, pre_show_num, revenue, show_number, show_rate,
+        show_rate_occupy, unique_key, updated_at)
+
+        values
+        <foreach collection="datas" item="item" index="index" separator=",">
+            (#{item.active},#{item.activeValue},#{item.adSpace},#{item.adStyle},#{item.adType},#{item.appId},#{item.appName},#{item.appType},#{item.clickNumber},#{item.clickPrice},#{item.clickRate},#{item.clientId},#{item.cpm},#{item.createdAt},#{item.date},#{item.platForm},#{item.preShowNum},#{item.revenue},#{item.showNumber},#{item.showRate},#{item.showRateOccupy},#{item.uniqueKey},#{item.updatedAt})
+        </foreach>
+    </insert>
+
+    <insert id="addUserBehavior" parameterType="list">
+        INSERT INTO banner_data_user_behavior(date, show_value, app_name, app_id, client_id, ad_space, app_type,created_at,active) VALUES
+        <foreach collection="datas" item="item" index="index" separator=",">
+            (#{item.date},#{item.showValue},#{item.appName},#{item.appId},#{item.clientId},#{item.adSpace},#{item.appType},#{item.createdAt},#{item.active})
+        </foreach>
+    </insert>
+
+</mapper>

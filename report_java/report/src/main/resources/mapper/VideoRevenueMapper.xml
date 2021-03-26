@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.report.mapper.VideoRevenueMapper">
+
+    <!-- 统计通用查询条件 -->
+    <sql id="query_condition_cpm">
+        where t.app_id = a.id
+        and concat(t.app_id,'-',t.client_id) in ('1-1','2-1','4-1','1-2','5-1')  <!-- 报表只要西柚android,果果android,果果ios,豆趣android，茜柚极速版,来电android的数据,豆趣android -->
+        and t.app_type = #{appType}
+        and date(date) &gt;= #{startDate}
+        and date(date) &lt;= #{endDate}
+        <if test="totalName != null and totalName != '' ">
+            and t.ad_space = #{totalName}
+        </if>
+    </sql>
+
+    <!-- 平台统计通用查询条件 -->
+    <sql id="query_condition_platform">
+        where 1 = 1
+        and concat(t.app_id,'-',t.client_id) in ('1-1','2-1','4-1','1-2','5-1')  <!-- 报表只要西柚android,果果android,果果ios,豆趣android，茜柚极速版,来电android的数据,豆趣android -->
+        and t.app_type = #{appType}
+        and date(date) &gt;= #{startDate}
+        and date(date) &lt;= #{endDate}
+        <if test="totalName != null and totalName != '' ">
+            and t.ad_space = #{totalName}
+        </if>
+    </sql>
+
+    <sql id="select_date">
+        <if test='timeType == 1'>date(t.date) date,</if>  <!-- 按天统计 -->
+        <if test='timeType == 2'>GROUP_CONCAT(distinct t.date order by t.date) date,</if>  <!--按周统计 -->
+        <if test='timeType == 3'>DATE_FORMAT(t.date,'%Y-%m') date,</if>  <!--按月统计 -->
+    </sql>
+
+    <select id="countLineRevenueChart" parameterType="java.util.Map" resultType="com.miguan.report.dto.LineChartDto">
+        select *
+        from (
+            <if test="appType == 1">
+                select <include refid="select_date" />
+                <if test='type == 1'>
+                    '汇总' type,
+                </if>
+                <if test='type == 2'>
+                  concat('汇总','-',(case plat_form when 1 then '穿山甲' when 2 then '广点通' when 3 then '快手' end)) type,
+                </if>
+                '0' sortTag,
+                sum(revenue) value
+                from banner_data_total_name t, app a
+                <include refid="query_condition_cpm" />
+                <if test='timeType == 1'>group by date(t.date)</if>   <!-- 按天统计 -->
+                <if test='timeType == 2'>group by date_format(t.date,'%Y%u')</if>  <!--按周统计 -->
+                <if test='timeType == 3'>group by date_format(t.date,'%m')</if>   <!--按月统计 -->
+                <if test='type == 2'>,plat_form</if> <!-- 按平台统计 -->
+                union
+            </if>
+            select <include refid="select_date" />
+            <if test='type == 1'>concat(a.alias, if(client_id=1,'Android','Ios')) type,</if>  <!-- 按应用统计 -->
+            <if test='type == 2'>concat(a.alias, if(client_id=1,'Android','Ios'),'-',(case plat_form when 1 then '穿山甲' when 2 then '广点通' when 3 then '快手' end)) type,</if> <!-- 按平台统计 -->
+            a.sort sortTag,
+            sum(revenue) value
+            from banner_data_total_name t, app a
+            <include refid="query_condition_cpm" />
+            group by <if test='timeType == 1'>date(t.date)</if>  <!-- 按天统计 -->
+            <if test='timeType == 2'>date_format(t.date,'%Y%u')</if>  <!--按周统计 -->
+            <if test='timeType == 3'>date_format(t.date,'%m')</if>  <!--按月统计 -->
+            <if test='type == 1'>,t.app_id,t.client_id</if>  <!-- 按应用统计 -->
+            <if test='type == 2'>,t.app_id,t.client_id,plat_form</if> <!-- 按平台统计 -->
+        ) a
+        order by a.date, sortTag, a.type
+    </select>
+
+    <!-- 统计营收柱状图基础数据 -->
+    <select id="countBarRevenueChar" parameterType="java.util.Map" resultType="com.miguan.report.vo.RevenuePlatformVo">
+        select a.date, platForm, appName, value
+        from (
+            select <include refid="select_date" />
+                   (case plat_form when 1 then '穿山甲' when 2 then '广点通' when 3 then '快手' end) platForm,
+                   concat(a.alias, if(client_id=1,'Android','Ios')) appName,
+                   sum(revenue) value
+            from app a
+            inner join banner_data_total_name t on t.app_id = a.id
+            left join (select distinct plat_form pf from banner_data) b on t.plat_form = b.pf
+            <include refid="query_condition_platform" />
+            group by <if test='timeType == 1'>date(t.date)</if>  <!-- 按天统计 -->
+                     <if test='timeType == 2'>date_format(t.date,'%Y%u')</if>  <!--按周统计 -->
+                     <if test='timeType == 3'>date_format(t.date,'%m')</if>  <!--按月统计 -->
+                     ,plat_form,t.app_id,t.client_id
+        ) a
+        order by a.date, appName, platForm;
+    </select>
+
+    <select id="findAllItem" parameterType="java.util.Map" resultType="com.miguan.report.vo.RevenuePlatformVo">
+        select
+                <if test='timeType == 1'>
+                   date,
+                </if>
+                <if test='timeType == 2'>
+                    GROUP_CONCAT(distinct date order by date) date,
+                </if>
+                <if test='timeType == 3'>
+                    DATE_FORMAT(date,'%Y-%m') date,
+                </if>
+               (case plat_form when 1 then '穿山甲' when 2 then '广点通' when 3 then '快手' end) platForm,
+               b.name appName
+        from cl_date a,
+             (select distinct concat(t.app_id,'-',t.client_id) id,
+                     concat(a.alias, if(client_id=1,'Android','Ios')) name,
+                     t.app_type
+              from banner_data_total_name t, app a
+              where t.app_id = a.id) b,
+             (select distinct plat_form from banner_data) c
+        where b.app_type = #{appType}
+        and date &gt;= #{startDate}
+        and date &lt;= #{endDate}
+        and b.id in ('1-1','2-1','4-1','1-2','5-1')  <!-- 报表只要西柚android,果果android,果果ios,豆趣android，茜柚极速版,来电android的数据,豆趣android -->
+        <if test='timeType == 2'>
+            group by DATE_FORMAT(date,'%Y%u'), platForm, appName
+        </if>
+        <if test='timeType == 3'>
+            group by DATE_FORMAT(date,'%m'), platForm, appName
+        </if>
+        order by date, appName, platForm
+    </select>
+</mapper>

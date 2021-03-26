@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.report.mapper.ActiveUserMapper">
+    <!-- 应用统计通用查询条件 -->
+    <sql id="query_condition">
+        where t.app_id = a.id
+        and t.date = d.date
+        and t.app_id = d.app_id
+        and t.client_id = d.client_id
+        and concat(t.app_id,'-',t.client_id) in ('1-1','2-1','4-1','1-2','5-1')  <!-- 报表只要西柚android,果果android,果果ios,豆趣android，茜柚极速版,来电android的数据,豆趣android -->
+        and t.app_type = #{appType}
+        and date(t.date) &gt;= #{startDate}
+        and date(t.date) &lt;= #{endDate}
+        <if test="appId != null and appId != '' ">
+            and concat(t.app_id,'-',t.client_id) = #{appId}
+        </if>
+    </sql>
+
+    <sql id="active_query_condition">
+        where concat(t.app_id,'-',t.client_id) in ('1-1','2-1','4-1','1-2','5-1')  <!-- 报表只要西柚android,果果android,果果ios,豆趣android，茜柚极速版,来电android的数据,豆趣android -->
+        and t.app_type = #{appType}
+        and t.date &gt;= #{startDate}
+        and t.date &lt;= #{endDate}
+        <if test="appId != null and appId != '' ">
+            and concat(t.app_id,'-',t.client_id) = #{appId}
+        </if>
+    </sql>
+
+    <sql id="countActive">
+        select sum(active)
+        from (
+        select date, max(active) active, t.app_id, t.client_id
+        <if test="source == null">
+            from umeng_data t
+        </if>
+        <if test="source != null">
+            from shence_data t
+        </if>
+        <include refid="active_query_condition"/>
+        group by date, t.app_id, t.client_id
+        ) a where a.date = t.date
+    </sql>
+
+    <sql id="countDetailActive">
+        select active
+        from (
+        select date, max(active) active, t.app_id, t.client_id
+        <if test="source == null">
+            from umeng_data t
+        </if>
+        <if test="source != null">
+            from shence_data t
+        </if>
+        <include refid="active_query_condition"/>
+        group by date, t.app_id, t.client_id
+        ) a where a.date = t.date and a.app_id = t.app_id and a.client_id = t.client_id
+    </sql>
+
+    <sql id="stat_item">
+        <if test="statItem == 1">max(d.active) value</if>  <!-- 活跃用户  -->
+        <if test="statItem == 2">(case when sum(show_number) = 0 then 0 else truncate((sum(revenue)/sum(show_number))*1000,2) end) value</if>  <!-- 千展收益  -->
+        <if test="statItem == 3">(case when max(d.active) = 0 then 0 else truncate((sum(show_number)/max(d.active)),2) end) value</if>  <!-- 人均展现  -->
+        <if test="statItem == 4">(case when max(d.active) = 0 then 0 else truncate((sum(revenue)/max(d.active)),4) end) value</if>  <!-- 日活价值  -->
+        <if test="statItem == 5">truncate(sum(distinct use_time)/60, 2) value</if>  <!-- 使用时长  -->
+        <if test="statItem == 6">sum(revenue) value</if>  <!-- 收益  -->
+        <if test="statItem == 7">(case when max(d.active) = 0 then 0 else truncate((max(d.new_users)/(<include refid="countDetailActive" />)),4) end) value</if>  <!-- 新增用户占比  -->
+    </sql>
+
+    <sql id="total_stat_item">
+        <if test="statItem == 1">(<include refid="countActive" />) value</if>  <!-- 活跃用户  -->
+        <if test="statItem == 2">(case when sum(show_number) = 0 then 0 else truncate((sum(revenue)/sum(show_number))*1000,2) end) value</if>  <!-- 千展收益  -->
+        <if test="statItem == 3">(case when max(d.active) = 0 then 0 else truncate((sum(show_number)/(<include refid="countActive" />)),2) end) value</if>  <!-- 人均展现  -->
+        <if test="statItem == 4">(case when max(d.active) = 0 then 0 else truncate((sum(revenue)/(<include refid="countActive" />)),4) end) value</if>  <!-- 日活价值  -->
+        <if test="statItem == 5">truncate(sum(distinct use_time)/count(distinct t.app_id)/60, 2) value</if>  <!-- 使用时长  -->
+        <if test="statItem == 6">sum(revenue) value</if>  <!-- 收益  -->
+        <if test="statItem == 7">(case when max(d.active) = 0 then 0 else truncate((sum(distinct d.new_users)/(<include refid="countActive" />)),4) end) value</if>  <!-- 新增用户占比  -->
+    </sql>
+
+    <!-- 活跃用户报表汇总统计 -->
+    <select id="countTotalActiveUserList" parameterType="java.util.Map" resultType="com.miguan.report.dto.LineChartDto">
+        select date(t.date) date, '0' sortTag,
+        <if test="detailType == null and isContrast == 1">
+            <if test="statItem == 1">'活跃用户' type,</if>  <!-- 活跃用户  -->
+            <if test="statItem == 2">'千展收益' type,</if>  <!-- 千展收益  -->
+            <if test="statItem == 3">'人均展现' type,</if>  <!-- 人均展现  -->
+            <if test="statItem == 4">'日活价值' type,</if>  <!-- 日活价值  -->
+            <if test="statItem == 5">'使用时长' type,</if>  <!-- 使用时长  -->
+            <if test="statItem == 6">'收益' type,</if>      <!-- 收益  -->
+            <if test="statItem == 7">'新增用户占比' type,</if>  <!-- 新增用户占比  -->
+        </if>
+        <if test="detailType == 1 and isContrast == 1">
+            '汇总' type,
+        </if>
+        <if test="isContrast == 0">
+            '汇总' type,
+        </if>
+        <include refid="total_stat_item" />
+        <if test="source == null">
+          from banner_data_total_name t, app a, umeng_data d
+        </if>
+        <if test="source != null">
+            from banner_data_total_name t, app a, shence_data d
+        </if>
+        <include refid="query_condition" />
+        group by date(t.date)
+        order by date
+    </select>
+
+    <!-- 活跃用户报表明细项统计 -->
+    <select id="countActiveUserList" parameterType="java.util.Map" resultType="com.miguan.report.dto.LineChartDto">
+        select date(t.date) date,
+        <if test="detailType == null and isContrast == 1">
+            <if test="statItem == 1">'活跃用户' type,</if>  <!-- 活跃用户  -->
+            <if test="statItem == 2">'千展收益' type,</if>  <!-- 千展收益  -->
+            <if test="statItem == 3">'人均展现' type,</if>  <!-- 人均展现  -->
+            <if test="statItem == 4">'日活价值' type,</if>  <!-- 日活价值  -->
+            <if test="statItem == 5">'使用时长' type,</if>  <!-- 使用时长  -->
+            <if test="statItem == 6">'收益' type,</if>      <!-- 收益  -->
+            <if test="statItem == 7">'新增用户占比' type,</if>  <!-- 新增用户占比  -->
+        </if>
+        <if test="detailType == 1 and isContrast == 1 ">
+            concat(a.alias, if(t.client_id=1,'Android','Ios')) type,
+        </if>
+        <if test="isContrast == 0 ">
+            concat(a.alias, if(t.client_id=1,'Android','Ios')) type,
+        </if>
+        a.sort sortTag,
+        <include refid="stat_item" />
+        <if test="source == null">
+            from banner_data_total_name t, app a, umeng_data d
+        </if>
+        <if test="source != null">
+            from banner_data_total_name t, app a, shence_data d
+        </if>
+        <include refid="query_condition" />
+        group by date(t.date),t.app_id,t.client_id
+        order by date, sortTag
+    </select>
+
+</mapper>

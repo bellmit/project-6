@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.report.mapper.AppCostMapper">
+    <insert id="addAppCost" parameterType="list">
+        insert into app_cost (app_name, app_type, client_id, app_id, cost, date ,channel) values
+        <foreach collection="datas" item="item" index="index" separator=",">
+            (#{item.appName},#{item.appType},#{item.clientId},#{item.appId},#{item.cost},#{item.date},#{item.channel})
+        </foreach>
+    </insert>
+</mapper>

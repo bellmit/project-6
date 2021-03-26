@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.report.mapper.DataDetailMapper">
+
+    <!-- 应用统计通用查询条件 -->
+    <select id="getHeadList"  resultType="com.miguan.report.dto.BannerQuotaDto">
+        select q.id, q.name, q.banner_data_total_field field, ifnull(user_id,0) `select`
+        from banner_quota q
+        left join (select r.* from banner_quota_relation r, admin_users u where r.user_id = u.id and u.token=#{token}) r
+        on q.id = r.banner_quota_id
+        where 1=1
+        and q.app_type = #{appType}
+        order by sort
+    </select>
+
+    <sql id="query_sql">
+        WHERE 1=1
+        and d.app_type = #{appType}
+        and d.date &gt;= #{startDate}
+        and d.date &lt;= #{endDate}
+        <if test="appClientId != null and appClientId != ''">
+            and concat(d.cut_app_name,d.client_id) in (${appClientId})
+        </if>
+        <if test="platForm != null and platForm != ''">
+            and d.plat_form in (${platForm})
+        </if>
+        <if test="totalName != null and totalName != ''">
+            and d.total_name in (${totalName})
+        </if>
+        <if test="adId != null and adId != ''">
+            and d.ad_space_id in (${adId})
+        </if>
+    </sql>
+
+    <sql id="countActive">
+        <if test="appClientId != null and appClientId != ''">
+          select active
+        </if>
+        <if test="appClientId == null or appClientId == ''">
+            select sum(active) active
+        </if>
+        from (
+                select d.date, max(t.active) active,concat( d.cut_app_name, d.client_id ) appClientId
+                <if test="source == null">
+                    from banner_data d,(select u.*, a.name from umeng_data u,app a where u.app_id = a.id) t
+                </if>
+                <if test="source != null">
+                    from banner_data d,(select u.*, a.name from shence_data u,app a where u.app_id = a.id) t
+                </if>
+                WHERE d.date = t.date
+                and concat(d.cut_app_name, d.client_id) = concat(t.name, t.client_id)
+                and d.app_type = #{appType}
+                and d.date &gt;= #{startDate}
+                and d.date &lt;= #{endDate}
+                <if test="appClientId != null and appClientId != ''">
+                    and concat(d.cut_app_name,d.client_id) in (${appClientId})
+                </if>
+                <if test="platForm != null and platForm != ''">
+                    and d.plat_form in (${platForm})
+                </if>
+                <if test="totalName != null and totalName != ''">
+                    and d.total_name in (${totalName})
+                </if>
+                <if test="adId != null and adId != ''">
+                    and d.ad_space_id in (${adId})
+                </if>
+                group by d.date, concat( d.cut_app_name, d.client_id )
+             ) a
+        <if test="appClientId != null and appClientId != ''">
+            where a.date=d.date and a.appClientId = concat( d.cut_app_name, d.client_id )
+        </if>
+        <if test="appClientId == null or appClientId == ''">
+            where a.date=d.date
+        </if>
+    </sql>
+
+
+    <select id="findDataDetailList" parameterType="java.util.Map" resultType="java.util.LinkedHashMap">
+        SELECT
+            DATE_FORMAT(d.date, '%Y-%m-%d') date,
+            concat(cut_app_name,if(d.client_id=1, 'Android', 'Ios')) app_id, <!--应用-->
+            (case plat_form when 1 then '穿山甲' when 2 then '广点通' when 3 then '快手' end) plat_form,<!-- 平台 -->
+            ad_type,<!-- 广告类型 -->
+            ad_style,<!-- 广告样式 -->
+            total_name ad_space,<!-- 广告位置 -->
+            sum(show_number) show_number,<!-- 展现量 -->
+            sum(click_number) click_number,<!-- 点击量 -->
+            (case when sum(show_number) = 0 then 0 else truncate(sum(click_number)/sum(show_number),4) end) click_rate, <!-- 点击率=点击量/展现量 -->
+            (case when sum(click_number) = 0 then 0 else truncate(sum(profit)/sum(click_number),4) end) click_price,<!-- 点击单价=营收/点击量 -->
+            (case when sum(show_number) = 0 then 0 else truncate((sum(profit)/sum(show_number))*1000,2) end) cpm,<!-- CPM=营收/展现量*1000 -->
+            sum(profit) revenue,<!-- 营收 -->
+            (case when sum(t.active) = 0 then 0 else truncate(sum(show_number)/(<include refid="countActive" />),2) end) pre_show_num,<!-- 人均展现数=展现量/日活用户 -->
+            (case when sum(t.active) = 0 then 0 else truncate(sum(profit)/(<include refid="countActive" />),4) end) active_value,<!-- 日活均价值=营收/日活 -->
+            (<include refid="countActive" />) active,<!-- 日活 -->
+            ad_space_id,<!-- 代码位id -->
+            sum(ad_space_request) ad_space_request,<!-- 广告位请求量 -->
+            sum(ad_space_return) ad_space_return,<!-- 广告位返回 -->
+            (case when sum(ad_space_request) = 0 then 0 else truncate(sum(ad_space_return)/sum(ad_space_request),4) end) ad_space_filling,<!-- 广告位填充率=广告返回/广告请求数 -->
+            sum(ad_request) ad_request,<!-- 广告请求量 -->
+            sum(ad_return) ad_return,<!-- 广告返回量 -->
+            (case when sum(ad_request) = 0 then 0 else truncate(sum(ad_return)/sum(ad_request),4) end) ad_filling,<!-- 广告填充率=广告返回/广告请求数 -->
+            (case when sum(ad_return) = 0 then 0 else truncate(sum(show_number)/sum(ad_return),4) end) exposure_rate,<!-- 展示率=展示数/广告返回数 -->
+            (case when ifnull(sum(e.req_num),0) = 0 then 0 else truncate(sum(e.err_num)/sum(e.req_num),4) end) error_rate <!-- 报错率=报错数/请求书 -->
+        FROM banner_data d
+        <if test="source == null">
+            left join (select u.*,a.name from umeng_data u, app a where u.app_id=a.id) t on d.date= t.date and concat(d.cut_app_name, d.client_id) = concat(t.name, t.client_id)
+        </if>
+        <if test="source != null">
+            left join (select u.*,a.name from shence_data u, app a where u.app_id=a.id) t on d.date= t.date and concat(d.cut_app_name, d.client_id) = concat(t.name, t.client_id)
+        </if>
+        LEFT JOIN banner_data_ext e ON d.date = e.date
+        AND d.ad_space_id = e.ad_id
+        <include refid="query_sql" />
+        group by d.date ${groupSql}
+        <if test="sortField != null and sortField != ''"> order by ${sortField}</if>
+
+    </select>
+
+    <sql id="select_date">
+        <if test='timeType == 1'>date(d.date) date,</if>  <!-- 按天统计 -->
+        <if test='timeType == 2'>GROUP_CONCAT(distinct d.date order by d.date) date,</if>  <!--按周统计 -->
+        <if test='timeType == 3'>DATE_FORMAT(d.date,'%Y-%m') date,</if>  <!--按月统计 -->
+    </sql>
+
+    <!-- 统计项,1-展现量,2-点击量，3-点击率，4-点击单价，5-cpm，6-营收，7-人均展现数，8-日活均价值，9-展示率，10-报错率，11-广告填充率 -->
+    <sql id="select_value">
+        <if test='item.statItme == 1'>sum(d.show_number) value </if>
+        <if test='item.statItme == 2'>sum(d.click_number) value </if>
+        <if test='item.statItme == 3'>(case when sum(d.show_number) = 0 then 0 else truncate(sum(d.click_number)/sum(d.show_number),4) end) value </if>
+        <if test='item.statItme == 4'>(case when sum(d.click_number) = 0 then 0 else truncate(sum(d.profit)/sum(d.click_number),4) end) value </if>
+        <if test='item.statItme == 5'>(case when sum(d.show_number) = 0 then 0 else truncate((sum(d.profit)/sum(d.show_number))*1000,4) end) value </if>
+        <if test='item.statItme == 6'>sum(d.profit) value </if>
+        <if test='item.statItme == 7'>(case when max(t.active) = 0 then 0 else truncate(sum(d.show_number)/(<include refid="countActive" />),4) end) value </if>
+        <if test='item.statItme == 8'>(case when max(t.active) = 0 then 0 else truncate(sum(d.profit)/(<include refid="countActive" />),4) end) value </if>
+        <if test='item.statItme == 9'>(case when sum(d.ad_return) = 0 then 0 else truncate(sum(d.show_number)/sum(d.ad_return),4) end) value </if>
+        <if test='item.statItme == 10'>(case when sum(e.req_num) = 0 then 0 else truncate(sum(e.err_num)/sum(e.req_num),4) end) value </if>
+        <if test='item.statItme == 11'>(case when sum(d.ad_request) = 0 then 0 else truncate(sum(d.ad_return)/sum(d.ad_request),4) end) value </if>
+    </sql>
+
+    <!-- 动态生成数据明细折线图 -->
+    <select id="countLineDataDetailChart" parameterType="java.util.Map" resultType="com.miguan.report.dto.LineChartDto">
+        select date, type, value
+        from (
+        <foreach collection="items" item="item" separator=" union ">
+            select <include refid="select_date" />   <!-- date字段 -->
+            ${item.selectNameSql}  <!-- type字段 -->
+            <include refid="select_value" />   <!-- value字段 -->
+            from banner_data d
+            <if test="source == null">
+                inner join (select u.*,a.name from umeng_data u, app a where u.app_id=a.id) t on d.date= t.date and concat(d.cut_app_name, d.client_id) = concat(t.name, t.client_id)
+            </if>
+            <if test="source != null">
+                inner join (select u.*,a.name from shence_data u, app a where u.app_id=a.id) t on d.date= t.date and concat(d.cut_app_name, d.client_id) = concat(t.name, t.client_id)
+            </if>
+            left join banner_data_ext e ON d.date = e.date and d.ad_space_id = e.ad_id
+            <include refid="query_sql" />
+            ${groupSql}
+        </foreach>
+        ) a
+        order by a.date, type
+    </select>
+
+    <select id="countLineHourChart" parameterType="java.lang.String" resultType="com.miguan.report.dto.LineChartDto">
+        select date, type, value
+        from (
+          <foreach collection="statItmes" item="statItme" separator=" union ">
+              SELECT
+              e.date staDate,
+              e.hours date,
+              <if test="statItme == 1">${typeSql}'展现量') type, </if>
+              <if test="statItme == 2">${typeSql}'点击量') type, </if>
+              <if test="statItme == 3">${typeSql}'点击率') type, </if>
+
+              <if test="statItme == 1">sum(e.show_number) value</if>
+              <if test="statItme == 2">sum(e.click_number) value</if>
+              <if test="statItme == 3">(case when sum(e.show_number) = 0 then 0 else truncate(sum(e.click_number)/sum(e.show_number),4) end) value</if>
+              FROM banner_data d
+              inner JOIN hour_data e ON d.date = e.date AND d.ad_space_id = e.ad_id
+              WHERE 1=1
+              and d.app_type = #{appType}
+              <if test="date != null and date != ''">
+                  and d.date in (${date})
+              </if>
+              <if test="appClientIds != null and appClientIds != ''">
+                  and concat(d.cut_app_name,d.client_id) in (${appClientIds})
+              </if>
+              <if test="platForms != null and platForms != ''">
+                  and d.plat_form in (${platForms})
+              </if>
+              <if test="totalNames != null and totalNames != ''">
+                  and d.total_name in (${totalNames})
+              </if>
+              <if test="adIds != null and adIds != ''">
+                  and d.ad_space_id in (${adIds})
+              </if>
+              ${groupSql}
+          </foreach>
+        ) a
+        order by a.staDate, a.date, type
+    </select>
+
+    <delete id="deleteUserFields">
+        delete r from banner_quota_relation r, admin_users u
+        where r.user_id = u.id
+        and r.app_type = #{appType}
+        and u.token = #{token}
+    </delete>
+
+    <insert id="saveUserFields" parameterType="java.util.Map">
+        INSERT INTO banner_quota_relation(app_type, user_id, banner_quota_id, created_at) VALUES
+        <foreach collection="ids" item="id" separator=",">
+             (#{appType}, (select id from admin_users where token=#{token}), ${id}, now())
+        </foreach>
+    </insert>
+</mapper>

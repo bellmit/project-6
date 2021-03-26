@@ -1,0 +1,57 @@
+package com.miguan.report.common.config.db;
+
+import com.zaxxer.hikari.HikariDataSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import java.util.Properties;
+
+@Configuration
+@EnableTransactionManagement
+@EnableJpaRepositories(
+        entityManagerFactoryRef = "entityManagerFactory4Adv",
+        transactionManagerRef = "transactionManager4Adv",
+        basePackages = {"com.miguan.report.repository4adv"}
+)
+public class HikariAdvtEntityManage {
+
+    @Resource(name = "advDataSource")
+    private HikariDataSource advDataSource;
+
+    @Autowired
+    private Environment environment;
+
+    @Bean(name = "entityManager4Adv", destroyMethod = "close")
+    public EntityManager entityManager4Adv(EntityManagerFactoryBuilder builder) {
+        return entityManagerFactory4Adv(builder).getObject().createEntityManager();
+    }
+
+    @Bean(name = "entityManagerFactory4Adv")
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory4Adv(EntityManagerFactoryBuilder builder) {
+        LocalContainerEntityManagerFactoryBean entityManagerFactory = builder.dataSource(advDataSource)
+                .packages("com.miguan.report.entity4adv").persistenceUnit("HikariAdvtEntityManage").build();
+        Properties jpaProperties = new Properties();
+        jpaProperties.put("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect");
+        jpaProperties.put("hibernate.physical_naming_strategy", "org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy");
+        jpaProperties.put("hibernate.connection.charSet", "utf-8");
+        jpaProperties.put("hibernate.show_sql", environment.getProperty("spring.jpa.show-sql"));
+        jpaProperties.put("hibernate.hbm2ddl.auto", environment.getProperty("spring.jpa.hibernate.ddl-auto"));
+        entityManagerFactory.setJpaProperties(jpaProperties);
+        return entityManagerFactory;
+    }
+
+    @Bean(name = "transactionManager4Adv")
+    public PlatformTransactionManager transactionManager4Adv(EntityManagerFactoryBuilder builder) {
+        return new JpaTransactionManager(entityManagerFactory4Adv(builder).getObject());
+    }
+}

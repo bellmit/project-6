@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.report.mapper.BannerDataMapper">
+    <select id="findByDateAndTotalName" parameterType="java.util.Map" resultType="com.miguan.report.dto.BannerDataDto">
+        SELECT
+        bd.date, bd.ad_space_id, bd.total_name, bd.client_id, bd.app_type, bd.ad_request, bd.ad_return, bd.ad_filling,
+        bd.show_number, bd.click_number, bd.click_rate, bd.profit, bd.cpm,
+        bde.err_num, bde.err_rate,
+        bdfa.channel_type, bdfa.computer, bdfa.cut_app_name, bdfa.ladder_price, bdfa.option_value,bdfa. app_package
+        FROM
+        banner_data bd
+        LEFT JOIN banner_data_ext bde
+        ON bd.date = bde.date
+        AND bd.ad_space_id = bde.ad_id
+        RIGHT JOIN banner_data_from_adv bdfa
+        ON bd.total_name = bdfa.total_name
+        AND bd.ad_space_id = bdfa.ad_id
+        AND bd.client_id = bdfa.client_id
+        AND bd.date = bdfa.date
+        <where>
+            <if test="startDdate != null and startDdate != ''">
+                DATE_FORMAT(bd.date, '%Y-%m-%d') &gt;= #{startDdate}
+            </if>
+            <if test="endDdate != null and endDdate != ''">
+                AND DATE_FORMAT(bd.date, '%Y-%m-%d') &lt;= #{endDdate}
+            </if>
+            <if test="clientIds != null and clientIds.size() > 0">
+                AND bd.client_id in
+                <foreach collection="clientIds" item="clientId" separator="," open="(" close=")">
+                    #{clientId}
+                </foreach>
+            </if>
+            <if test="packageNames != null and packageNames.size() > 0">
+                AND bdfa.app_package in
+                <foreach collection="packageNames" item="packageName" separator="," open="(" close=")">
+                    #{packageName}
+                </foreach>
+            </if>
+            <if test="totalNames != null and totalNames.size() > 0">
+                AND bd.total_name in
+                <foreach collection="totalNames" item="totalName" separator="," open="(" close=")">
+                    #{totalName}
+                </foreach>
+            </if>
+            <if test="optionValues != null and optionValues.size() > 0">
+                AND bdfa.option_value in
+                <foreach collection="optionValues" item="optionValue" separator="," open="(" close=")">
+                    #{optionValue}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY bd.date DESC, bdfa.app_package DESC, bd.total_name DESC, bdfa.option_value ASC
+    </select>
+
+    <select id="findForCodeSpaceReportListCount" parameterType="java.util.Map" resultType="long">
+        SELECT count(1) from (
+        SELECT 1 AS num
+        <include refid="mainSql"/>
+        group by bdfa.date,bdfa.cut_app_name, bdfa.client_id,bdfa.total_name) t
+    </select>
+
+    <select id="findForCodeSpaceReportList" parameterType="java.util.Map"
+            resultType="com.miguan.report.dto.BannerDataDto">
+        select aa.* from
+        (SELECT
+        bdfa.date,
+        bdfa.cut_app_name,
+        bdfa.app_package,
+        bdfa.client_id,
+        bdfa.total_name,
+        bdfa.ad_id ad_space_id,
+        bdfa.ladder_price,
+        bdfa.channel_type,
+        bdfa.computer,
+        bdfa.sort_value as option_value,
+        tmp.app_type,
+        tmp.ad_request,
+        tmp.ad_return,
+        tmp.ad_filling,
+        tmp.show_number,
+        tmp.click_number,
+        tmp.click_rate,
+        tmp.profit,
+        tmp.cpm,
+        bde.req_num,
+        bde.err_num,
+        bde.err_rate
+        <include refid="mainSql"/>
+        <include refid="mainSqlOrderBySql"/>) aa
+        INNER JOIN
+        (SELECT bdfa.date, bdfa.total_name, bdfa.cut_app_name, bdfa.client_id
+        <include refid="mainSql"/>
+        group by bdfa.date,bdfa.cut_app_name, bdfa.client_id,bdfa.total_name
+        <include refid="mainSqlOrderBySql"/>
+        LIMIT #{poffset}, #{psize}
+        ) bb
+        on aa.date = bb.date
+        and aa.cut_app_name=bb.cut_app_name
+        and aa.client_id=bb.client_id
+        and aa.total_name = bb.total_name
+    </select>
+    <sql id="mainSql">
+        FROM
+        banner_data_from_adv bdfa
+        LEFT JOIN (
+        SELECT
+        bd.date,
+        bd.ad_space_id,
+        bd.total_name,
+        bd.client_id,
+        bd.app_type,
+        bd.ad_request,
+        bd.ad_return,
+        bd.ad_filling,
+        bd.show_number,
+        bd.click_number,
+        bd.click_rate,
+        bd.profit,
+        bd.cpm
+        FROM
+        banner_data bd
+        <where>
+            <if test="startDdate != null and startDdate != ''">
+                DATE_FORMAT(bd.date, '%Y-%m-%d') &gt;= #{startDdate}
+            </if>
+            <if test="endDdate != null and endDdate != ''">
+                AND DATE_FORMAT(bd.date, '%Y-%m-%d') &lt;= #{endDdate}
+            </if>
+            <if test="totalNames != null and totalNames.size() > 0">
+                AND bd.total_name in
+                <foreach collection="totalNames" item="totalName" separator="," open="(" close=")">
+                    #{totalName}
+                </foreach>
+            </if>
+        </where>
+        ) tmp
+        ON tmp.total_name = bdfa.total_name
+        AND tmp.ad_space_id = bdfa.ad_id
+        AND tmp.client_id = bdfa.client_id
+        AND tmp.date = bdfa.date
+        LEFT JOIN banner_data_ext bde ON bdfa.date = bde.date AND bdfa.ad_id = bde.ad_id
+        <where>
+            bdfa.option_value != 0
+            <if test="startDdate != null and startDdate != ''">
+                AND DATE_FORMAT(bdfa.date, '%Y-%m-%d') &gt;= #{startDdate}
+            </if>
+            <if test="endDdate != null and endDdate != ''">
+                AND DATE_FORMAT(bdfa.date, '%Y-%m-%d') &lt;= #{endDdate}
+            </if>
+            <if test="totalNames != null and totalNames.size() > 0">
+                AND bdfa.total_name in
+                <foreach collection="totalNames" item="totalName" separator="," open="(" close=")">
+                    #{totalName}
+                </foreach>
+            </if>
+            <if test="clientIds != null and clientIds.size() > 0">
+                AND bdfa.client_id in
+                <foreach collection="clientIds" item="clientId" separator="," open="(" close=")">
+                    #{clientId}
+                </foreach>
+            </if>
+            <if test="packageNames != null and packageNames.size() > 0">
+                AND bdfa.app_package in
+                <foreach collection="packageNames" item="packageName" separator="," open="(" close=")">
+                    #{packageName}
+                </foreach>
+            </if>
+            <if test="optionValues != null and optionValues.size() > 0">
+                AND bdfa.sort_value in
+                <foreach collection="optionValues" item="optionValue" separator="," open="(" close=")">
+                    #{optionValue}
+                </foreach>
+            </if>
+        </where>
+    </sql>
+    <sql id="mainSqlOrderBySql">
+        ORDER BY bdfa.date
+        DESC, bdfa.app_package DESC, bdfa.total_name DESC, bdfa.sort_value
+    </sql>
+</mapper>

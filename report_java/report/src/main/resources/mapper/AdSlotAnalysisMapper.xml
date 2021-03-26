@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.report.mapper.AdSlotAnalysisMapper">
+
+    <select id="queryGroupByAppNameAndAdspace" parameterType="map" resultType="com.miguan.report.vo.AdSlotAnlyVo">
+        select
+        aa.appName,
+        aa.adSpace,
+        aa.revenue,
+        aa.activeValue/bb.active as activeValue,
+        aa.cpm,
+        aa.preShowNum/bb.active as preShowNum
+        from (SELECT
+        app_name as appName,
+        ad_space as adSpace,
+        SUM(revenue) as revenue,
+        SUM(revenue) as activeValue,
+        SUM(revenue)/SUM(show_number)*1000 as cpm,
+        SUM(show_number) as preShowNum,
+        date,
+        app_id
+        FROM banner_data_total_name
+        WHERE
+        date = #{qdate}
+        <if test="platType != null">
+            and plat_form = #{platType}
+        </if>
+        and app_type = #{appType}
+        <!-- 只展示2个安卓-->
+        <!-- and client_id = 1 -->
+         GROUP BY app_id, ad_space) aa
+         left join (
+         <include refid="getActiveForDaySumByAppId"/>
+         ) bb on aa.app_id=bb.app_id
+         where
+          1=1
+         <!-- 只展示2个安卓-->
+        <if test="appType == 1">
+        <!--    (aa.app_id = 1 or aa.app_id = 2)-->
+         </if>
+         <if test="appType == 2">
+           and  aa.app_id = 4
+         </if>
+     </select>
+
+     <select id="queryAdSlotDetail" parameterType="map" resultType="com.miguan.report.vo.AdSlotAnlyDetailVo">
+         select
+         aa.cpm,
+         aa.show_number/bb.active as preShowNum,
+         aa.revenue/bb.active as activeValue,
+         aa. date,
+         aa.appName,
+         aa.adSpace,
+         aa.appDevType
+         from
+         ( SELECT SUM(revenue)/SUM(show_number)*1000 as cpm,
+         SUM(show_number) as show_number,
+         SUM(revenue) as revenue,
+         date,
+         app_name as appName,
+         ad_space as adSpace,
+         client_id as appDevType,
+         app_id
+         FROM banner_data_total_name
+         WHERE ad_space = #{adSpace}
+         and date between #{startDate} and #{endDate}
+         and app_type = #{appType}
+         <if test="platType != null">
+             and plat_form = #{platType}
+         </if>
+         <if test="apps != null and apps.size() > 0">
+             and
+             <foreach collection="apps" index="index" item="item" open="(" separator="or" close=")">
+                 (app_id = '${item[0]}' and client_id= ${item[1]})
+             </foreach>
+         </if>
+         GROUP BY app_id, client_id, date
+         ) aa
+         left join (
+         <include refid="getActiveForDay"/>
+         ) bb on aa.app_id=bb.app_id and aa.appDevType= bb.client_id and aa.date = bb.date
+         where
+         1=1
+         <!-- 只展示2个安卓-->
+        <if test="appType == 1">
+           <!-- aa.appDevType = 1 and (aa.app_id = 1 or aa.app_id = 2) -->
+        </if>
+        <if test="appType == 2">
+           and aa.appDevType = 1 and aa.app_id = 4
+        </if>
+    </select>
+
+    <select id="queryAdUserBehaviorDetail" parameterType="map" resultType="com.miguan.report.vo.AdSlotAnlyDetailVo">
+        <!-- 统计用户行为数据-->
+        select
+        aa.dataValue/aa.active as dataValue,
+        aa.date,
+        aa.appName,
+        aa.adSpace,
+        aa.client_id as appDevType
+        from
+        (select
+            sum(show_value) as dataValue,
+            max(active) as active,
+            date,
+            app_name as appName,
+            ad_space as adSpace,
+            client_id,
+            app_id
+        from banner_data_user_behavior
+        WHERE ad_space = #{adSpace}
+            and date between #{startDate} and #{endDate}
+            and app_type = #{appType}
+        <if test="apps != null and apps.size() > 0">
+            and
+            <foreach collection="apps" index="index" item="item" open="(" separator="or" close=")">
+                (app_id = '${item[0]}' and client_id= ${item[1]})
+            </foreach>
+        </if>
+        GROUP BY app_id, client_id, date) aa
+        where
+        1=1
+        <!-- 只展示2个安卓-->
+        <if test="appType == 1">
+           <!-- aa.client_id = 1 and (aa.app_id = 1 or aa.app_id = 2)-->
+        </if>
+        <if test="appType == 2">
+           and aa.client_id = 1 and aa.app_id = 4
+        </if>
+    </select>
+
+    <sql id="getActiveForDay">
+        <!-- 取出每个app的每天的日活量 -->
+        SELECT max(active) as active, date, client_id, app_id
+        <if test="source == null">
+            FROM umeng_data
+        </if>
+        <if test="source != null">
+            FROM shence_data
+        </if>
+        WHERE
+        app_type = #{appType}
+        and date between #{startDate} and #{endDate}
+        GROUP BY app_id, client_id, date
+    </sql>
+    <sql id="getActiveForDaySumByAppId">
+        <!-- 取出每个app(不分客户端类型)的每天的日活量 -->
+        SELECT sum(active) as active,sg.app_id from (
+        <!-- 取出每个app的每天的日活量 -->
+        SELECT max(active) as active, date, client_id, app_id
+        <if test="source == null">
+            FROM umeng_data
+        </if>
+        <if test="source != null">
+            FROM shence_data
+        </if>
+        WHERE
+        app_type = #{appType}
+        and date = #{qdate}
+        GROUP BY app_id, client_id, date
+        ) sg
+        <!-- 只展示2个安卓-->
+        <!-- where sg.client_id = 1 -->
+        group by sg.app_id
+    </sql>
+</mapper>

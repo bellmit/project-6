@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.report.mapper.UmengDataMapper">
+
+    <insert id="batchInsertChannelData" parameterType="java.util.List">
+        insert into umeng_channel_data(date, package_name,father_channel,channel, launch, duration, total_user_rate, active_user, new_user, total_user, app_type, app_id, app_name,
+                                       client_id, created_at)
+        <foreach collection="channels" item="data" separator="," open="values " close="">
+            (#{data.date},#{data.packageName},#{data.fatherChannel},#{data.channel},#{data.launch},#{data.duration},#{data.totalUserRate},#{data.activeUser},#{data.newUser},#{data.totalUser},
+             #{data.appType},#{data.appId},#{data.appName},#{data.clientId},now())
+        </foreach>
+    </insert>
+
+    <delete id="deleteChannelData">
+        delete from umeng_channel_data where date=#{date} and package_name=#{packageName}
+    </delete>
+</mapper>

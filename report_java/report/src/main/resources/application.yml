@@ -1,0 +1,56 @@
+server:
+  port: 8114
+spring:
+  profiles:
+    active: local
+  main:
+    allow-bean-definition-overriding: true
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 100MB
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+  mapper-locations: classpath:/mapper/*.xml
+logging:
+  level:
+    com.github.xiaoymin: off
+    com.miguan.report: debug
+    com.cgcg: debug
+cgcg:
+  rest:
+    read-timeout: 300000
+    connect-timeout: 300000
+    connection-request-timeout: 300000
+  swagger:
+    name: report-在线文档
+    desc: Http Online Documentation
+    headers: token
+    contact-url: http://gitlab.miguan.com/video/report_java.git
+    contact-name: zhicong.lin
+    version: 1.0.0
+  format:
+    response-data: true
+    response-data-ignore:  ##接口返回值不需要在包裹一层data的接口
+      - /api/skypay/payoutQueuePayout
+    des3: S5EXCbIx98nrWA7a
+  interceptor:
+    ignore:
+      auth-ignore:  ##不需要token拦截接口
+        - /api/login
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+umeng:
+  appKey: 6707656
+  secKey: 08YEq9QGAN
+shence:
+  videoUrl: https://91daikuan.cloud.sensorsdata.cn/api/events/report?project=xiyoushipin&token=e0e61e8dd6b1bf88e71ba277675af72fb46053a91f3299502063aa5327b7a774
+  laidianUrl: https://91daikuan.cloud.sensorsdata.cn/api/events/report?project=xuanlaidian&token=03acb92b34cd2d9b7ce364f037d001445bb651e57af81f5c40d3802d41e3f139

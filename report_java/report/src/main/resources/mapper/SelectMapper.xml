@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.report.mapper.SelectMapper">
+
+    <select id="getAdSpaceIdList" resultType="java.lang.String">
+        select
+           ad_space_id
+        from banner_data
+        where app_type = #{appType}
+        <if test="keyword != null and keyword != '' ">
+            and ad_space_id like CONCAT(#{keyword},'%' )
+        </if>
+        <if test="totalNames != null and totalNames.size() > 0 ">
+            and total_name in <foreach collection="totalNames" item="totalName" open="(" close=")" separator=",">#{totalName}</foreach>
+        </if>
+        <if test="appClientIds != null and appClientIds.size() > 0 ">
+            and concat(cut_app_name, client_id) in <foreach collection="appClientIds" item="appClientId" open="(" close=")" separator=",">#{appClientId}</foreach>
+        </if>
+        <if test="platForms != null and platForms.size() > 0 ">
+            and plat_form in <foreach collection="platForms" item="platForm" open="(" close=")" separator=",">#{platForm}</foreach>
+        </if>
+        group by ad_space_id
+    </select>
+</mapper>

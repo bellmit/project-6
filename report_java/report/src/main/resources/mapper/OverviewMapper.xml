@@ -1,0 +1,527 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.report.mapper.OverviewMapper">
+
+    <select id="queryActiveForAllApp" parameterType="map" resultType="long">
+        select sum(active) as active
+        from (
+        SELECT max(active) as active
+        <if test="source == null">
+            FROM umeng_data
+        </if>
+        <if test="source != null">
+            FROM shence_data
+        </if>
+        WHERE app_type = #{appType}
+        and date = #{qdate}
+        <!-- 只展示2个安卓-->
+        <if test="appType == 1">
+            <!--  and client_id = 1 and (app_id = 1 or app_id = 2) -->
+            and ((client_id = 1 and app_id = 1) or (client_id = 1 and app_id = 2 ) or (client_id = 2 and app_id = 1 ) or (client_id = 1 and app_id = 5))
+        </if>
+        <if test="appType == 2">
+            and client_id = 1 and app_id = 4
+        </if>
+        GROUP BY app_id, client_id
+        ) t
+    </select>
+
+    <select id="queryAllCaStat" parameterType="map" resultType="map">
+        <!-- 统计概览首行数据（包括总数，环比，同比）-->
+        SELECT<include refid="totalSql"/>, t1.*, t2.*
+        FROM banner_data_total_name t
+        JOIN
+        (SELECT
+        <include refid="momSql"/>
+        FROM banner_data_total_name WHERE date = #{momDate} and app_type = #{appType}) as t1
+        on 1 = 1
+        JOIN
+        (SELECT
+        <include refid="yoySql"/>
+        FROM banner_data_total_name
+        WHERE date = #{yoyDatePlus1} and app_type = #{appType}) t2
+        on 1 = 1
+        WHERE date = #{qdate} and app_type = #{appType}
+        <!-- 只展示2个安卓-->
+        <if test="appType == 1">
+            <!--  and client_id = 1 and (app_id = 1 or app_id = 2) -->
+            and ((client_id = 1 and app_id = 1) or (client_id = 1 and app_id = 2 ) or (client_id = 2 and app_id = 1 ) or (client_id = 1 and app_id = 5))
+        </if>
+        <if test="appType == 2">
+            and client_id = 1 and app_id = 4
+        </if>
+    </select>
+    <sql id="totalSql">
+        <!-- 总营收 -->
+        sum(t.revenue) as revenue,
+        <!-- 日活 -->
+        <!-- sum(t.active) as active,-->
+        <!-- cpm=营收/展现量*1000 -->
+        SUM(t.revenue)/SUM(t.show_number)*1000 as cpm,
+        <!--  人均展现数=展现量/日活 -->
+        SUM(t.show_number) as pre_show_num,
+        <!-- 日活价值=营收/日活 -->
+        SUM(t.revenue) as active_value
+    </sql>
+    <sql id="momSql">
+        <!-- 总营收 -->
+        sum(revenue) as momrevenue,
+        <!-- 日活 -->
+        <!-- sum(active) as momactive,-->
+        <!-- 总CPM -->
+        SUM(revenue)/SUM(show_number)*1000 as momcpm,
+        <!-- 人均展示 -->
+        SUM(show_number) as mompre_show_num,
+        <!-- 日活均值 -->
+        SUM(revenue) as momactive_value
+    </sql>
+    <sql id="yoySql">
+        <!-- 总营收 -->
+        sum(revenue) as yoyrevenue,
+        <!-- 日活 -->
+        <!-- sum(active) as yoyactive,-->
+        <!-- 总CPM -->
+        SUM(revenue)/SUM(show_number)*1000 as yoycpm,
+        <!-- 人均展示 -->
+        SUM(show_number) as yoypre_show_num,
+        <!-- 日活均值 -->
+        SUM(revenue) as yoyactive_value
+    </sql>
+
+
+    <select id="queryCatStatDetail" parameterType="map" resultType="com.miguan.report.vo.CaStatNumVoDetail">
+        <!--小方格数据详情(拆线图) -->
+        SELECT aa.appName,
+        aa.deviceType,
+        aa.date,
+        <if test="showtype == 2">
+            <!-- 日活 -->
+            bb.active as dataValue
+        </if>
+        <if test="showtype == 3">
+            <!--  -->
+            aa.dataValue as sumMol,
+            aa.show_number as sumDem,
+            aa.dataValue/aa.show_number*1000 as dataValue
+        </if>
+        <if test="showtype == 4 or showtype == 5">
+            aa.dataValue as sumMol,
+            bb.active as sumDem,
+            aa.dataValue/bb.active as dataValue
+        </if>
+        <if test="showtype == 1">
+            aa.dataValue
+        </if>
+        from ( SELECT
+        app_name as appName,
+        client_id as deviceType,
+        app_id,
+        <if test="showtype == 1">
+            <!-- 总营收 -->
+            sum(revenue) as dataValue,
+        </if>
+        <if test="showtype == 3">
+            <!-- 总CPM -->
+            SUM(show_number) as show_number,
+            sum(revenue) as dataValue,
+        </if>
+        <if test="showtype == 4">
+            <!-- 人均展示 -->
+            SUM(show_number) as dataValue,
+        </if>
+        <if test="showtype == 5">
+            <!-- 日活均值 -->
+            SUM(revenue) as dataValue,
+        </if>
+        date
+        FROM
+        banner_data_total_name
+        WHERE
+        app_type = #{appType}
+        and
+        date between #{startDate} and #{endDate}
+        GROUP BY
+        app_id,client_id, date
+        ) aa
+        left join (
+        <include refid="getActiveForDay">
+            <property name="include_sql" value="dateBetween"/>
+        </include>
+        ) bb on aa.app_id=bb.app_id and aa.deviceType= bb.client_id and aa.date = bb.date
+        where
+        1=1
+        <!-- 只展示2个安卓-->
+        <if test="appType == 1">
+            <!-- aa.deviceType = 1 and (aa.app_id = 1 or aa.app_id = 2) -->
+            and ((aa.deviceType = 1 and aa.app_id = 1) or (aa.deviceType = 1 and aa.app_id = 2 ) or (aa.deviceType = 2 and aa.app_id = 1 )
+            or (aa.deviceType = 1 and aa.app_id = 5))
+        </if>
+        <if test="appType == 2">
+            and deviceType = 1 and aa.app_id = 4
+        </if>
+    </select>
+
+
+    <select id="queryAdSta" parameterType="map" resultType="com.miguan.report.vo.AdStaVo">
+        <!-- 广告位对统计 -->
+        select aa.deviceType,
+        aa.adSpace,
+        aa.appName,
+        <if test="showtype == 2 or showtype == 5">
+            <!-- 人均展示 -->
+            aa.dataValue/active as dataValue
+        </if>
+        <if test="showtype != 2 and showtype != 5">
+            aa.dataValue
+        </if>
+        from (SELECT
+        app_id,
+        date,
+        client_id as deviceType,
+        ad_space as adSpace,
+        app_name as appName,
+        <if test="showtype == 1">
+            <!-- CPM -->
+            SUM(revenue)/SUM(show_number)*1000 as dataValue
+        </if>
+        <if test="showtype == 2">
+            <!-- 人均展示 -->
+            SUM(show_number) as dataValue
+        </if>
+        <if test="showtype == 4">
+            <!-- 总营收 -->
+            sum(revenue) as dataValue
+        </if>
+        <if test="showtype == 5">
+            <!-- 日活均值 -->
+            SUM(revenue) as dataValue
+        </if>
+        FROM
+        banner_data_total_name
+        WHERE
+        date = #{qdate}
+        and app_type = #{appType}
+        GROUP BY
+        ad_space,app_id, client_id
+        ) aa
+        left join (
+        <include refid="getActiveForDay">
+            <property name="include_sql" value="dateEq"/>
+        </include>
+        ) bb on aa.app_id=bb.app_id and aa.deviceType= bb.client_id and aa.date = bb.date
+        where
+        1=1
+        <!-- 只展示2个安卓-->
+        <if test="appType == 1">
+            <!--  aa.deviceType = 1 and (aa.app_id = 1 or aa.app_id = 2) -->
+            and ((aa.deviceType = 1 and aa.app_id = 1) or (aa.deviceType = 1 and aa.app_id = 2 ) or (aa.deviceType = 2 and aa.app_id = 1 ) or (aa.deviceType = 1 and aa.app_id = 5))
+        </if>
+        <if test="appType == 2">
+            and aa.deviceType = 1 and aa.app_id = 4
+        </if>
+    </select>
+
+    <select id="queryAdStaExt" parameterType="map" resultType="com.miguan.report.vo.AdStaVo">
+        <!-- 广告位对统计-扩展查询（错误率） -->
+        SELECT d.client_id as deviceType,
+        d.total_name as adSpace,
+        d.cut_app_name as appName,
+        SUM( de.err_num )/SUM(de.req_num)*100 AS dataValue
+        FROM banner_data_ext de
+        LEFT JOIN banner_data d
+        ON de.ad_id = d.ad_space_id and de.date = d.date
+        WHERE de.date = #{qdate}
+        and de.app_type = #{appType}
+        <!-- 只展示2个安卓-->
+        <if test="appType == 1">
+            <!-- and client_id = 1 and (cut_app_name = '茜柚视频' or cut_app_name = '果果视频') -->
+            and ((client_id = 1 and cut_app_name = '茜柚视频') or (client_id = 1 and cut_app_name = '果果视频' ) or (client_id = 2 and cut_app_name = '果果视频') or (client_id = 1 and cut_app_name = '豆趣视频' ))
+        </if>
+        <if test="appType == 2">
+            and client_id = 1 and cut_app_name = '炫来电'
+        </if>
+        GROUP BY d.total_name,
+        d.client_id,
+        d.cut_app_name
+    </select>
+
+    <select id="queryUserUsTimeSta" parameterType="map" resultType="map">
+        <!-- 统计用户日使用时长-->
+        SELECT
+        <if test="appType == 1">
+            SUM(use_time)/180 AS useTime,
+        </if>
+        <if test="appType == 2">
+            SUM(use_time)/60 AS useTime,
+        </if>
+        t.*,
+        t1.*
+        FROM umeng_data
+        JOIN (
+        SELECT
+        <if test="appType == 1">
+            SUM(use_time)/180 AS momuseTime
+        </if>
+        <if test="appType == 2">
+            SUM(use_time)/60 AS momuseTime
+        </if>
+        FROM umeng_data
+        WHERE date = #{momDate}
+        and app_type = #{appType}
+        <!-- 只展示2个安卓-->
+        <if test="appType == 1">
+            <!-- and client_id = 1 and (app_id = 1 or app_id = 2) -->
+            and ((client_id = 1 and app_id = 1) or (client_id = 1 and app_id = 2 ) or (client_id = 2 and app_id = 1 ) or (client_id = 1 and app_id = 5 ))
+        </if>
+        <if test="appType == 2">
+            and client_id = 1 and app_id = 4
+        </if>
+        ) AS t ON 1 = 1
+        JOIN (
+        SELECT
+        <if test="appType == 1">
+            SUM(use_time)/180 AS yoyuseTime
+        </if>
+        <if test="appType == 2">
+            SUM(use_time)/60 AS yoyuseTime
+        </if>
+        FROM umeng_data
+        WHERE date = #{yoyDatePlus1}
+        and app_type = #{appType}
+        <!-- 只展示2个安卓-->
+        <if test="appType == 1">
+            <!--  and client_id = 1 and (app_id = 1 or app_id = 2) -->
+            and ((client_id = 1 and app_id = 1) or (client_id = 1 and app_id = 2 ) or (client_id = 2 and app_id = 1 ) or (client_id = 1 and app_id = 5 ))
+        </if>
+        <if test="appType == 2">
+            and client_id = 1 and app_id = 4
+        </if>
+        ) AS t1 ON 1 = 1
+        WHERE date = #{qdate}
+        and app_type = #{appType}
+        <!-- 只展示2个安卓-->
+        <if test="appType == 1">
+            <!-- and client_id = 1 and (app_id = 1 or app_id = 2) -->
+            and ((client_id = 1 and app_id = 1) or (client_id = 1 and app_id = 2 ) or (client_id = 2 and app_id = 1 ) or (client_id = 1 and app_id = 5 ))
+        </if>
+        <if test="appType == 2">
+            and client_id = 1 and app_id = 4
+        </if>
+    </select>
+
+    <select id="queryUserUsTimeStaDetail" parameterType="map" resultType="com.miguan.report.vo.CaStatNumVoDetail">
+        <!-- 查询首行数据（包括总数，环比，同比）的详情统计 扩展实现，查询用户日使用时长 -->
+        SELECT app_id as appName,
+        client_id as deviceType,
+        date,
+        SUM(use_time)/60 AS dataValue
+        FROM umeng_data
+        WHERE
+        app_type = #{appType}
+        <!-- 只展示2个安卓-->
+        <if test="appType == 1">
+            <!--  and client_id = 1 and (app_id = 1 or app_id = 2) -->
+            and ((client_id = 1 and app_id = 1) or (client_id = 1 and app_id = 2 ) or (client_id = 2 and app_id = 1 )
+            or (client_id = 1 and app_id = 5 ))
+        </if>
+        <if test="appType == 2">
+            and client_id = 1 and app_id = 4
+        </if>
+        AND date BETWEEN #{startDate} and #{endDate}
+        GROUP BY app_id, client_id, date
+
+    </select>
+
+    <select id="queryLastDatelCost" resultType="com.miguan.report.vo.CostStaVo">
+        SELECT SUM(cost/(1+rebate)) as cost,
+        date
+        FROM dm_channel_cost_enter
+        WHERE app_type = #{appType}
+        and date = (SELECT MAX(date) AS lastDate FROM dm_channel_cost_enter)
+        <!--&lt;!&ndash; 只展示2个安卓&ndash;&gt;-->
+        <!--<if test="appType == 1">-->
+        <!--&lt;!&ndash; and client_id = 1 and (app_id = 1 or app_id = 2)&ndash;&gt;-->
+        <!--and ((client_id = 1 and app_id = 1) or (client_id = 1 and app_id = 2 ) or (client_id = 2 and app_id = 1 )  or (client_id = 1 and app_id = 5 ))-->
+        <!--</if>-->
+        <!--<if test="appType == 2">-->
+        <!--and client_id = 1 and app_id = 4-->
+        <!--</if>-->
+    </select>
+
+    <select id="queryMonAndYoyCost" parameterType="map" resultType="com.miguan.report.vo.CostStaVo">
+        SELECT SUM(t1.cost/(1+t1.rebate)) as momcost,
+        t2.*
+        FROM dm_channel_cost_enter t1
+        JOIN
+        (
+        SELECT sum(cost/(1+rebate)) as yoycost
+        FROM dm_channel_cost_enter
+        WHERE app_type = #{appType}
+        and date = #{momDate}
+        ) t2 on 1 = 1
+        WHERE t1.app_type = #{appType}
+        and t1.date = #{yoyDate}
+        <!--&lt;!&ndash; 只展示2个安卓&ndash;&gt;-->
+        <!--<if test="appType == 1">-->
+        <!--&lt;!&ndash; and t1.client_id = 1 and (t1.app_id = 1 or t1.app_id = 2) &ndash;&gt;-->
+        <!--and ((t1.client_id = 1 and t1.app_id = 1) or (t1.client_id = 1 and t1.app_id = 2 ) or (t1.client_id = 2 and t1.app_id = 1 )  or (t1.client_id = 1 and t1.app_id = 5 ))-->
+        <!--</if>-->
+        <!--<if test="appType == 2">-->
+        <!--and t1.client_id = 1 and t1.app_id = 4-->
+        <!--</if>if-->
+
+    </select>
+
+    <select id="queryChartCost" parameterType="map" resultType="com.miguan.report.vo.DisaChartVo">
+        select date,alias as name,dataValue from
+        (
+        SELECT
+        --         client_id as deviceType,
+        SUM(cost/(1+rebate)) as dataValue,
+        date,
+        package_name
+        FROM dm_channel_cost_enter
+        WHERE app_type = #{appType}
+        and date BETWEEN #{startDate} and #{endDate}
+        and package_name !="-"
+        GROUP BY package_name, date
+        )a left join (
+        select package_name,alias from dim_app_package
+        )b on a.package_name=b.package_name
+        <!--&lt;!&ndash; 只展示2个安卓&ndash;&gt;-->
+        <!--<if test="appType == 1">-->
+        <!--&lt;!&ndash;  and client_id = 1 and (app_id = 1 or app_id = 2) &ndash;&gt;-->
+        <!--and ((client_id = 1 and app_id = 1) or (client_id = 1 and app_id = 2 ) or (client_id = 2 and app_id = 1 ) or (client_id = 1 and app_id = 5 ))-->
+        <!--</if>-->
+        <!--<if test="appType == 2">-->
+        <!--and client_id = 1 and app_id = 4-->
+        <!--</if>-->
+        ORDER BY date desc
+    </select>
+
+
+    <select id="queryLastDateForPerCost" parameterType="map" resultType="com.miguan.report.vo.PerCapitaCostVo">
+        SELECT
+        t.date
+        FROM (
+        <include refid="perCostSql"/>
+        group by aa.active, aa.new_users, aa.date, aa.client_id, aa.app_id,c.app_name
+        ) t
+        ORDER BY t.date DESC
+        LIMIT 1
+    </select>
+
+    <select id="queryMomAndYoyPerCost" parameterType="map" resultType="com.miguan.report.vo.PerCapitaCostVo">
+        SELECT
+        <include refid="perCostSelectSql"/>
+        FROM
+        (
+        <include refid="perCostSql"/>
+        and (aa.date = #{qDate} or aa.date = #{momDate} or aa.date = #{yoyDate})
+        group by aa.active, aa.new_users, aa.date, aa.client_id, aa.app_id,c.app_name
+        ) t
+        GROUP BY t.client_id, t.app_id, t.date
+    </select>
+
+    <select id="queryChartPerCost" parameterType="map" resultType="com.miguan.report.vo.PerCapitaCostVo">
+        <!-- 查询人均成本拆线图数据 -->
+        SELECT
+        <include refid="perCostSelectSql"/>
+        FROM (
+        <include refid="perCostSql"/>
+        and aa.date BETWEEN #{startDate} and #{endDate}
+        group by aa.active, aa.new_users, aa.date, aa.client_id, aa.app_id,c.app_name
+        ) t
+        GROUP BY t.client_id, t.app_id, t.date
+        ORDER BY t.date
+    </select>
+
+    <sql id="perCostSelectSql">
+        t.active,
+        t.new_users as newUsers,
+        t.date,
+        t.app_name as name,
+        t.client_id as deviceType,
+        <if test="showtype == 1">
+            t.cost/t.new_users as dataValue,
+        </if>
+        <if test="showtype == 2">
+            t.cost/ t.active as dataValue,
+        </if>
+        t.cost
+    </sql>
+    <sql id="perCostSql">
+        <!-- 查询app每日的成本 及日活信息 -->
+        SELECT aa.active, aa.new_users, aa.date, aa.client_id, aa.app_id,c.app_name,sum(c.cost) as cost
+        FROM (
+        <include refid="getAciveAndNewUsers"/>
+        ) aa
+        INNER JOIN (
+            select date,app_type,client_platform,alias as app_name,a.package_name,sum(cost) as cost
+            from (
+                select date,package_name,father_channel,cost/(1+rebate) as cost
+                from  dm_channel_cost_enter
+                where date>=date_format(date_add(curdate(), interval -30 day),'%Y-%c-%d')
+            )a inner join (
+                select app_type,client_platform,alias,package_name from dim_app_package
+            )b on a.package_name=b.package_name
+            group by date,app_type,client_platform,app_name,a.package_name
+        )c
+        on c.app_name = aa.app_name and c.client_platform = aa.client_id and c.date = aa.date and aa.app_type = c.app_type
+        WHERE
+        1=1
+        <!--&lt;!&ndash; 只展示2个安卓&ndash;&gt;-->
+        <!--<if test="appType == 1">-->
+        <!--&lt;!&ndash; aa.client_id = 1 and (aa.app_id = 1 or aa.app_id = 2) &ndash;&gt;-->
+        <!--and ((aa.client_id = 1 and aa.app_id = 1) or (aa.client_id = 1 and aa.app_id = 2 ) or (aa.client_id = 2 and aa.app_id = 1 )  or (aa.client_id = 1 and aa.app_id = 5 ))-->
+        <!--</if>-->
+        <!--<if test="appType == 2">-->
+        <!--and aa.client_id = 1 and aa.app_id = 4-->
+        <!--</if>-->
+    </sql>
+
+    <sql id="getAciveAndNewUsers">
+        <if test="source == null">
+            SELECT max(active) as active,
+            max(new_users) as new_users,
+            date, client_id, app_id, app_type, app_name
+            FROM umeng_data
+            WHERE app_type = #{appType}
+            GROUP BY app_id, client_id, date
+        </if>
+        <if test="source != null">
+            SELECT max(active) as active,
+            max(new_users) as new_users,
+            date, client_id, app_id, app_type, app_name
+            FROM shence_data
+            WHERE app_type = #{appType}
+            GROUP BY app_id, client_id, date
+        </if>
+    </sql>
+
+    <sql id="getActiveForDay">
+        <!-- 取出每个app的每天的日活量 -->
+        SELECT max(active) as active, date, client_id, app_id
+        <if test="source == null">
+            FROM umeng_data
+        </if>
+        <if test="source != null">
+            FROM shence_data
+        </if>
+        WHERE
+        app_type = #{appType}
+        <include refid="${include_sql}"/>
+        GROUP BY app_id, client_id, date
+    </sql>
+    <sql id="dateBetween">
+        and date between
+        #{startDate}
+        and
+        #{endDate}
+    </sql>
+    <sql id="dateEq">
+        and date =
+        #{qdate}
+    </sql>
+</mapper>

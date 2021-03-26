@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.report.mapper.SyncDataMapper">
+
+    <insert id="batchInsertHourData">
+        INSERT INTO hour_data(ad_id, date, hours, show_number, click_number, click_rate, create_time)
+        VALUES <foreach collection="contents" item="content" separator="," close=";">${content}</foreach>
+    </insert>
+
+    <delete id="deleteBannerDataTotalName">
+        delete from banner_data_total_name where date = #{date} and plat_form = #{platForm}
+    </delete>
+
+    <insert id="insertBannerDataTotalName">
+        insert into banner_data_total_name(date, show_number, show_rate, show_rate_occupy, click_number, click_rate, click_price, cpm, revenue, active,
+                                           pre_show_num, active_value, created_at, updated_at, app_name, app_id, client_id, plat_form, ad_style, ad_type,
+                                           ad_space, app_type, unique_key)
+        select date,
+               sum(show_number) show_number,
+               0 show_rate,
+               0 show_rate_occupy,
+               sum(click_number) click_number,
+               (case when sum(show_number) = 0 then 0 else round(sum(click_number)/sum(show_number),4) end) click_rate,
+               (case when sum(click_number) = 0 then 0 else truncate(sum(profit)/sum(click_number),4) end) click_price,
+               (case when sum(show_number) = 0 then 0 else truncate((sum(profit)/sum(show_number))*1000,2) end) cpm,
+               sum(profit) revenue,
+               0 active,
+               0 pre_show_num,
+               0 active_value,
+               now() created_at,
+               now() updated_at,
+               cut_app_name app_name,
+               (select a.id from app a where a.name = b.cut_app_name) app_id,
+               client_id,
+               plat_form,
+               ad_style,
+               ad_type,
+               total_name ad_space,
+               app_type,
+               md5(concat(date, total_name, cut_app_name, client_id, plat_form)) unique_key
+        from banner_data b
+        where date = #{date}
+        and plat_form = #{platForm}
+        group by app_id, client_id, plat_form,app_type, total_name
+    </insert>
+</mapper>

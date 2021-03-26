@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.report.mapper.ActiveValueMapper">
+    <select id="queryStaGroupByAppOrPlat" parameterType="map" resultType="com.miguan.report.vo.ActiveValueVo">
+        SELECT aa.*,
+        aa.revenue as sumMol,
+        bb.active as sumDem,
+        aa.revenue/bb.active as dataValue
+        from (
+        <include refid="mainSta"/>
+        ) aa
+        left join (
+        <if test="showDateType == 1">
+            <include refid="getActiveForDay"/>
+        </if>
+        <if test="showDateType != 1">
+            <include refid="getActiveForWeekerOrYear"/>
+        </if>
+        ) bb on
+        <if test="showDateType == 1">
+            bb.date = aa.dates
+        </if>
+        <if test="showDateType != 1">
+            bb.dates = aa.dates
+        </if>
+        and bb.app_id = aa.app_id and aa.deviceType= bb.client_id
+        where
+        1=1
+        <!-- 只展示2个安卓-->
+        <if test="appType == 1">
+            <!-- aa.deviceType = 1 and (aa.app_id = 1 or aa.app_id = 2) -->
+            and ((aa.deviceType = 1 and aa.app_id = 1) or (aa.deviceType = 1 and aa.app_id = 2) or (aa.deviceType = 2 and aa.app_id = 1) or (aa.deviceType = 1 and aa.app_id = 5))
+         </if>
+         <if test="appType == 2">
+             and aa.deviceType = 1 and aa.app_id = 4
+         </if>
+         ORDER BY aa.dates
+     </select>
+
+     <sql id="mainSta">
+         SELECT
+         <!--按应用统计 -->
+        app_name as name,
+        app_id,
+        client_id as deviceType,
+        <if test="groupType == 2">
+            <!--按平台统计 -->
+            plat_form as platType,
+        </if>
+
+        SUM(revenue) as revenue,
+        <if test="showDateType == 1">
+            <!--按天统计 -->
+            date as dates
+        </if>
+        <if test="showDateType == 2">
+            <!--按周统计 -->
+            min(date) as minDate,
+            max(date) as maxDate,
+            DATE_FORMAT(date, '%Y%u') as dates
+        </if>
+        <if test="showDateType == 3">
+            <!--按月统计 -->
+            DATE_FORMAT(date, '%Y-%m') as dates
+        </if>
+        FROM banner_data_total_name
+        WHERE app_type = #{appType}
+        <if test="adSpace != null and adSpace != ''">
+            and ad_space = #{adSpace}
+        </if>
+        and date between #{startDate} and #{endDate}
+        GROUP BY
+        <if test="groupType == 1">
+            <!--按应用统计 -->
+            app_id,client_id,
+        </if>
+        <if test="groupType == 2">
+            <!--按平台统计 -->
+            plat_form, app_id,client_id,
+        </if>
+        dates
+    </sql>
+
+    <sql id="getActiveForWeekerOrYear">
+        <!-- 统计每周或每月的每个app的周期日活量 -->
+        SELECT SUM(active) as active, app_id, client_id,
+        <if test="showDateType == 2">
+            <!--按周统计 -->
+            DATE_FORMAT(date, '%Y%u') as dates
+        </if>
+        <if test="showDateType == 3">
+            <!--按月统计 -->
+            DATE_FORMAT(date, '%Y-%m') as dates
+        </if>
+        FROM (
+        <include refid="getActiveForDay"/>
+        ) t
+        GROUP BY app_id, client_id, dates
+    </sql>
+
+    <sql id="getActiveForDay">
+        <!-- 取出每个app的每天的日活量 -->
+        SELECT max(active) as active, date, app_name, client_id, app_id
+        <if test="source == null">
+            FROM umeng_data
+        </if>
+        <if test="source != null">
+            FROM shence_data
+        </if>
+        WHERE
+        app_type = #{appType}
+        and date between #{startDate} and #{endDate}
+        GROUP BY app_id, client_id, date
+    </sql>
+
+</mapper>

@@ -1,0 +1,109 @@
+logging:
+  level:
+    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+    com.miguan.cashmore: debug
+    com.cgcg: debug
+spring:
+  datasource:
+    url: jdbc:mysql://112.74.179.254:3306/ballvideoreport?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+    username: liyu
+    password: 1l4RZD4mqJH1pY7u
+    driverClassName: com.mysql.cj.jdbc.Driver
+    hikari:
+      connectionTimeout: 180000
+      maximumPoolSize: 1500
+      maxLifetime: 60000
+      minimumIdle: 20
+      validationTimeout: 8000
+      idleTimeout: 50000
+  datasource-video:
+    url: jdbc:mysql://112.74.179.254:3306/ballvideo_dev?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+    username: ballvideo_java
+    password: e7I8vpV7H6FZohOj
+    driverClassName: com.mysql.cj.jdbc.Driver
+    hikari:
+      connectionTimeout: 180000
+      maximumPoolSize: 1500
+      maxLifetime: 60000
+      minimumIdle: 20
+      validationTimeout: 8000
+      idleTimeout: 50000
+  datasource-adv:
+    url: jdbc:mysql://112.74.179.254:3306/ballvideoadv?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+    username: ballvideo_java
+    password: e7I8vpV7H6FZohOj
+    driverClassName: com.mysql.cj.jdbc.Driver
+    hikari:
+      connectionTimeout: 180000
+      maximumPoolSize: 1500
+      maxLifetime: 60000
+      minimumIdle: 20
+      validationTimeout: 8000
+      idleTimeout: 50000
+  datasource-laidian:
+    url: jdbc:mysql://112.74.179.254:3306/laidian?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+    username: liyu
+    password: 1l4RZD4mqJH1pY7u
+    driverClassName: com.mysql.cj.jdbc.Driver
+    hikari:
+      connectionTimeout: 180000
+      maximumPoolSize: 1500
+      maxLifetime: 60000
+      minimumIdle: 20
+      validationTimeout: 8000
+      idleTimeout: 50000
+  jpa:
+    database: mysql
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+cgcg:
+  rest:
+    read-timeout: 30000
+    connect-timeout: 3000
+    connection-request-timeout: 30000
+
+mongodb:
+  primary:
+    uri: mongodb://zhangbinglin:5wMdNa45FS2xAMCj@112.74.179.254:53333/log
+    database: log
+    username: zhangbinglin
+    password: 5wMdNa45FS2xAMCj
+  second:
+    uri: mongodb://zhangbinglin:5wMdNa45FS2xAMCj@112.74.179.254:53333/bury
+    database: bury
+    username: zhangbinglin
+    password: 5wMdNa45FS2xAMCj
+
+task:
+  scheduled:
+    cron:
+      #使用时长
+      app-use-time: 0 0 7 * * ?
+      #用户行为分析统计 每天凌晨5点
+      user-behavior: 0 0 5 * * ?
+      #获取友盟数据
+      umeng-data: 0 10 6 * * ?
+      #获取友盟渠道数据
+      umeng-channel-data: 0 10 8 * * ?
+      #每隔20分钟获取友盟数据
+      umeng-channel-data-min: 0 */20 * * * ?
+      #获取神策数据(视频)
+      shence-data-video: 0 10 5 * * ?
+      #获取神策数据(来电),要和神策视频的时间间隔开，1小时以上，要不然同步数据会报错（神策那有限制）
+      shence-data-call: 0 0 3 * * ?
+      #汇总是每小时展现数、点击数
+      hour-data: 0 30 0 * * ?
+      #统计每日代码位的错误数和请求数
+      banner-data-ext: 0 45 0 * * ?
+      #从广告第三方平台（广点通，快手）同步数据
+      plat_form_third: 0 10 8 * * ?
+kuai-shou:
+  url: https://ssp.e.kuaishou.com
+  dailyShareUrl: /api/report/dailyShare
+  ak: 5198
+  sk: 9dbab9b08323be5239a9cc9954e7261f
+guang-dian-tong:
+  memberid: 903050305786
+  secret: <f0O4AVZR>4kSWwBsZGSgt,fh55JIU7c
+  reportUrl: https://api.adnet.qq.com/open/v1.0/report/get
