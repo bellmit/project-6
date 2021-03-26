@@ -1,0 +1,22 @@
+server:
+  port: 8888
+cgcg:
+  interceptor:
+    auth: true
+    ignore:
+      auth-ignore:
+        - /test/index
+      log-ignore:
+  swagger:
+    name: wocalie
+    apis: com.test.base.controller
+    desc: sda
+    version: 1.0.0
+  format:
+    response-data: true
+    des3: 123456
+#    class-name: com.xx
+spring:
+  mvc:
+    static-path-pattern: /static/**
+    throw-exception-if-no-handler-found: true

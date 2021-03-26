@@ -1,0 +1,88 @@
+{
+  "properties": [
+    {
+      "name": "cgcg.format.response-data",
+      "type": "java.lang.Boolean",
+      "description": "is open auth",
+      "defaultValue": "false"
+    },
+    {
+      "name": "cgcg.format.class-name",
+      "type": "java.lang.String",
+      "description": "format className",
+      "defaultValue": "com.cgcg.base.format"
+    },
+    {
+      "name": "cgcg.format.property",
+      "type": "java.lang.String",
+      "description": "format class field",
+      "defaultValue": "data"
+    },
+    {
+      "name": "cgcg.format.des3",
+      "type": "java.lang.String",
+      "description": "encryption data",
+      "defaultValue": ""
+    },
+    {
+      "name": "cgcg.format.des3.result",
+      "type": "java.lang.String",
+      "description": "encryption data",
+      "defaultValue": ""
+    },
+    {
+      "name": "cgcg.format.des3.param",
+      "type": "java.lang.String",
+      "description": "encryption param",
+      "defaultValue": ""
+    },
+    {
+      "name": "cgcg.interceptor.auth",
+      "type": "java.lang.Boolean",
+      "description": "is open auth",
+      "defaultValue": "false"
+    },
+    {
+      "name": "cgcg.interceptor.ignore.root",
+      "type": "java.util.List",
+      "description": "ignore interceptor",
+      "defaultValue": ""
+    },
+    {
+      "name": "cgcg.interceptor.ignore.auth-ignore",
+      "type": "java.util.List",
+      "description": "ignore interceptor",
+      "defaultValue": ""
+    },
+    {
+      "name": "cgcg.interceptor.ignore.log-ignore",
+      "type": "java.util.List",
+      "description": "ignore interceptor",
+      "defaultValue": ""
+    },
+    {
+      "name": "cgcg.swagger.apis",
+      "type": "java.lang.String",
+      "description": "scanner packages",
+      "defaultValue": "com"
+    },
+    {
+      "name": "cgcg.swagger.desc",
+      "type": "java.lang.String",
+      "description": "this service name desc",
+      "defaultValue": "http在线接口文档."
+    },
+    {
+      "name": "cgcg.swagger.name",
+      "type": "java.lang.String",
+      "description": "doc title",
+      "defaultValue": "接口文档."
+    },
+    {
+      "name": "cgcg.swagger.version",
+      "type": "java.lang.String",
+      "description": "the doc version",
+      "defaultValue": "1.0.0"
+    }
+  ]
+}
