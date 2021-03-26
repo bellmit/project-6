@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.ballvideo.mapper3.AdvertDesWeightMapper">
+
+    <resultMap id="advertDesWeightBaseMap" type="com.miguan.ballvideo.vo.request.AdvertDesWeightVo" >
+        <id property="id" column="id" />
+        <result property="group_id" column="group_id" />
+        <result property="plan_id" column="plan_id" />
+        <result property="design_id" column="design_id" />
+        <result property="weight" column="weight"/>
+        <result property="created_at" column="created_at"/>
+        <result property="updated_at" column="updated_at"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.miguan.ballvideo.vo.request.AdvertDesWeightVo" useGeneratedKeys="true" keyProperty="id" >
+        INSERT INTO idea_adv_des_weight(group_id, plan_id, design_id,
+          weight,created_at,updated_at)
+        VALUES(#{group_id}, #{plan_id}, #{design_id},
+        #{weight},now(),now())
+    </insert>
+
+    <select id="insertBatch" resultType="java.lang.Integer" >
+        INSERT INTO idea_adv_des_weight(id,group_id, plan_id, design_id,
+        weight,created_at,updated_at)
+        VALUES
+        <foreach collection ="advertDesWeightVos" item="advertDesWeightVo" separator =",">
+            (#{advertDesWeightVo.id}, #{advertDesWeightVo.group_id}, #{advertDesWeightVo.plan_id},#{advertDesWeightVo.design_id},#{advertDesWeightVo.weight},now(),now())
+        </foreach >
+    </select>
+
+    <delete id="deleteByGroupId" parameterType="long">
+        delete from idea_adv_des_weight where group_id =#{groupId}
+    </delete>
+
+    <delete id="deleteByPlanId" parameterType="long">
+        delete from idea_adv_des_weight where plan_id =#{planId}
+    </delete>
+
+    <delete id="deleteByDesId" parameterType="long">
+        delete from idea_adv_des_weight where design_id =#{desId}
+    </delete>
+
+    <select id="findByPlanId" parameterType="long" resultMap="advertDesWeightBaseMap">
+        SELECT * FROM idea_adv_des_weight where plan_id =#{planId}
+    </select>
+    <select id="findByDesignId" parameterType="long" resultMap="advertDesWeightBaseMap">
+        SELECT * FROM idea_adv_des_weight where design_id =#{desId} limit 1
+    </select>
+</mapper>

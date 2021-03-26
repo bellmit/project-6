@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.ballvideo.mapper3.BudgetSmoothMapper">
+
+    <select id="findBugeSmoothPlanIds" resultType="int">
+        select id from idea_advert_plan where put_in_type=1
+    </select>
+
+    <select id="findBugeSmoothPlan"  resultType="com.miguan.ballvideo.vo.BudgetAccountVo">
+        select p.id plan_id, price, day_price, remain_day_price, remain_total_price, p.time_setting,p.times_config
+        from idea_advert_plan p
+        inner join idea_advert_account a on p.id = a.plan_id
+        where p.state=1
+    </select>
+
+    <update id="initAdvertAcount" parameterType="java.util.List">
+        update idea_advert_account a
+        inner join idea_advert_plan p on a.plan_id = p.id
+        inner join idea_advert_group g on p.group_id = g.id
+        set a.remain_day_price = if(p.total_price = 0,p.day_price,if(a.remain_total_price-p.day_price>0, p.day_price, a.remain_total_price)),
+            a.remain_day_group_price = g.day_price,
+            a.updated_at = NOW()
+        where (date(a.updated_at) != date(now()) or a.updated_at is null)
+        and p.state=1
+        and (a.remain_total_price > 0 or p.total_price = 0)
+    </update>
+
+    <update id="initPlanSmoothDate" parameterType="java.util.List">
+        update idea_advert_plan
+        set smooth_date = null
+        where state=1
+        and date(smooth_date) &lt; date(now())
+        <if test="planIds != null">
+            and a.plan_id in <foreach collection="planIds" item="planId" open="(" separator="," close=")">${planId}</foreach>
+        </if>
+    </update>
+
+    <select id="findPlanAccountList" parameterType="java.util.List" resultType="map">
+        select p.id, p.put_in_type,p.price,p.day_price,g.day_price group_day_price,p.total_price,p.smooth_date,a.id acc_id,
+               a.remain_day_price, a.remain_day_group_price, a.remain_total_price, a.updated_at
+        from idea_advert_plan p
+        inner join idea_advert_group g on p.group_id = g.id
+        left join idea_advert_account a on a.plan_id = p.id
+        where p.state = 1
+        and g.state = 1
+        <if test="planIds != null">
+            and a.plan_id in <foreach collection="planIds" item="planId" open="(" separator="," close=")">${planId}</foreach>
+        </if>
+    </select>
+
+    <update id="updateGroupRemainAccount" parameterType="map">
+        update idea_advert_account a
+        inner join idea_advert_plan p on a.plan_id = p.id
+        inner join idea_advert_group g on p.group_id = g.id
+        set a.remain_day_group_price = #{remainGroupPrice}, a.updated_at = NOW()
+        where p.id = #{planId}
+    </update>
+
+    <select id="staYesPreClickRate" resultType="java.lang.Double">
+        select ifnull(sum(valid_click)/sum(exposure),0) from idea_advert_report where date = DATE_SUB(curdate(),INTERVAL 1 DAY)
+    </select>
+</mapper>

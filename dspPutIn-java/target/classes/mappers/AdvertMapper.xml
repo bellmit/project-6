@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.ballvideo.mapper.AdvertMapper">
+
+    <select id="queryAdertList" resultType="com.miguan.ballvideo.vo.AdvertVo" parameterType="java.util.Map">
+        select n.id,p.id positionId,p.name positionName, p.keyword positionType, n.title, n.url, n.remark, n.img_path,
+        n.img_path2, n.ad_type ,n.ad_code, n.ad_id, p.first_load_position,n.probability,
+        p.second_load_position, p.mobile_type, n.app_id, n.state, p.max_show_num,p.fill_state,n.link_type linkType,
+        (case when p.fill_state='1' then '1' else '0' end) type
+        from news_feed_ads n, banner_position p
+        where p.id = n.banner_position_id
+        and p.state = 1
+        and ((n.ad_type='1' and now() BETWEEN n.start_time and n.end_time) OR (n.ad_type='2'))
+        and n.channel_id = #{channelId}
+        <if test="state != null">
+            and n.state = #{state}
+        </if>
+        <if test="game != null">
+            and p.keyword like CONCAT('Game','%')
+        </if>
+        <if test="positionType != null and positionType != ''">
+            and p.keyword = #{positionType}
+        </if>
+        <if test="positionTypes != null and positionTypes.size>0">
+            and p.keyword in
+                <foreach collection="positionTypes" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+        </if>
+        <if test="mobileType != null and mobileType != ''">
+            and p.mobile_type = #{mobileType}
+        </if>
+        <if test="lockScreenPositionTypes != null and lockScreenPositionTypes != ''">
+            and p.keyword in ('lockScreenDeblocking','lockH5ScreenDeblocking','lockAppScreenDeblocking')
+        </if>
+        <!--
+        ad_code:1表示百度 2表示广点通 3表示穿山甲激励视频 4表示穿山甲全屏视频广告，5表示穿山甲开屏广告，6表示穿山甲banner广告，7表示穿山甲Draw信息流广告8表示穿山甲信息流广告
+        9穿山甲插屏广告10广点通自渲染广告11虹益广告
+        -->
+        <if test="permission != null and permission == 0">
+            and (n.ad_code in ('3','4','5','6','7','8','9','10','11','13','14','15','16','17','18','19') OR n.ad_code is null)
+        </if>
+        <if test="appVersion != null and appVersion != ''">
+            and replace(#{appVersion},'.','')+0 BETWEEN replace(n.version1,'.','')+0 and replace(n.version2,'.','')+0
+        </if>
+        <if test="appPackage != null and appPackage != ''">
+            and n.app_package = #{appPackage}
+        </if>
+        <choose>
+            <when test="queryNumber != null">
+                ORDER BY RAND() limit ${queryNumber}
+            </when>
+            <otherwise>
+                order by p.keyword, n.sort
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="queryPositionType" resultType="java.lang.String" parameterType="java.util.Map">
+        select  p.keyword as positionType
+        from banner_position p
+        where  p.state = 1
+        <if test="mobileType != null and mobileType != ''">
+            and p.mobile_type = #{mobileType}
+        </if>
+    </select>
+
+    <select id="queryPositionTypeGame" resultType="java.lang.String" parameterType="java.util.Map">
+        select  p.keyword as positionType
+        from banner_position p
+        where  p.state = 1
+        and p.keyword like CONCAT('Game','%')
+        <if test="mobileType != null and mobileType != ''">
+            and p.mobile_type = #{mobileType}
+        </if>
+    </select>
+</mapper>

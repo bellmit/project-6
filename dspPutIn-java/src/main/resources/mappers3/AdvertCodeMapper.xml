@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.ballvideo.mapper3.AdvertCodeMapper">
+    <resultMap id="advertCodeBaseMap" type="com.miguan.ballvideo.vo.request.AdvertCodeVo" >
+        <id property="id" column="id" />
+        <result property="name" column="name" />
+        <result property="style_type" column="style_type" />
+        <result property="style_size" column="style_size" />
+        <result property="ecpm" column="ecpm" />
+        <result property="advert_type" column="advert_type" />
+        <result property="app_id" column="app_id" />
+        <result property="rela_id" column="rela_id" />
+        <result property="code_id" column="code_id" />
+    </resultMap>
+
+    <resultMap id="advertCodeSimpleResBaseMap" type="com.miguan.ballvideo.vo.response.AdvertCodeSimpleRes" >
+        <id property="id" column="id" />
+        <result property="name" column="name" />
+        <result property="app_position_name" column="app_position_name" />
+        <result property="state" column="state" />
+        <result property="app_id" column="app_id" />
+    </resultMap>
+
+    <select id="findByStyleSize" parameterType="string" resultMap="advertCodeBaseMap">
+        SELECT * FROM  idea_advert_code where style_size = #{styleSize} and state = 1
+        <if test="adType != null">
+            and ad_type like CONCAT('%',#{adType},'%')
+        </if>
+    </select>
+
+    <select id="findByCodeIds" parameterType="long" resultMap="advertCodeSimpleResBaseMap">
+        SELECT
+            c.id,
+            rela.position_name name,
+            CONCAT(app.NAME,rela.position_name) app_position_name,
+            c.state,
+            c.app_id
+        FROM
+            idea_advert_code c
+            INNER JOIN idea_advert_app app on c.app_id = app.id
+            INNER JOIN idea_adv_position_relation rela on c.rela_id = rela.id
+        WHERE
+        c.id in
+        <foreach collection="codeIds" item="codeId" open="(" separator="," close=")">
+            #{codeId}
+        </foreach>
+    </select>
+
+    <select id="getCodeList" parameterType="long" resultMap="advertCodeSimpleResBaseMap">
+        SELECT
+            c.id,
+            rela.position_name name,
+            CONCAT(app.NAME,rela.position_name) app_position_name,
+            c.state,
+            c.app_id
+        FROM
+            idea_advert_code c
+            INNER JOIN idea_advert_app app on c.app_id = app.id
+            INNER JOIN idea_adv_position_relation rela on c.rela_id = rela.id
+        WHERE c.state = 1
+        <if test="appId != null">
+            and app.id = #{appId}
+        </if>
+        <if test="name != null and name != ''">
+            and rela.position_name like CONCAT('%',#{name},'%')
+        </if>
+        <if test="materialShape != null">
+            and c.style_size = #{materialShape}
+        </if>
+        <if test="adType != null">
+            and c.ad_type like CONCAT('%',#{adType},'%')
+        </if>
+    </select>
+
+    <select id="findAdvCodeByGroupIds" parameterType="map" resultMap="advertCodeBaseMap">
+        select distinct c.* from idea_advert_group g
+            INNER JOIN idea_advert_plan plan ON plan.group_id = g.id
+            INNER JOIN idea_plan_code_relation rela ON rela.plan_id = plan.id
+            INNER JOIN idea_advert_code c ON rela.code_id = c.id
+        where g.id in <foreach collection="groupIds" item="id" open="(" separator="," close=")">#{id}</foreach>
+    </select>
+
+    <select id="findAdvCodeByPlanIds" parameterType="map" resultMap="advertCodeBaseMap">
+        select distinct c.* from idea_advert_plan plan
+        INNER JOIN idea_plan_code_relation rela ON rela.plan_id = plan.id
+        INNER JOIN idea_advert_code c ON rela.code_id = c.id
+        where plan.id in <foreach collection="planIds" item="id" open="(" separator="," close=")">#{id}</foreach>
+    </select>
+
+    <select id="findAdvCodeInfoByDesignIds" parameterType="map" resultMap="advertCodeBaseMap">
+        select distinct c.* from idea_advert_design des
+        INNER JOIN idea_adv_des_weight weight ON des.id = weight.design_id
+        INNER JOIN idea_advert_plan plan ON weight.plan_id = plan.id
+        INNER JOIN idea_plan_code_relation rela ON rela.plan_id = plan.id
+        INNER JOIN idea_advert_code c ON rela.code_id = c.id
+        where des.id in <foreach collection="designIds" item="id" open="(" separator="," close=")">#{id}</foreach>
+    </select>
+</mapper>

@@ -1,0 +1,107 @@
+server:
+  tomcat:
+    uri-encoding: UTF-8
+    max-threads: 5000
+    max-connections: 10000
+spring:
+  datasource:
+    url: jdbc:mysql://192.168.0.197:3306/ballvideo?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+    username: dsp_java
+    password: B8kqJ1KeedzmfNsB
+    driverClassName: com.mysql.cj.jdbc.Driver
+    hikari:
+      connectionTimeout: 120000
+      maximumPoolSize: 2500
+      maxLifetime: 60000
+      minimumIdle: 20
+      validationTimeout: 8000
+      idleTimeout: 50000
+  secondDatasource:
+    url: jdbc:mysql://192.168.0.197:3306/ballvideoadv?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+    username: dsp_java
+    password: B8kqJ1KeedzmfNsB
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      connectionTimeout: 180000
+      maximumPoolSize: 1500
+      maxLifetime: 60000
+      minimumIdle: 20
+      validationTimeout: 8000
+      idleTimeout: 50000
+  threeDatasource:
+    url: jdbc:mysql://192.168.0.197:3306/dsp?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+    username: dsp_java
+    password: B8kqJ1KeedzmfNsB
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      connectionTimeout: 180000
+      maximumPoolSize: 1500
+      maxLifetime: 60000
+      minimumIdle: 20
+      validationTimeout: 8000
+      idleTimeout: 50000
+  fourthDatasource:
+    url: jdbc:mysql://rm-wz9r3k68fq34ck17n.mysql.rds.aliyuncs.com:3306/channel_tool_mofang?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+    username: dsp_java
+    password: qqKOHVXt1Jhdh3V2
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      connectionTimeout: 180000
+      maximumPoolSize: 1500
+      maxLifetime: 60000
+      minimumIdle: 20
+      validationTimeout: 8000
+      idleTimeout: 50000
+  redis:
+    #host: 120.78.185.45 外网地址
+    host: 172.18.161.166
+    port: 6379
+    password: e8cFnj3CoWZdUFyXg8Dkv9Vp66c=
+    database: 13
+    timeout: 15000
+    jedis:
+      pool:
+        max-active: 10000
+        max-idle: 300
+        min-idle: 100
+        max-wait: 3000
+    #推荐项目的redis
+    rec:
+      host: 192.168.0.211
+      port: 6379
+      password: NapBMeZfTCLbdYFXspgK0XnQ7vCzCQ6n
+      database: 9
+  session:
+    store-type: redis
+  data:
+    mongodb:
+      uri: mongodb://dsp_java:SNii0bqNno8iVMGr@192.168.0.206:53333/dsp
+  rabbitmq:
+    addresses: 192.168.0.205
+    username: dsp
+    port: 5672
+    password: LYkM3gBkTmefIgDF
+    open: true
+  jpa:
+    database: mysql
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 100MB
+swagger:
+  enable: false
+logging:
+  config: classpath:log4j2/Log4j2-prod.xml
+send:
+  ndmin-java:
+    url: http://nadmin-java.uheixia.com
+#大数据服务接口
+bigdata-server:
+  #统计近7天每个时间段的日活数占比
+  get-user-ratio: http://bdserver-java.uheixia.com/api/dspdata/getUserRatio
+  #获取广告计划今日消耗的金额
+  get-plan-consumption: http://bdserver-java.uheixia.com/api/dspdata/getPlanConsumption

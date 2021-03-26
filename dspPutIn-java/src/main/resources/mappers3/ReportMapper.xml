@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.ballvideo.mapper3.ReportMapper">
+
+    <!-- rightType 右折线类型，1-曝光量，2-点击量，3-点击率，4-点击均价，5-花费，6-千次展示均价 -->
+    <select id="getReportLineData" parameterType="com.miguan.ballvideo.vo.ReportParamVo" resultType="com.miguan.ballvideo.vo.LineChartVo">
+        select
+        <if test="lineType == 1">
+            '曝光量' type,
+            sum(exposure) value,
+        </if>
+        <if test="lineType == 2">
+            '点击量' type,
+            sum(valid_click) value,
+        </if>
+        <if test="lineType == 3">
+            '点击率' type,
+            if(sum(exposure)=0,0,round(sum(valid_click)/sum(exposure)*100,2)) value, /*点击率=点击数/展现数*/
+        </if>
+        <if test="lineType == 4">
+            '点击均价' type,
+            if(sum(valid_click)=0,0,round(sum(actual_consumption)/sum(valid_click),2)) value,  /*点击均价=消耗/点击数*/
+        </if>
+        <if test="lineType == 5">
+            '花费' type,
+            sum(actual_consumption) value, /*花费*/
+        </if>
+        <if test="lineType == 6">
+            '千次展示均价' type,
+            if(sum(exposure)=0,0,round(sum(actual_consumption)/sum(exposure)*1000,2)) value, /*千次展示均价=消耗/展示数*1000*/
+        </if>
+          r.date
+        from idea_advert_report r
+        <if test="type == 1">
+            inner join idea_advert_plan p on p.id=r.plan_id
+            inner join idea_advert_group t on t.id=p.group_id
+        </if>
+        <if test="type == 2">
+            inner join idea_advert_plan t on t.id=r.plan_id
+        </if>
+        <if test="type == 3">
+            inner join idea_advert_design t on t.id=r.design_id
+        </if>
+        where 1=1
+        <include refid="whereSql" />
+        group by r.date
+        order by r.date asc
+    </select>
+
+
+    <select id="pageReportTableList" resultType="com.miguan.ballvideo.vo.ReportTableVo" parameterType="com.miguan.ballvideo.vo.ReportParamVo">
+        select r.date, t.name,<if test="type == 2">t.price,</if>
+               sum(exposure) exposure,   /*曝光量*/
+               sum(valid_click) validClick,  /*点击量*/
+               IFNULL(sum(click_user),0) clickUser,  /*点击用户数*/
+               if(sum(exposure)=0,0,round(sum(valid_click)/sum(exposure)*100,2)) preClickRate, /*点击率=点击数/展现数*/
+               if(sum(valid_click)=0,0,round(sum(actual_consumption)/sum(valid_click),2)) preClickPrice,  /*点击均价=消耗/点击数*/
+               sum(actual_consumption) consume, /*花费*/
+               if(sum(exposure)=0,0,round(sum(actual_consumption)/sum(exposure)*1000,2)) preEcpm /*千次展示均价=消耗/展示数*1000*/
+        from idea_advert_report r
+        <if test="type == 1">
+            inner join idea_advert_plan p on p.id=r.plan_id
+            inner join idea_advert_group t on t.id=p.group_id
+        </if>
+        <if test="type == 2">
+            inner join idea_advert_plan t on t.id=r.plan_id
+        </if>
+        <if test="type == 3">
+            inner join idea_advert_design t on t.id=r.design_id
+        </if>
+        where 1=1
+        <include refid="whereSql" />
+        group by r.date,t.id
+        having 1=1
+        <include refid="havingSql" />
+        <if test="sort != null">
+            order by ${sort}
+        </if>
+    </select>
+
+    <select id="pageReportEmpty" resultType="com.miguan.ballvideo.vo.ReportTableVo" parameterType="com.miguan.ballvideo.vo.ReportParamVo">
+        select t.created_at as date, t.name,<if test="type == 2">t.price,</if>
+        0 exposure,   /*曝光量*/
+        0 validClick,  /*点击量*/
+        0 preClickRate, /*点击率=点击数/展现数*/
+        0 preClickPrice,  /*点击均价=消耗/点击数*/
+        0 consume, /*花费*/
+        0 clickUser,  /*点击用户数*/
+        0 preEcpm /*千次展示均价=消耗/展示数*1000*/
+        from
+        <if test="type == 1">
+            idea_advert_group t
+        </if>
+        <if test="type == 2">
+            idea_advert_plan t
+        </if>
+        <if test="type == 3">
+            idea_advert_design t
+        </if>
+        where id=#{id}
+    </select>
+
+    <sql id="whereSql">
+        <if test="id != null">
+            and t.id =#{id}
+        </if>
+        <if test="promotionPurpose != null">
+            <if test="type == 1">
+                and t.promotion_purpose = #{promotionPurpose}
+            </if>
+            <if test="type == 2">
+                and exists (select 1 from idea_advert_group g where t.group_id = g.id and promotion_purpose = #{promotionPurpose})
+            </if>
+            <if test="type == 3">
+                and exists (select 1
+                from idea_advert_group g
+                inner join idea_advert_plan p on p.group_id = g.id
+                where p.id = r.plan_id
+                and g.promotion_purpose = #{promotionPurpose})
+            </if>
+        </if>
+        <if test="startDay != null">
+            and r.date >= #{startDay}
+        </if>
+        <if test="endDay != null">
+            and r.date &lt;= #{endDay}
+        </if>
+    </sql>
+
+    <sql id="havingSql">
+        <if test="spend != null">
+            and sum(actual_consumption) ${spend}
+        </if>
+        <if test="exposure != null">
+            and sum(exposure) ${exposure}
+        </if>
+        <if test="validClick != null">
+            and sum(valid_click) ${validClick}
+        </if>
+    </sql>
+</mapper>

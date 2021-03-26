@@ -1,0 +1,105 @@
+server:
+  tomcat:
+    uri-encoding: UTF-8
+    max-threads: 200
+    max-connections: 10000
+spring:
+  application:
+    name: dspPutIn
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/ballvideo_dev?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+    username: ballvideo_java
+    password: e7I8vpV7H6FZohOj
+    driverClassName: com.mysql.cj.jdbc.Driver
+    hikari:
+      connectionTimeout: 180000
+      maximumPoolSize: 1500
+      maxLifetime: 60000
+      minimumIdle: 20
+      validationTimeout: 8000
+      idleTimeout: 50000
+  secondDatasource:
+    url: jdbc:mysql://127.0.0.1:3306/ballvideoadv?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+    username: dsp_java
+    password: hpxpXjUAKzWFgn1A
+    driverClassName: com.mysql.cj.jdbc.Driver
+    hikari:
+      connectionTimeout: 180000
+      maximumPoolSize: 1500
+      maxLifetime: 60000
+      minimumIdle: 20
+      validationTimeout: 8000
+      idleTimeout: 50000
+  threeDatasource:
+    url: jdbc:mysql://127.0.0.1:3306/dsp?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+    username: dsp_java
+    password: hpxpXjUAKzWFgn1A
+    driverClassName: com.mysql.cj.jdbc.Driver
+    hikari:
+      connectionTimeout: 180000
+      maximumPoolSize: 1500
+      maxLifetime: 60000
+      minimumIdle: 20
+      validationTimeout: 8000
+      idleTimeout: 50000
+  fourthDatasource:
+    url: jdbc:mysql://112.74.179.254:3306/channel_tool_mofang?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+    username: ballvideo_java
+    password: e7I8vpV7H6FZohOj
+    driverClassName: com.mysql.cj.jdbc.Driver
+    hikari:
+      connectionTimeout: 180000
+      maximumPoolSize: 1500
+      maxLifetime: 60000
+      minimumIdle: 20
+      validationTimeout: 8000
+      idleTimeout: 50000
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: e8cFnj3CoWZdUFyXg8Dkv9Vp66c=
+    timeout: 3000
+    database: 13
+    jedis:
+      pool:
+        max-active: 10000
+        max-idle: 100
+        min-idle: 20
+        max-wait: 3000
+    #推荐项目的redis
+    rec:
+      host: 127.0.0.1
+      port: 6379
+      password: e8cFnj3CoWZdUFyXg8Dkv9Vp66c=
+      database: 9
+  session:
+    store-type: redis
+  data:
+    mongodb:
+      uri: mongodb://dsp_java:2RY6a3InONVs9VWg@127.0.0.1:53333/dsp
+  rabbitmq:
+    addresses: 127.0.0.1
+    username: dsp
+    port: 5672
+    password: cmMbFFYjSYrFHiVE
+    open: true
+  jpa:
+    database: mysql
+    show-sql: false
+    hibernate:
+      ddl-auto: update
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 100MB
+swagger:
+  enable: true
+logging:
+  config: classpath:log4j2/Log4j2-dev.xml
+  level:
+    com.miguan.ballvideo.mapper: debug
+    com.miguan.ballvideo.mapper3: debug
+send:
+  ndmin-java:
+    url: http://dev.nadmin-java.uheixia.com

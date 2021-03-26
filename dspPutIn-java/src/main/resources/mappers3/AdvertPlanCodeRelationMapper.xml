@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.ballvideo.mapper3.AdvertPlanCodeRelationMapper">
+
+    <resultMap id="advertPlanCodeRelationBaseMap" type="com.miguan.ballvideo.vo.request.AdvertPlanCodeRelationVo" >
+        <id property="id" column="id" />
+        <result property="plan_id" column="plan_id" />
+        <result property="code_id" column="code_id" />
+        <result property="created_at" column="created_at"/>
+        <result property="updated_at" column="updated_at"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.miguan.ballvideo.vo.request.AdvertPlanCodeRelationVo" useGeneratedKeys="true" keyProperty="id" >
+        INSERT INTO idea_plan_code_relation(plan_id, code_id,created_at,updated_at)
+        VALUES(#{plan_id}, #{code_id},now(),now())
+    </insert>
+
+    <select id="findByPlanId" parameterType="long" resultMap="advertPlanCodeRelationBaseMap">
+        SELECT * FROM idea_plan_code_relation where plan_id =#{planId}
+    </select>
+
+    <select id="insertBatch" resultType="java.lang.Integer" >
+        INSERT INTO idea_plan_code_relation(id,plan_id, code_id,created_at,updated_at)
+        VALUES
+        <foreach collection ="advertPlanCodeRelations" item="advertPlanCodeRelation" separator =",">
+            (#{advertPlanCodeRelation.id}, #{advertPlanCodeRelation.plan_id}, #{advertPlanCodeRelation.code_id},now(),now())
+        </foreach >
+    </select>
+
+    <delete id="deleteByPlanId" parameterType="long">
+        delete from idea_plan_code_relation where plan_id =#{planId}
+    </delete>
+</mapper>

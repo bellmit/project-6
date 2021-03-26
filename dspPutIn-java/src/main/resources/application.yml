@@ -1,0 +1,85 @@
+server:
+  port: 8309
+
+spring:
+  application:
+    name: dspPutIn
+  datasource:
+    url: jdbc:mysql://192.168.0.194:3306/ballvideo?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+    username: xy_java
+    password: 49HUwMKoeVC1qQpV
+    driverClassName: com.mysql.cj.jdbc.Driver
+    hikari:
+      connection-timeout: 600000
+      maximum-pool-size: 1500
+      max-lifetime: 60000
+      minimum-idle: 20
+      validation-timeout: 3000
+      idle-timeout: 60000
+  redis:
+    host: 112.74.179.254
+    port: 6379
+    database: 0
+    password: e8cFnj3CoWZdUFyXg8Dkv9Vp66c=
+    timeout: 3000
+    jedis:
+      pool:
+        max-active: 10000
+        max-idle: 100
+        min-idle: 20
+        max-wait: 3000
+  session:
+    store-type: redis
+  jpa:
+    database: mysql
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+      #方言
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
+  profiles:
+    active: local
+  mvc:
+    static-path-pattern: /static/**
+    throw-exception-if-no-handler-found: true
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 100MB
+  main:
+    allow-bean-definition-overriding: true
+
+cgcg:
+  swagger:
+    name: dspPutIn-在线文档
+    desc: Http Online Documentation
+    version: 1.0.0
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+    #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations: classpath:/mappers/*.xml
+#白山云
+aws:
+  #客户端上传文件请求地址
+  appPoint: http://ss.bscstorage.com
+  #服务端端上传文件请求地址
+  endPoint: http://xiyou.sc.diyixin.com
+  accessKey: k98oumchga6z5l42j0fe
+  secretKey: fFiLIjjvg5Q2qcMGa/kEGi6Xi9on3uj7Mp8TRKfB
+  bucketName: dsp
+  #devs 二级目录
+  prefix_dev: dev-img-dsp
+  video_prefix_dev: dev-video-dsp
+  #prod 二级目录
+  prefix_prod: pro-img-dsp
+  video_prefix_prod: pro-video-dsp
+#大数据服务接口
+bigdata-server:
+  #统计近7天每个时间段的日活数占比
+  get-user-ratio: http://localdev.bdserver-java.uheixia.com/api/dspdata/getUserRatio
+  #获取广告计划今日消耗的金额
+  get-plan-consumption: http://localdev.bdserver-java.uheixia.com/api/dspdata/getPlanConsumption

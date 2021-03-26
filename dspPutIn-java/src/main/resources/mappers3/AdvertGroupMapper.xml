@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.ballvideo.mapper3.AdvertGroupMapper">
+
+    <select id="findAdvertGroupList" resultType="com.miguan.ballvideo.vo.AdvertGroupListVo" parameterType="map">
+         select g.id, g.promotion_purpose, g.name, g.day_price, g.state,
+               sum(exposure) exposure, /*有效展示数*/
+               sum(valid_click) valid_click, /*有效点击数*/
+               sum(click_user) clickUser, /*点击用户数*/
+               sum(actual_consumption) consume, /*消耗*/
+               if(sum(exposure)=0,0,round(sum(actual_consumption)/sum(exposure)*1000,2)) pre_ecpm, /*千次展示收益=消耗/展示数*1000*/
+               if(sum(valid_click)=0,0,round(sum(actual_consumption)/sum(valid_click),2)) pre_click_price,  /*点击单价=消耗/点击数*/
+               if(sum(exposure)=0,0,round(sum(valid_click)/sum(exposure)*100,2)) pre_click_rate /*点击率=点击数/展现数*/
+        from idea_advert_group g
+        left join (
+                     select max(group_id) group_id,
+                            max(price) price,  /*cpc单间*/
+                            sum(exposure) exposure, /*有效展示数*/
+                            sum(valid_click) valid_click, /*有效点击数*/
+                            sum(click_user) click_user, /*点击用户数*/
+                            sum(actual_consumption) actual_consumption /*消耗*/
+                     from idea_advert_plan p
+                     inner join idea_advert_report r on p.id = r.plan_id
+                     where 1=1
+                     <if test="startDay != null">
+                         and r.date >= #{startDay}
+                     </if>
+                     <if test="endDay != null">
+                         and r.date &lt;= #{endDay}
+                     </if>
+                     -- and r.date between '2020-11-20' and '2020-11-20'
+                     group by p.id
+                   ) p on g.id = p.group_id
+        where 1=1
+        <if test="keyword != null and keyword != ''">
+            AND (g.id =  #{keyword} or g.name like  CONCAT('%',#{keyword},'%') )
+        </if>
+        <if test="state != null">
+            and g.state = #{state}
+        </if>
+        <if test="promotionPurpose != null" >
+            and g.promotion_purpose = #{promotionPurpose}
+        </if>
+        group by g.id
+        <if test="sort != null">
+            order by ${sort}
+        </if>
+    </select>
+
+    <select id="getAdvertGroupById" resultType="com.miguan.ballvideo.vo.AdvertGroupVo" parameterType="int">
+        select * from idea_advert_group
+        where id = #{id}
+    </select>
+
+    <insert id="insertAdvertGroup" useGeneratedKeys="true" keyProperty="id" parameterType="com.miguan.ballvideo.vo.AdvertGroupVo">
+        INSERT INTO idea_advert_group(promotion_purpose, name, day_price, created_at)
+        VALUES(#{promotionPurpose}, #{name}, #{dayPrice},now())
+    </insert>
+
+    <update id="updateAdvertGroup" parameterType="com.miguan.ballvideo.vo.AdvertGroupVo">
+        update idea_advert_group
+        <set>
+            <if test="promotionPurpose != null">
+                promotion_purpose = #{promotionPurpose},
+            </if>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="dayPrice != null">
+                day_price = #{dayPrice},
+            </if>
+            updated_at = now()
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="deleteGroup" parameterType="int">
+        delete from idea_advert_group where id =#{id}
+    </delete>
+
+    <delete id="deletePlanByGroupId" parameterType="int">
+        delete from idea_advert_plan where group_id =#{id}
+    </delete>
+
+    <delete id="deleteDesignByGroupId">
+        DELETE FROM idea_advert_design
+        where id in (select design_id from idea_adv_des_weight where group_id =#{id})
+    </delete>
+
+    <delete id="deleteDesWeightByGroupId">
+        DELETE FROM idea_adv_des_weight where group_id =#{id}
+    </delete>
+
+    <update id="updateGroupState" parameterType="map">
+        update idea_advert_group
+        set state = #{state}
+        where id in <foreach collection="idList" item="id" open="(" separator="," close=")">#{id}</foreach>
+    </update>
+
+    <update id="updatePlanState" parameterType="map">
+        update idea_advert_plan
+        set state = #{state}
+        where group_id in <foreach collection="idList" item="id" open="(" separator="," close=")">#{id}</foreach>
+    </update>
+
+    <update id="updateDesignState" parameterType="map">
+        update idea_advert_design
+        set state = #{state}
+        where id in (select design_id
+                     from idea_adv_des_weight
+                     where group_id in <foreach collection="idList" item="id" open="(" separator="," close=")">#{id}</foreach>
+                    )
+    </update>
+
+
+    <select id="getGroupList" resultType="com.miguan.ballvideo.vo.AdvertGroupVo" parameterType="long">
+        select * from idea_advert_group
+        where 1 = 1
+        <if test="advertUserId != null">
+            and advert_user_id = #{advertUserId}
+        </if>
+    </select>
+</mapper>

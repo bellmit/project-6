@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.ballvideo.mapper3.AdvertDesignMapper">
+
+    <resultMap id="advertDesignBaseMap" type="com.miguan.ballvideo.vo.request.AdvertDesignVo" >
+        <id property="id" column="id" />
+        <result property="advert_user_id" column="advert_user_id" />
+        <result property="name" column="name" />
+        <result property="material_type" column="material_type" />
+        <result property="material_url" column="material_url" />
+        <result property="state" column="state"/>
+        <result property="copy" column="copy"/>
+        <result property="button_copy" column="button_copy"/>
+        <result property="logo_url" column="logo_url"/>
+        <result property="product_name" column="product_name"/>
+        <result property="is_show_logo_product" column="is_show_logo_product"/>
+        <result property="put_in_method" column="put_in_method"/>
+        <result property="put_in_value" column="put_in_value"/>
+        <result property="position_type" column="position_type"/>
+        <result property="created_at" column="created_at"/>
+        <result property="updated_at" column="updated_at"/>
+    </resultMap>
+
+    <resultMap id="advertDesignVoResBaseMap" type="com.miguan.ballvideo.vo.response.AdvertDesignRes" >
+        <id property="id" column="id" />
+        <result property="advert_user_id" column="advert_user_id" />
+        <result property="name" column="name" />
+        <result property="material_type" column="material_type" />
+        <result property="material_url" column="material_url" />
+        <result property="state" column="state"/>
+        <result property="copy" column="copy"/>
+        <result property="button_copy" column="button_copy"/>
+        <result property="logo_url" column="logo_url"/>
+        <result property="product_name" column="product_name"/>
+        <result property="is_show_logo_product" column="is_show_logo_product"/>
+        <result property="put_in_method" column="put_in_method"/>
+        <result property="put_in_value" column="put_in_value"/>
+        <result property="position_type" column="position_type"/>
+        <result property="created_at" column="created_at"/>
+        <result property="updated_at" column="updated_at"/>
+    </resultMap>
+
+    <resultMap id="advertDesignResBaseMap" type="com.miguan.ballvideo.vo.response.AdvertDesignListRes" >
+        <id property="id" column="id" />
+        <result property="advert_user_id" column="advert_user_id" />
+        <result property="state" column="state" />
+        <result property="name" column="name" />
+        <result property="put_in_value" column="put_in_value" />
+        <result property="plan_name" column="plan_name"/>
+        <result property="plan_state" column="plan_state"/>
+        <result property="material_shape" column="material_shape"/>
+        <result property="exposure" column="exposure"/>
+        <result property="valid_click" column="valid_click"/>
+        <result property="click_user" column="click_user"/>
+        <result property="pre_click_rate" column="pre_click_rate"/>
+        <result property="click_price" column="click_price"/>
+        <result property="consume" column="consume"/>
+        <result property="exposure_price" column="exposure_price"/>
+    </resultMap>
+
+    <resultMap id="advertDesignSimpleBaseMap" type="com.miguan.ballvideo.vo.response.AdvertDesignSimpleRes" >
+        <id property="id" column="id" />
+        <result property="advert_user_id" column="advert_user_id" />
+        <result property="name" column="name" />
+    </resultMap>
+
+    <insert id="insert" parameterType="com.miguan.ballvideo.vo.request.AdvertDesignVo" useGeneratedKeys="true" keyProperty="id" >
+        INSERT INTO idea_advert_design(advert_user_id, name, material_type,material_url,
+          copy,button_copy,logo_url,put_in_method,put_in_value,state,
+          position_type,product_name,is_show_logo_product,created_at)
+        VALUES(#{advert_user_id}, #{name}, #{material_type}, #{material_url},
+        #{copy},#{button_copy},#{logo_url},#{put_in_method},#{put_in_value},#{state},
+        #{position_type},#{product_name},#{is_show_logo_product},now())
+    </insert>
+
+    <update id="update" parameterType="com.miguan.ballvideo.vo.request.AdvertDesignVo">
+        update idea_advert_design set advert_user_id = #{advert_user_id}, name = #{name}, material_type = #{material_type},material_url = #{material_url},
+          copy = #{copy},button_copy = #{button_copy},logo_url = #{logo_url},put_in_method = #{put_in_method},
+          put_in_value = #{put_in_value},state = #{state},position_type = #{position_type},product_name = #{product_name},
+          is_show_logo_product = #{is_show_logo_product},updated_at = now()
+        WHERE id = #{id}
+    </update>
+
+    <update id="changeState" parameterType="map" >
+        update idea_advert_design set state = #{state} where id = #{id}
+    </update>
+
+    <select id="findAll" parameterType="map" resultMap="advertDesignBaseMap">
+        SELECT * FROM idea_advert_design
+    </select>
+
+    <select id="findPageList" parameterType="map" resultMap="advertDesignResBaseMap">
+        SELECT DISTINCT design.id,design.advert_user_id,design.state,design.name,design.put_in_value,plan.name plan_name,plan.state plan_state,plan.material_shape,
+            consume,
+            exposure,
+            valid_click,
+            click_user,
+            if(exposure=0,0,round(valid_click/exposure*100,2)) pre_click_rate, /*点击率=点击数/展现数*/
+            if(valid_click=0,0,round(consume/valid_click,2)) click_price ,   /*点击均价=花费/点击数*/
+            if(exposure=0,0,round(consume/exposure*1000,2)) exposure_price /*千次展示收益=消耗/展示数*1000*/
+            FROM
+            idea_advert_design design
+            LEFT JOIN idea_adv_des_weight weight ON design.id = weight.design_id
+            LEFT JOIN idea_advert_plan plan ON weight.plan_id = plan.id
+            LEFT JOIN (
+                select d.id,
+                sum(actual_consumption) consume, /*实际消费*/
+                sum(exposure) exposure, /*有效展示数*/
+                sum(click_user) click_user, /*点击用户数*/
+                sum(valid_click) valid_click /*有效点击数*/
+                from idea_advert_design d
+                inner join idea_advert_report r on d.id = r.design_id
+                where 1=1
+                <if test="startDay != null">
+                    and r.date >= #{startDay}
+                </if>
+                <if test="endDay != null">
+                    and r.date &lt;= #{endDay}
+                </if>
+            group by d.id
+            ) r on design.id = r.id
+        WHERE 1 = 1
+        <if test="planId != null">
+            AND plan.id = #{planId}
+        </if>
+        <if test="advertUserId != null">
+            AND design.advert_user_id = #{advertUserId}
+        </if>
+        <if test="keyword != null and keyword != ''">
+            AND (design.name like CONCAT('%',#{keyword},'%') or design.id =  #{keyword} )
+        </if>
+        <if test="materialShape != null">
+            AND plan.material_shape = #{materialShape}
+        </if>
+        <if test="sort != null">
+            order by ${sort}
+        </if>
+    </select>
+
+    <select id="getDesignList" parameterType="map" resultMap="advertDesignSimpleBaseMap">
+        SELECT id,advert_user_id,name FROM idea_advert_design WHERE 1 = 1
+        <if test="advertUserId != null">
+            and advert_user_id = #{advertUserId}
+        </if>
+    </select>
+
+    <select id="getById" parameterType="long" resultMap="advertDesignBaseMap">
+        SELECT * FROM idea_advert_design WHERE id =#{id} LIMIT 1
+    </select>
+
+    <select id="getResById" parameterType="long" resultMap="advertDesignVoResBaseMap">
+        SELECT * FROM idea_advert_design WHERE id =#{id} LIMIT 1
+    </select>
+
+    <select id="getByPlanId" parameterType="long" resultMap="advertDesignBaseMap">
+        SELECT des.* FROM idea_advert_design des
+        INNER JOIN idea_adv_des_weight weight ON des.id = weight.design_id
+        WHERE plan_id =#{planId}
+    </select>
+
+    <delete id="deleteById" parameterType="long">
+        delete from idea_advert_design where id =#{id}
+    </delete>
+
+
+    <delete id="deleteByPlanId" parameterType="long">
+        delete from idea_advert_design where id in (
+            SELECT design_id FROM idea_adv_des_weight
+            WHERE plan_id = #{planId}
+        )
+    </delete>
+
+    <delete id="deleteDesignByPlanId" parameterType="long">
+        delete from idea_advert_design
+        INNER JOIN idea_adv_des_weight weight ON des.id = weight.design_id
+        WHERE plan_id =#{plan_id}
+    </delete>
+
+    <update id="updateDesignByPlanState" parameterType="map">
+        update idea_advert_design
+        set state = #{state}
+        where id in (select design_id
+            from idea_adv_des_weight
+            where plan_id in <foreach collection="idList" item="id" open="(" separator="," close=")">#{id}</foreach>
+            )
+    </update>
+
+    <update id="updateDesignState" parameterType="map">
+        update idea_advert_design
+        set state = #{state}
+        where id in <foreach collection="idList" item="id" open="(" separator="," close=")">#{id}</foreach>
+    </update>
+</mapper>

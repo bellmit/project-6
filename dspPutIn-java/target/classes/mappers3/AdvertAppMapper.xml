@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.ballvideo.mapper3.AdvertAppMapper">
+
+    <resultMap id="advertAppSimpleResBaseMap" type="com.miguan.ballvideo.vo.response.AdvertAppSimpleRes" >
+        <id property="id" column="id" />
+        <result property="name" column="name" />
+        <result property="app_package" column="app_package" />
+        <result property="mobile_type" column="mobile_type" />
+    </resultMap>
+
+    <select id="getAppList" parameterType="long" resultMap="advertAppSimpleResBaseMap">
+        SELECT id,name,app_package,mobile_type
+        FROM  idea_advert_app app WHERE state = 1
+        <if test="materialShape != null">
+            AND EXISTS (
+                SELECT c.id from
+                    idea_advert_code c
+                where c.app_id = app.id
+                and c.state = 1
+                and c.style_size = #{materialShape}
+                <if test="materialType != null">
+                    and c.ad_type like CONCAT('%','${materialType}','%')
+                </if>
+            )
+        </if>
+    </select>
+</mapper>

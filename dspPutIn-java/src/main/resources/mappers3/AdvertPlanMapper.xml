@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.ballvideo.mapper3.AdvertPlanMapper">
+
+    <resultMap id="advertPlanBaseMap" type="com.miguan.ballvideo.vo.request.AdvertPlanVo" >
+        <id property="id" column="id" />
+        <result property="advert_user_id" column="advert_user_id" />
+        <result property="name" column="name" />
+        <result property="start_date" column="start_date" />
+        <result property="end_date" column="end_date"/>
+        <result property="time_setting" column="time_setting"/>
+        <result property="price_method" column="price_method"/>
+        <result property="price" column="price"/>
+        <result property="created_at" column="created_at"/>
+        <result property="updated_at" column="updated_at"/>
+        <result property="state" column="state"/>
+        <result property="times_config" column="times_config"/>
+        <result property="day_price" column="day_price"/>
+        <result property="total_price" column="total_price"/>
+        <result property="version1" column="version1"/>
+        <result property="version2" column="version2"/>
+        <result property="show_logo" column="show_logo"/>
+        <result property="app_id" column="app_id"/>
+        <result property="code_id" column="code_id"/>
+        <result property="put_in_type" column="put_in_type"/>
+        <result property="advert_type" column="advert_type"/>
+        <result property="smooth_date" column="smooth_date"/>
+        <result property="group_id" column="group_id"/>
+        <result property="cat_type" column="cat_type"/>
+        <result property="cat_ids" column="cat_ids"/>
+        <result property="material_type" column="material_type"/>
+        <result property="material_shape" column="material_shape"/>
+    </resultMap>
+
+    <resultMap id="advertPlanResBaseMap" type="com.miguan.ballvideo.vo.response.AdvertPlanRes" >
+        <id property="id" column="id" />
+        <result property="advert_user_id" column="advert_user_id" />
+        <result property="name" column="name" />
+        <result property="start_date" column="start_date" />
+        <result property="end_date" column="end_date"/>
+        <result property="time_setting" column="time_setting"/>
+        <result property="price_method" column="price_method"/>
+        <result property="price" column="price"/>
+        <result property="created_at" column="created_at"/>
+        <result property="updated_at" column="updated_at"/>
+        <result property="state" column="state"/>
+        <result property="tmp_times_config" column="times_config"/>
+        <result property="day_price" column="day_price"/>
+        <result property="total_price" column="total_price"/>
+        <result property="version1" column="version1"/>
+        <result property="version2" column="version2"/>
+        <result property="show_logo" column="show_logo"/>
+        <result property="app_id" column="app_id"/>
+        <result property="code_id" column="code_id"/>
+        <result property="put_in_type" column="put_in_type"/>
+        <result property="advert_type" column="advert_type"/>
+        <result property="smooth_date" column="smooth_date"/>
+        <result property="group_id" column="group_id"/>
+        <result property="cat_type" column="cat_type"/>
+        <result property="cat_ids" column="cat_ids"/>
+        <result property="material_type" column="material_type"/>
+        <result property="material_shape" column="material_shape"/>
+    </resultMap>
+
+
+    <resultMap id="advertPlanResListBaseMap" type="com.miguan.ballvideo.vo.response.AdvertPlanListRes" >
+        <id property="id" column="id" />
+        <result property="advert_user_id" column="advert_user_id" />
+        <result property="name" column="name" />
+        <result property="state" column="state" />
+        <result property="consume" column="consume"/>
+        <result property="price" column="price"/>
+        <result property="plan_price" column="plan_price"/>
+        <result property="exposure" column="exposure"/>
+        <result property="exposure_price" column="exposure_price"/>
+        <result property="valid_click" column="valid_click"/>
+        <result property="click_user" column="click_user"/>
+        <result property="pre_click_rate" column="pre_click_rate"/>
+        <result property="put_time" column="put_time"/>
+        <result property="group_name" column="group_name"/>
+        <result property="group_state" column="group_state"/>
+        <result property="material_shape_tmp" column="material_shape"/>
+        <result property="put_in_type" column="put_in_type"/>
+        <result property="put_in_value" column="put_in_value"/>
+    </resultMap>
+
+
+    <resultMap id="advertPlanSimpleBaseMap" type="com.miguan.ballvideo.vo.response.AdvertPlanSimpleRes" >
+        <id property="id" column="id" />
+        <result property="advert_user_id" column="advert_user_id" />
+        <result property="name" column="name" />
+        <result property="material_type" column="material_type" />
+        <result property="material_shape" column="material_shape" />
+        <result property="price_method" column="price_method" />
+        <result property="price" column="price" />
+        <result property="state" column="state" />
+        <result property="day_price" column="day_price" />
+        <result property="put_in_type" column="put_in_type" />
+        <result property="start_date" column="start_date" />
+        <result property="end_date" column="end_date" />
+    </resultMap>
+
+
+    <resultMap id="advertPlanExtListBaseMap" type="com.miguan.ballvideo.vo.response.AdvertPlanListExt" >
+        <id property="id" column="id" />
+        <result property="name" column="name" />
+        <result property="advert_user_name" column="advert_user_name" />
+        <result property="state" column="state" />
+        <result property="material_type" column="material_type" />
+        <result property="material_shape" column="material_shape" />
+        <result property="material_shape_name" column="material_shape_name" />
+        <result property="point_adv_names" column="point_adv_names" />
+    </resultMap>
+
+    <insert id="insert" parameterType="com.miguan.ballvideo.vo.request.AdvertPlanVo" useGeneratedKeys="true" keyProperty="id" >
+        INSERT INTO idea_advert_plan(advert_user_id, name, advert_type,
+          version1,version2,start_date,end_date,
+          time_setting,times_config,price_method,
+          price,day_price,total_price,state,smooth_date,
+          put_in_type,show_logo,group_id,cat_type,cat_ids,material_type,material_shape,created_at)
+        VALUES(#{advert_user_id}, #{name}, #{advert_type},
+        #{version1},#{version2},#{start_date},#{end_date},
+        #{time_setting},#{times_config},#{price_method},
+        #{price},#{day_price},#{total_price},#{state},#{smooth_date},
+        #{put_in_type},#{show_logo},#{group_id},#{cat_type},#{cat_ids},#{material_type},#{material_shape},now())
+    </insert>
+
+    <update id="update" parameterType="com.miguan.ballvideo.vo.request.AdvertPlanVo">
+        update idea_advert_plan set advert_user_id =#{advert_user_id} , name = #{name}, advert_type = #{advert_type},
+        version1 = #{version1},version2 = #{version2},start_date = #{start_date},end_date = #{end_date},
+        time_setting = #{time_setting},times_config = #{times_config},price_method = #{price_method},
+        price = #{price},day_price = #{day_price},total_price = #{total_price},state = #{state},
+        put_in_type = #{put_in_type},show_logo = #{show_logo},group_id = #{group_id},
+        cat_type = #{cat_type},cat_ids = #{cat_ids} ,material_type = #{material_type},material_shape = #{material_shape},updated_at = now()
+        WHERE id = #{id}
+    </update>
+
+    <select id="findAll" parameterType="map" resultMap="advertPlanBaseMap">
+        SELECT * FROM idea_advert_plan
+    </select>
+
+    <select id="findPageList" parameterType="map" resultMap="advertPlanResListBaseMap">
+        SELECT plan.id, plan.advert_user_id, plan.name, plan.price, plan.day_price plan_price, plan.state,
+        if(plan.end_date is NULL, CONCAT(DATE_FORMAT(plan.start_date,'%Y-%m-%d'),'开始长期投放'),CONCAT(DATE_FORMAT(plan.start_date,'%Y-%m-%d'),'至',DATE_FORMAT(plan.end_date,'%Y-%m-%d'))) put_time ,
+        g.name group_name,g.state group_state, plan.material_shape ,plan.put_in_type ,
+        (case when plan.put_in_type = 1 then '标准投放' else '快速投放' end) as put_in_value,
+        IFNULL(exposure,0) exposure, /*有效展示数*/
+        IFNULL(valid_click,0) valid_click, /*有效点击数*/
+        IFNULL(click_user,0) click_user, /*点击用户数*/
+        IFNULL(consume,0) consume, /*消耗*/
+        IFNULL(if(exposure=0,0,round(consume/exposure*1000,2)),0) exposure_price, /*千次展示收益=消耗/展示数*1000*/
+        IFNULL(if(exposure=0,0,round(valid_click/exposure*100,2)),0) pre_click_rate /*点击率=点击数/展现数*/
+        FROM idea_advert_plan plan
+        LEFT JOIN  idea_advert_group g ON g.id = plan.group_id
+        LEFT JOIN (
+            select p.id,
+                price,  /*cpc单间*/
+                sum(actual_consumption) consume, /*实际消费*/
+                sum(exposure) exposure, /*有效展示数*/
+                sum(click_user) click_user, /*点击用户数*/
+                sum(valid_click) valid_click /*有效点击数*/
+            from idea_advert_plan p
+            inner join idea_advert_report r on p.id = r.plan_id
+            where 1=1
+                <if test="startDay != null">
+                    and r.date >= #{startDay}
+                </if>
+                <if test="endDay != null">
+                    and r.date &lt;= #{endDay}
+                </if>
+            group by p.id
+        ) r on plan.id = r.id
+        where 1 = 1
+        <if test="keyword != null and keyword != ''">
+            AND (plan.name like CONCAT('%',#{keyword},'%') or plan.id =  #{keyword} )
+        </if>
+        <if test="advertUserId != null">
+            AND plan.advert_user_id = #{advertUserId}
+        </if>
+        <if test="state != null">
+            AND plan.state = #{state}
+        </if>
+        <if test="putInType != null">
+            AND plan.put_in_type = #{putInType}
+        </if>
+        <if test="sort != null">
+            order by ${sort}
+        </if>
+    </select>
+
+    <select id="findExtPageList" parameterType="map" resultMap="advertPlanExtListBaseMap">
+        SELECT plan.id,plan.name,u.name advert_user_name,plan.state,plan.material_type,plan.material_shape,plan.material_shape material_shape_name FROM
+            idea_advert_plan plan
+            LEFT JOIN idea_advert_user u
+            ON plan.advert_user_id = u.id
+        where 1 = 1
+        <if test="keyword != null and keyword != ''">
+            AND (plan.name like CONCAT('%',#{keyword},'%') or plan.id =  #{keyword} )
+        </if>
+        <if test="advertUserName != null and advertUserName != ''">
+            AND u.name like CONCAT('%',#{advertUserName},'%')
+        </if>
+        <if test="state != null">
+            AND plan.state = #{state}
+        </if>
+        order by id desc
+    </select>
+
+    <select id="getPlanList" parameterType="map" resultMap="advertPlanSimpleBaseMap">
+        SELECT *  FROM idea_advert_plan WHERE 1 = 1
+        <if test="groupId != null">
+            and group_id =#{groupId}
+        </if>
+        <if test="advertUserId != null">
+            and advert_user_id = #{advertUserId}
+        </if>
+    </select>
+
+    <select id="getById" parameterType="long" resultMap="advertPlanBaseMap">
+        SELECT * FROM idea_advert_plan WHERE id =#{id} LIMIT 1
+    </select>
+
+    <select id="findResById" parameterType="long" resultMap="advertPlanResBaseMap">
+        SELECT * FROM idea_advert_plan WHERE id =#{id} LIMIT 1
+    </select>
+
+    <select id="getByGroupId" parameterType="long" resultMap="advertPlanBaseMap">
+        SELECT * FROM idea_advert_plan WHERE group_id =#{groupId}
+    </select>
+
+    <delete id="deleteById" parameterType="long">
+        delete from idea_advert_plan where id =#{id}
+    </delete>
+
+    <delete id="deletePlanByGroupId" parameterType="long">
+        delete from idea_advert_plan where group_id =#{id}
+    </delete>
+
+    <update id="updatePlanState" parameterType="map">
+        update idea_advert_plan
+        set state = #{state},updated_at = now()
+        where id in <foreach collection="idList" item="id" open="(" separator="," close=")">#{id}</foreach>
+    </update>
+
+    <update id="updateMaterial" parameterType="map">
+        update idea_advert_plan
+        set material_type = #{materialType},material_shape = #{materialShape},updated_at = now()
+        where id = #{planId}
+    </update>
+
+    <update id="updateAdvType" parameterType="map">
+        update idea_advert_plan
+        set advert_type = #{advertType}
+        where id = #{id}
+    </update>
+
+    <update id="updateSmoothDate" parameterType="map">
+        update idea_advert_plan set smooth_date = #{smoothDate} , updated_at = now() where id = #{id}
+    </update>
+
+</mapper>
