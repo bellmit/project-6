@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.bigdata.mapper.MonitorMapper">
+
+    <!-- 监测广告行为中，广告位纬度的uuid丢失率 -->
+    <select id="monitorAdAction" resultType="com.miguan.bigdata.vo.MonitorVo" parameterType="map">
+        SELECT ad_key type,
+               app_version,
+               sum(if(uuid='',1,0)) null_uuid,
+               count(1) total,
+               round(null_uuid/total*100, 2) loseRate
+        FROM dw_ad_actions
+        where dt =#{dt}
+        and receive_time BETWEEN #{startTime} and #{endTime}
+        and ((package_name ='com.mg.phonecall' and app_version >= '2.7.9') or (package_name !='com.mg.phonecall' and app_version >= '3.2.20'))
+        GROUP by app_version,ad_key
+        having loseRate > #{adUuidThreshold}
+    </select>
+
+    <!-- 监测视频用户行为中，页面纬度的uuid丢失率 -->
+    <select id="monitorUserAction" resultType="com.miguan.bigdata.vo.MonitorVo" parameterType="map">
+        select current_page type,
+               client_version app_version,
+               sum(if(uuid='',1,0)) null_uuid,
+               count(1) total,
+               round(null_uuid/total*100, 2) loseRate
+        from dw.dwd_user_actions_disb
+        where dt =#{dt}
+        and receive_time BETWEEN #{startTime} and #{endTime}
+        and client_version >= '3.2.20'
+        GROUP by client_version, current_page
+        having loseRate > #{userUuidThreshold}
+    </select>
+
+    <!-- 监测来电用户行为中，页面纬度的uuid丢失率 -->
+    <select id="monitorLdUserAction" resultType="com.miguan.bigdata.vo.MonitorVo" parameterType="map">
+        select current_page type,
+               client_version app_version,
+               sum(if(uuid='',1,0)) null_uuid,
+               count(1) total,
+               round(null_uuid/total*100, 2) loseRate
+        from dw.dwd_ld_user_actions_disb
+        where dt =#{dt}
+        and receive_time BETWEEN #{startTime} and #{endTime}
+        and app_version >= '2.7.9'
+        GROUP by client_version, current_page
+        having loseRate > #{userUuidThreshold}
+    </select>
+
+</mapper>

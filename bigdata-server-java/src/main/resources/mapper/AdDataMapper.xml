@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.bigdata.mapper.AdDataMapper">
+
+    <!-- 查询出小于广告配置代码位自动排序阀值的代码位 -->
+    <select id="listAdIdShowThreshold" resultType="java.lang.String" parameterType="map">
+        select ad_id
+        from dw_ad_actions daa
+        where dt=#{dd}
+        and ad_id != ''
+        <if test="adIds != null">
+            and ad_id in <foreach collection="adIds" item="adId" open="(" separator="," close=")">#{adId}</foreach>
+        </if>
+        group by ad_id
+        <if test="type == 1">
+            having sum(show) &lt; #{showThreshold}
+        </if>
+        <if test="type == 2">
+            having sum(show) > #{showThreshold}
+        </if>
+    </select>
+
+    <select id="findEarlyWarnList" resultType="com.miguan.bigdata.dto.EarlyWarningDto" parameterType="map">
+        select father_channel,app_version,package_name,package_name_zw,ad_key_name, sum(show) show, sum(stock) stock,
+               if(stock =0,0, round(show/stock,4)*100) show_stock_rate,
+               countdistinct(distinct_id) active_user
+        from dw_ad_actions d,dd_threshold t
+        where d.package_name = t.package_name and d.ad_key = t.ad_key
+        and dt in (${dd})
+        and receive_time BETWEEN #{startTime} and #{endTime}
+        and t.package_name != 'com.mg.phonecall'
+        and t.type = #{warnType}
+        <if test="appVersions != null and friendPhone != ''">
+            and app_version in (${appVersions})
+        </if>
+        group by father_channel,app_version,package_name,package_name_zw, ad_key_name
+        having active_user > #{activeUser}
+        <if test="type == 1">
+            and show_stock_rate &lt; any(value)
+            order by show_stock_rate
+        </if>
+        <if test="type == 3">
+            and stock =0
+        </if>
+    </select>
+
+    <select id="findDspPlanList" resultType="com.miguan.bigdata.vo.DspPlanVo" parameterType="int">
+        select toDate(receive_time) date, anyLast(package_name) package_name, plan_id,design_id,ad_id, anyLast(advertiser) advertiser,
+               sum(if(action_id='ad_flow', 1, 0)) inventory, /*库存数*/
+               sum(if(action_id='ad_zone_request', 1, 0)) request, /*请求量*/
+               sum(if(action_id='ad_zone_response', 1, 0)) response, /*返回量*/
+               sum(if(action_id='ad_zone_render', 1, 0)) render, /*渲染量*/
+               countdistinct(if(action_id='ad_zone_show', batch_id, null)) show, /*自监测曝光数*/
+               countdistinct(if(action_id='ad_zone_exposure', batch_id, null)) exposure,  /*有效曝光点击数*/
+               countdistinct(if(action_id='ad_zone_click', batch_id, null)) click,  /*自监测点击数*/
+               sum(if(action_id = 'ad_zone_valid_click', 1, 0)) validClick,  /*有效点击数*/
+               sum(if(action_id = 'ad_zone_valid_click',price,0)) AS actual_consumption, /*实际消费*/
+               countdistinct(distinct_id) click_user /*点击用户数*/
+        from dw.dwd_ad_actions_disb
+        where dt between #{startDay} and #{endDay}
+        and action_id != 'ad_error'
+        AND ad_source = '98_adv'
+        and plan_id is not NULL
+        group by date, plan_id, design_id,ad_id
+    </select>
+
+    <select id="findDspPlanConsumption" resultType="java.math.BigDecimal" parameterType="string">
+        select sum(actual_consumption) actual_consumption
+        from rp_ad_action_day
+        where dd between #{startDay} and #{endDay}
+        and plan_id = #{planId}
+        group by plan_id
+    </select>
+
+    <delete id="deleteAdMultiDimensionalData" parameterType="map">
+      delete from ad_multi_dimensional_data
+      where 1=1
+      <if test="type == 1">
+          and date(date) = #{dd}
+      </if>
+        <if test="type == 2">
+            and date(date) &lt; #{dd}
+        </if>
+    </delete>
+
+    <update id="optimizeMulti">
+        optimize table ad_multi_dimensional_data
+    </update>
+
+    <insert id="syncAdMultiDimensionalData" parameterType="map">
+        INSERT INTO mysql_ballvideoadv.ad_multi_dimensional_data(date, ad_id, package_name, channel, is_new, city, show, click, exposure, valid_click,created_at)
+        select #{dd},
+               ad_id,  /*代码位id*/
+               package_name, /*包名*/
+               ifnull(father_channel, '-1'),  /*渠道*/
+               ifnull(is_new_app,-1), /*新老用户*/
+               ifnull(gpscity, '-1'), /*城市*/
+               countdistinct(if(action_id='ad_zone_show', batch_id, null)) show, /*自监测曝光数*/
+               countdistinct(if(action_id='ad_zone_click', batch_id, null)) click,  /*自监测点击数*/
+               countdistinct(if(action_id='ad_zone_exposure', batch_id, null)) validShow,  /*有效曝光点击数*/
+               countdistinct(if(action_id='ad_zone_valid_click', batch_id, null)) validClick,  /*有效点击数*/
+               now()
+        from dw.dwd_ad_actions_disb daad
+        where dt = #{dt}
+        and action_id in ('ad_zone_show', 'ad_zone_click', 'ad_zone_valid_click','ad_zone_exposure')
+        and ad_id IS NOT NULL
+        and package_name IS NOT NULL
+        and gpscity IS NOT NULL
+        and father_channel IS NOT NULL
+        and is_new_app IS NOT NULL
+        group by CUBE (ad_id, package_name, gpscity, father_channel, is_new_app )
+        having ad_id is not null and package_name is not null
+    </insert>
+</mapper>

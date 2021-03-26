@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.bigdata.mapper.DwdUserInfoMapper">
+
+    <sql id="where-sql">
+        <where>
+            <if test="active_date != null and active_date != ''">
+                toDate(first_visit_time) = #{active_date}
+            </if>
+            <if test="packageName != null and packageName != ''">
+                and package_name = #{packageName}
+            </if>
+            <if test="channels != null and !channels.isEmpty ">
+                and channel not in (
+                <foreach collection="channels" item="channel" separator=",">
+                    #{channel}
+                </foreach>
+                )
+            </if>
+        </where>
+    </sql>
+
+    <select id="countByPackageNameAndFirstVisitDate" parameterType="java.util.Map" resultType="java.lang.Integer">
+        SELECT
+          count(DISTINCT distinct_id)
+        from dw.dwd_user_package_info_disb duid
+        <include refid="where-sql" />
+    </select>
+
+    <select id="selectByPackageNameAndFirstVisitDate" parameterType="java.util.Map"
+            resultType="java.lang.String">
+        SELECT
+          DISTINCT distinct_id
+        from dw.dwd_user_package_info_disb
+        <include refid="where-sql" />
+        ORDER by first_visit_time asc
+        <if test="skip != null and size != null">
+            limit #{skip},#{size}
+        </if>
+    </select>
+
+    <select id="selectMapByPackageNameAndFirstVisitDate" parameterType="java.util.Map"
+            resultType="java.util.Map">
+        SELECT
+          DISTINCT distinct_id, uuid
+        from dw.dwd_user_package_info_disb
+        <include refid="where-sql" />
+        ORDER by first_visit_time asc
+        <if test="skip != null and size != null">
+            limit #{skip},#{size}
+        </if>
+    </select>
+
+</mapper>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.bigdata.mapper.LdClDeviceMapper">
+
+    <sql id="where-sql">
+        <where>
+            <if test="distinctIds != null and !distinctIds.isEmpty ">
+                and distinct_id in (
+                <foreach collection="distinctIds" item="distinctId" separator=",">
+                    #{distinctId}
+                </foreach>
+                )
+            </if>
+        </where>
+    </sql>
+
+    <select id="selectByDeviceId" parameterType="java.util.Map" resultType="com.miguan.bigdata.entity.xy.ClDevice">
+        SELECT
+        *
+        from cl_device
+        <where>
+            <if test="deviceId != null and deviceId != ''">device_id = #{deviceId}</if>
+        </where>
+        order by update_time desc
+        limit 1
+    </select>
+
+    <select id="selectByDistinctId" parameterType="java.util.Map" resultType="com.miguan.bigdata.entity.xy.ClDevice">
+        SELECT
+          *
+        from cl_device
+        <include refid="where-sql" />
+    </select>
+
+    <select id="selectByDistinctIdAndPackageName" parameterType="java.util.Map" resultType="com.miguan.bigdata.entity.xy.ClDevice">
+        SELECT * from cl_device
+        <where>
+            <if test="distinctId != null and distinctId != ''">distinct_id = #{distinctId}</if>
+            <if test="packageName != null and packageName != ''">and app_package = #{packageName}</if>
+        </where>
+    </select>
+
+</mapper>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.bigdata.mapper.FirstVideosMapper">
+
+    <select id="checkVideosIsOnline" parameterType="java.util.List" resultType="java.lang.Integer">
+        select id
+        from first_videos
+        where state=1
+        and id in <foreach collection="videoIds" item="id" separator="," open="(" close=")">#{id} </foreach>
+    </select>
+
+</mapper>

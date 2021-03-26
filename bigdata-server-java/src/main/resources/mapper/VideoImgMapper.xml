@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.bigdata.mapper.VideoImgMapper">
+
+    <select id="fingVideoByPage" parameterType="map" resultType="com.miguan.bigdata.vo.FirstVideosVo">
+        select id videoId, title, bsy_img_url imgUrl
+        from first_videos
+        where 1=1
+        <if test="videoIds != null">
+            and id in (${videoIds})
+        </if>
+        order by videos_source desc, id
+        limit #{startRow},#{pageSize}
+    </select>
+
+    <insert id="batchInsertRepeatVideoLog" parameterType="list">
+        REPLACE INTO `repeat_video_log`(`video_id`, `repeat_video_id`, `title_sim_score`, `img_sim_score`, `log_type`)
+        VALUES <foreach collection="list" item="reVideo" separator=",">(#{reVideo.videoId}, #{reVideo.repeatVideoId}, #{reVideo.titleSimScore}, #{reVideo.imgSimScore}, #{reVideo.logType})</foreach>
+    </insert>
+</mapper>

@@ -1,0 +1,106 @@
+logging:
+  level:
+    root: info
+    com.github.xiaoymin: off
+    com.miguan.bigdata: debug
+    com.baomidou.dynamic: info
+    com.cgcg: info
+spring:
+#  redis:
+#    host: 192.168.0.211
+#    port: 6379
+#    password: NapBMeZfTCLbdYFXspgK0XnQ7vCzCQ6n
+#    timeout: 15000
+#    database: 2
+  redis:
+    host: 192.168.100.10
+    port: 6379
+    password: 2ZfVUQPaVmKwdKWj6ZBW8CfvQt5EvK4C
+    timeout: 15000
+    database: 9
+    jedis:
+      pool:
+        max-active: 10000
+        max-idle: 400
+        min-idle: 20
+        max-wait: 3000
+    bloom:
+      init-capacity: 10000000
+      error-rate: 0.0001
+  datasource:
+    dynamic:
+      datasource:
+        clickhouse:
+          url: jdbc:clickhouse://8.129.8.3:8123/ballvideostream?socket_timeout=600000
+          username: liyu
+          password: vlsjgz2yhzIvqDmf
+          driverClassName: ru.yandex.clickhouse.ClickHouseDriver
+        ck-dw:
+          url: jdbc:clickhouse://8.129.8.3:8123/dw?socket_timeout=300000
+          username: liyu
+          password: vlsjgz2yhzIvqDmf
+          driverClassName: ru.yandex.clickhouse.ClickHouseDriver
+        report-db:
+          url: jdbc:mysql://47.115.147.28:3306/ballvideoreport?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+          username: liyu
+          password: 9OxClDKGIMNcCFQw
+          driverClassName: com.mysql.cj.jdbc.Driver
+        data-server:
+          url: jdbc:mysql://192.168.100.10:3306/data_server?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+          username: liyu
+          password: iFZ62x7lrXufK4Cg
+          driverClassName: com.mysql.cj.jdbc.Driver
+        dsp:
+          url: jdbc:mysql://47.115.147.28:3306/dsp?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+          username: liyu
+          password: 9OxClDKGIMNcCFQw
+          driver-class-name: com.mysql.cj.jdbc.Driver
+        npush-db:
+          url: jdbc:mysql://47.115.147.28:3306/npush?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+          username: liyu
+          password: 9OxClDKGIMNcCFQw
+          driverClassName: com.mysql.cj.jdbc.Driver
+        xy-db:
+          url: jdbc:mysql://47.115.147.28:3306/ballvideo?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+          username: liyu
+          password: 9OxClDKGIMNcCFQw
+          driverClassName: com.mysql.cj.jdbc.Driver
+        laidian-db:
+          url: jdbc:mysql://8.129.17.252:3306/laidian?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+          username: liyu
+          password: 9OxClDKGIMNcCFQw
+          driverClassName: com.mysql.cj.jdbc.Driver
+        advert:
+          url: jdbc:mysql://192.168.0.197:3306/ballvideoadv?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+          username: advert_java
+          password: UxEuCXR4rMUN490J
+          driverClassName: com.mysql.cj.jdbc.Driver
+  data:
+    mongodb:
+      idmapping:
+        uri: mongodb://liyu:9OxClDKGIMNcCFQw@192.168.0.206:53333/idmapping
+      drive:
+        uri: mongodb://bdserver_java:iBen9K1lcr8i3V95@192.168.0.206:53333/drive
+  es:
+    host: 8.129.38.18
+    port: 9200
+    scheme: http
+  rabbitmq:
+    addresses: 192.168.100.10
+    port: 5672
+    username: nrec
+    password: VJsHFEE4t484Dv3W
+    groupId: bigdata-service-localdev
+    open: true
+  kafka:
+    bootstrap-servers: 192.168.100.10:19092
+    template:
+      default-topic: npush
+ding:
+  robot:
+    secret: SEC087980919a319960cb393908c5a85bc9d5ab75c806f47f5d41243b89f4ae5ecb
+    accessToken: 6a2bbd13813cd17ebe663018c63b73f39a89e26173b26d6da4a6f120448e8176
+task:
+  scheduled:
+    cron:
+      dspPlan: 0 0/5 * * * ?

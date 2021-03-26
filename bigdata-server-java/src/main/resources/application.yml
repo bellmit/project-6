@@ -1,0 +1,87 @@
+server:
+  port: 8381
+  max-post-size: -1
+  max-http-header-size: 402400
+spring:
+  profiles:
+    active: local
+  main:
+    allow-bean-definition-overriding: true
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 100MB
+  datasource:
+    dynamic:
+      primary: clickhouse
+      hikari:
+        connection-test-query: SELECT 1
+        connectionTimeout: 180000
+        maxLifetime: 60000
+        validationTimeout: 8000
+        idleTimeout: 50000
+        min-idle: 20
+        max-pool-size: 1500
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+  mapper-locations: classpath:/mapper/*.xml
+logging:
+  level:
+    com.github.xiaoymin: off
+    com.miguan.bigdata: debug
+    com.baomidou.dynamic: debug
+    com.cgcg: debug
+cgcg:
+  rest:
+    read-timeout: 300000
+    connect-timeout: 300000
+    connection-request-timeout: 300000
+  swagger:
+    name: bigdata-server-java-在线文档
+    desc: Http Online Documentation
+    headers: token
+    contact-url: http://gitlab.miguan.com/bigdata/bigdata-server-java.git
+    contact-name: zhangbinglin
+    version: 1.0.0
+  format:
+    response-data: true
+    response-data-ignore:  ##接口返回值不需要在包裹一层data的接口
+      - /api/skypay/payoutQueuePayout
+      - /api/videoView/leaderboard
+      - /api/videoView/video
+      - /api/push/predictCount
+      - /api/dspdata/getUserRatio
+      - /api/firstFlushVideo/count
+      - /api/flow/strategy/inOrOutIncentiveVideo
+    des3: S5EXCbIx98nrWA7a
+  interceptor:
+    ignore:
+      auth-ignore:  ##不需要token拦截接口
+        - /api/login
+        - /api/npush/test
+swagger:
+  enable: false
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+ding:
+  robot:
+    secret: none
+    accessToken: none
+task:
+  scheduled:
+    cron:
+      dspPlan: 0 0/10 * * * ?
+      video-info: 0 0/10 * * * ?
+      video-detail: 0 25,55 * * * ?
+#获取图片向量接口
+python-img:
+  get-img-vector: http://localdev.bdvector-py.98du.com/api/getImgVector

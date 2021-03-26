@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- arc_sys_config表:系统参数表模块 -->
+<mapper namespace="com.miguan.bigdata.mapper.NewUserSelectionMapper">
+
+    <select id="findAll" resultType="com.miguan.bigdata.entity.NewUserSelection">
+    	select * from new_user_selection
+    </select>
+
+    <select id="findCountInfoByVideoId" parameterType="java.util.Map" resultType="java.util.Map">
+    	select
+    		video_id, SUM(show_count) as show_count , sum(play_count) as play_count , sum(vaild_play_count) as vplay_count, sum(playover_count) as playover_count
+    	from dws_video_day_disb dvdd
+    	where dt = #{dt} and video_id = #{videoId} and is_new_app = 1 group by video_id
+    </select>
+	
+	<update id="updateCountInfo" parameterType="com.miguan.bigdata.entity.NewUserSelection">
+		update new_user_selection
+		<set>
+			<if test="showCount!=null">show_count = #{showCount},</if>
+			<if test="playCount!=null">play_count = #{playCount},</if>
+			<if test="vplayRate!=null">vplay_rate = #{vplayRate},</if>
+			<if test="vplayCount!=null">vplay_count = #{vplayCount},</if>
+			<if test="allPlayRate!=null">all_play_rate = #{allPlayRate},</if>
+			<if test="updatedAt!=null">updated_at = #{updatedAt},</if>
+		</set>
+		where id = #{id}
+	</update>
+
+</mapper>

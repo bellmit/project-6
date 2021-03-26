@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.bigdata.mapper.DwdUserActionDisbMapper">
+
+    <select id="selectLastVisitDate" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select dt from dwd_user_actions_disb duad where action_id = 'app_start' and package_name = #{packageName} and distinct_id = #{distinctId} order by receive_time DESC limit 1
+    </select>
+
+</mapper>

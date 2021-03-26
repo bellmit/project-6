@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.bigdata.mapper.PushDataIterConfMapper">
+
+    <select id="selectByServenDay" parameterType="java.lang.Integer" resultType="com.miguan.bigdata.entity.npush.PushDataIterConf">
+        select * from push_data_iter_conf
+        <where>
+            state = 1
+            <if test="dayOfWeek==1">and monday is not null and monday != ''</if>
+            <if test="dayOfWeek==2">and tuesday is not null and tuesday != ''</if>
+            <if test="dayOfWeek==3">and wednesday is not null and wednesday != ''</if>
+            <if test="dayOfWeek==4">and thursday is not null and thursday != ''</if>
+            <if test="dayOfWeek==5">and friday is not null and friday != ''</if>
+            <if test="dayOfWeek==6">and saturday is not null and saturday != ''</if>
+            <if test="dayOfWeek==7">and sunday is not null and sunday != ''</if>
+        </where>
+    </select>
+
+</mapper>

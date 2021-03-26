@@ -1,0 +1,39 @@
+logging:
+  level:
+    com.miguan: debug
+    com.cgcg: debug
+spring:
+  redis:
+    host: 112.74.179.254
+    port: 6379
+    password: e8cFnj3CoWZdUFyXg8Dkv9Vp66c=
+    timeout: 15000
+    database: 9
+    jedis:
+      pool:
+        max-active: 10000
+        max-idle: 100
+        min-idle: 20
+        max-wait: 3000
+    bloom:
+      init-capacity: 10000000
+      error-rate: 0.0001
+      database: 9
+  datasource:
+    dynamic:
+      datasource:
+        clickhouse:
+#          url: jdbc:clickhouse://47.112.117.37:8123/default
+#          url: jdbc:clickhouse://192.168.100.10:8123/default?socket_timeout=300000
+          url: jdbc:clickhouse://58.23.3.114:18123/default?socket_timeout=300000
+          username: default
+          password: 98du123#
+          driverClassName: ru.yandex.clickhouse.ClickHouseDriver
+          socketTimeout: 600000
+        dsp:
+          url: jdbc:mysql://112.74.179.254:3306/dsp?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+          username: dsp_java
+          password: hpxpXjUAKzWFgn1A
+          driverClassName: com.mysql.cj.jdbc.Driver
+swagger:
+  enable: true

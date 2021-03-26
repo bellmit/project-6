@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- arc_sys_config表:系统参数表模块 -->
+<mapper namespace="com.miguan.bigdata.mapper.SysConfigMapper">
+    <!--xml内部引用别名-->
+	<!--返回MAP-->		
+	<resultMap id="SysConfigMap" type="com.miguan.bigdata.entity.SysConfig">
+			<id column="id" property="id" />
+			<result column="creator" property="creator" />
+			<result column="name" property="name" />
+			<result column="code" property="code" />
+			<result column="value" property="value" />
+			<result column="type" property="type" />
+            <result column="video_cat" property="videoCat" />
+            <result column="video_cat_gg" property="videoCatGg" />
+			<result column="remark" property="remark" />
+			<result column="status" property="status" />
+	</resultMap>
+
+    <select id="findAll" resultMap="SysConfigMap">
+    	select * from arc_sys_config where status = 1
+    </select>
+
+	<select id="getConfig" parameterType="map" resultMap="SysConfigMap">
+        select *
+        from arc_sys_config
+        where code=#{code} and status=1 limit 1;
+    </select>
+
+</mapper> 

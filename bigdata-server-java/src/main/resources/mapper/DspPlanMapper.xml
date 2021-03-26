@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.bigdata.mapper.DspPlanMapper">
+
+    <insert id="batchReplaceAdActionDay" parameterType="list">
+         REPLACE INTO idea_advert_report(date, package_name, plan_id, design_id,ad_id, advertiser, inventory, request, response, render,`show`, click, click_user, exposure, valid_click, actual_consumption, created_at)
+         <foreach collection="list" item="data" separator="," open="VALUES">
+             (#{data.date},#{data.packageName},#{data.planId},#{data.designId},#{data.adId},#{data.advertiser},#{data.inventory},#{data.request},#{data.response},
+              #{data.render},#{data.show},#{data.click},#{data.clickUser},#{data.exposure},#{data.validClick},#{data.actualConsumption},now())
+         </foreach>
+    </insert>
+
+    <select id="countTimeSlotActiveUse" parameterType="map" resultType="int">
+        select count(1) from dm_bigdata.time_slot_active_user_disb where dt=#{dt}
+    </select>
+
+    <delete id="deleteTimeSlotActiveUser" parameterType="map">
+        alter table dm_bigdata.time_slot_active_user_local on cluster ck6_s3_r2 delete where dt=#{dt} and app_type=#{type}
+    </delete>
+
+    <insert id="insertTimeSlotActiveUser" parameterType="map">
+        INSERT INTO dm_bigdata.time_slot_active_user_disb (dt, time_slot, app_type, active_user )
+        select #{dt},time_slot, 1, toUInt32(avg(active_user)) active_user
+        from (
+            select
+                  dt,
+                  concat(formatDateTime(receive_time,'%H'),':',if((FLOOR( toMinute(receive_time)/30)*30)=0,'00','30')) time_slot,
+                  count(DISTINCT distinct_id) active_user
+            from (select dt,receive_time,distinct_id
+                  from dw.dwd_user_actions_disb
+                  where dt BETWEEN #{startDay} and #{endDay}
+                  UNION ALL
+                  select dt,receive_time,distinct_id
+                  from dw.dwd_ld_user_actions_disb
+                  where dt BETWEEN #{startDay} and #{endDay}
+                 )
+            group by dt,time_slot
+            order by time_slot
+        )
+        group by time_slot
+        order by time_slot;
+    </insert>
+
+
+    <select id="getUserRatio" parameterType="map" resultType="com.miguan.bigdata.vo.UserRatioVo">
+        select time_slot, active_user
+        from dm_bigdata.time_slot_active_user_disb
+        where dt=#{dt}
+        and time_slot >= #{time}
+        order by time_slot
+    </select>
+</mapper>

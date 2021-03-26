@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.bigdata.mapper.AppListMapper">
+
+    <select id="findDistinctIdByDeviceId" parameterType="list" resultType="com.miguan.bigdata.entity.mongo.AppsInfo">
+        select device_id, app_package, distinct_id
+        from cl_device
+        where 1=1
+        and (device_id,app_package) in <foreach collection="list" item="appInfo" separator="," open="(" close=")">(#{appInfo.deviceId},#{appInfo.appPackage}) </foreach>
+    </select>
+
+</mapper>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.bigdata.mapper.VideoCountMapper">
+    <!-- 统计单日分类有效播放率 -->
+    <select id="countCatVplayRate" parameterType="java.util.Map" resultType="com.miguan.bigdata.vo.VideoCountVo">
+        SELECT tag_category_id as catid , SUM(vaild_play_count )/sum(show_count) as vplayRate from dws_video_day_disb vd where dt  = #{dt} GROUP by catid ORDER by vplayRate DESC
+        <if test="limit != null">
+            limit #{limit}
+        </if>
+    </select>
+
+    <!-- 统计单日某个分类下的视频有效播放率 -->
+    <select id="countVideoVplayRate" parameterType="java.util.Map" resultType="com.miguan.bigdata.vo.VideoCountVo">
+        SELECT
+            video_id as videoId, tag_category_id as catid , vaild_play_count as vplayCount, vaild_play_count/show_count as vplayRate
+        from dws_video_day_disb vd
+        <where>
+            <if test="dt != null">
+                dt  = #{dt}
+            </if>
+            <if test="catid != null">
+                and catid = #{catid}
+            </if>
+            <if test="excludeVideos != null and !excludeVideos.isEmpty">
+                and video_id not in (
+                    <foreach collection="excludeVideos" item="video" separator=",">
+                      #{video}
+                    </foreach>
+                )
+            </if>
+        </where>
+        ORDER by vplayRate DESC
+        limit #{limit}
+    </select>
+
+</mapper>

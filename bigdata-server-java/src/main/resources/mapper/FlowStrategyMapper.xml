@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.bigdata.mapper.FlowStrategyMapper">
+
+    <select id="staInIncentiveVideos" resultType="com.miguan.bigdata.vo.IncentiveVideoVo" parameterType="map">
+        select video_id,
+               any(v.cat_id) cat_id,
+               sum(play_count) play_count,  /*视频播放数*/
+               sum(show_count) show_count,  /*视频展示数*/
+               sum(vaild_play_count) vplay_count,  /*有效播放数*/
+               if(show_count=0,0,play_count/show_count) playRate,  /*视频播放率*/
+               if(play_count=0,0,vplay_count/play_count) vplayRate,  /*有效播放率*/
+               sum(playover_count) all_play_count, /*完播次数*/
+               if(play_count=0,0,all_play_count/play_count) allPlayRate  /*视频完播放率*/
+        from dw.dws_video_day_disb d
+        inner join mysql_ballvideo.first_videos v on v.id=toInt64(d.video_id)
+        where dt BETWEEN #{startDay} and #{endDay}
+
+        <if test="unInVideoList != null and unInVideoList.size > 0">
+            and video_id not in
+            <foreach collection ="unInVideoList" item="videoId" separator ="," open="(" close=")">
+                #{videoId}
+            </foreach >
+        </if>
+        and v.state=1  /*上线状态的视频*/
+        and v.is_incentive=0 /*非激励视频*/
+        and v.video_time >= '02:00'
+        group by video_id
+        having play_count > 500  /*播放率大于500*/
+    </select>
+
+    <select id="staOutIncentiveVideos" resultType="com.miguan.bigdata.vo.IncentiveVideoVo" parameterType="map">
+        select video_id,
+               any(tag_category_id) cat_id,
+               sum(play_count) play_count,  /*视频播放数*/
+               sum(vaild_play_count) vplay_count,  /*有效播放数*/
+               if(play_count=0,0,vplay_count/play_count) vplayRate,  /*有效播放率*/
+               sum(playover_count) all_play_count, /*完播次数*/
+               if(play_count=0,0,all_play_count/play_count) allPlayRate  /*视频完播放率*/
+        from dw.dws_video_day_disb d
+        inner join mysql_ballvideo.first_videos v on v.id=toInt64(d.video_id)
+        where dt BETWEEN #{startDay} and #{endDay}
+        and v.state=1  /*上线状态的视频*/
+        and v.is_incentive=1 /*激励视频*/
+        group by video_id
+        order by vplayRate desc,allPlayRate desc
+    </select>
+
+
+
+    <select id="getIncentiveVideoList" resultType="com.miguan.bigdata.vo.IncentiveVideoVo">
+        select id video_id, cat_id
+        from mysql_ballvideo.first_videos
+        where state=1 and is_incentive=1
+    </select>
+
+</mapper>

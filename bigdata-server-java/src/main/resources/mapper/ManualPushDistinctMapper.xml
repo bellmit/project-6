@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.bigdata.mapper.ManulPushDistinctMapper">
+
+    <delete id="deleteByDt" parameterType="java.util.Map">
+        delete from manual_push_distinct where dt = #{dt}
+    </delete>
+    
+    <select id="countByParams" parameterType="java.util.Map" resultType="java.lang.Long">
+        select COUNT(distinct distinct_id) from manual_push_distinct
+        <where>
+            <if test="businessId != null and businessId != ''">business_id = #{businessId}</if>
+            <if test="packageName != null and packageName != ''">and package_name  = #{packageName}</if>
+            <if test="channels != null and !channels.isEmpty">
+                and change_channel in (
+                <foreach collection="channels" item="channel" separator=",">
+                    #{channel}
+                </foreach>
+                )
+            </if>
+        </where>
+    </select>
+    
+    
+    <select id="selectByParams" parameterType="java.util.Map" resultType="java.lang.String">
+        select distinct distinct_id from manual_push_distinct
+        <where>
+            <if test="businessId != null and businessId != ''">business_id = #{businessId}</if>
+            <if test="packageName != null and packageName != ''">and package_name  = #{packageName}</if>
+            <if test="channels != null and !channels.isEmpty">
+                and change_channel in (
+                <foreach collection="channels" item="channel" separator=",">
+                    #{channel}
+                </foreach>
+                )
+            </if>
+        </where>
+        order by receive_time desc
+        <if test="skip != null and limit != null">
+            limit #{skip},#{limit}
+        </if>
+    </select>
+
+</mapper>

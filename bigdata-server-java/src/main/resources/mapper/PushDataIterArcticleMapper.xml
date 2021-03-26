@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.bigdata.mapper.PushDataIterArcticleMapper">
+
+    <select id="selectByActDayAndSortNum" parameterType="java.util.Map" resultType="com.miguan.bigdata.entity.npush.PushDataIterArcticle">
+      select * from push_data_iter_arcticle where state = 1 and project_type = #{projectType} and act_day = #{actDay} and sort = #{sortNum}
+    </select>
+
+    <select id="selectByActDayAndAfterSortNum" parameterType="java.util.Map" resultType="com.miguan.bigdata.entity.npush.PushDataIterArcticle">
+      select * from push_data_iter_arcticle where state = 1 and project_type = #{projectType} and act_day = #{actDay} and sort &gt; #{sortNum} order by sort asc
+    </select>
+</mapper>
