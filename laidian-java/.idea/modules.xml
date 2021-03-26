@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/laidian/laidian.iml" filepath="$PROJECT_DIR$/laidian/laidian.iml" />
+      <module fileurl="file://$PROJECT_DIR$/laidian-java.iml" filepath="$PROJECT_DIR$/laidian-java.iml" />
+      <module fileurl="file://F:/projects/miguan/taskcenter/taskcenter-java/taskcenter/taskcenter.iml" filepath="F:/projects/miguan/taskcenter/taskcenter-java/taskcenter/taskcenter.iml" />
+      <module fileurl="file://F:/projects/miguan/taskcenter/taskcenter-java/taskcenter-java.iml" filepath="F:/projects/miguan/taskcenter/taskcenter-java/taskcenter-java.iml" />
+    </modules>
+  </component>
+</project>

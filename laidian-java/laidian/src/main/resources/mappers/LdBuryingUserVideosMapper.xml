@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.miguan.laidian.mapper.LdBuryingUserVideosMapper" >
+  <resultMap id="BaseResultMap" type="com.miguan.laidian.entity.LdBuryingUserVideos" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="device_id" property="deviceId" jdbcType="VARCHAR" />
+    <result column="videos_id" property="videosId" jdbcType="INTEGER" />
+    <result column="operation_type" property="operationType" jdbcType="VARCHAR" />
+    <result column="app_type" property="appType" jdbcType="VARCHAR" />
+    <result column="create_day" property="createDay" jdbcType="DATE" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, device_id, videos_id, operation_type, create_day,app_type
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from ld_burying_user_videos
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from ld_burying_user_videos
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.miguan.laidian.entity.LdBuryingUserVideos" >
+    insert into ld_burying_user_videos (id, device_id, videos_id,
+      operation_type, create_day)
+    values (#{id,jdbcType=BIGINT}, #{deviceId,jdbcType=VARCHAR}, #{videosId,jdbcType=INTEGER},
+      #{operationType,jdbcType=VARCHAR}, #{createDay,jdbcType=DATE})
+  </insert>
+  <insert id="insertSelective" parameterType="com.miguan.laidian.entity.LdBuryingUserVideos" >
+    insert into ld_burying_user_videos
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="deviceId != null" >
+        device_id,
+      </if>
+      <if test="videosId != null" >
+        videos_id,
+      </if>
+      <if test="operationType != null" >
+        operation_type,
+      </if>
+      <if test="appType != null" >
+        app_type,
+      </if>
+      <if test="createDay != null" >
+        create_day,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="deviceId != null" >
+        #{deviceId,jdbcType=VARCHAR},
+      </if>
+      <if test="videosId != null" >
+        #{videosId,jdbcType=INTEGER},
+      </if>
+      <if test="operationType != null" >
+        #{operationType,jdbcType=VARCHAR},
+      </if>
+      <if test="appType != null" >
+        #{appType,jdbcType=VARCHAR},
+      </if>
+      <if test="createDay != null" >
+        #{createDay,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.miguan.laidian.entity.LdBuryingUserVideos" >
+    update ld_burying_user_videos
+    <set >
+      <if test="deviceId != null" >
+        device_id = #{deviceId,jdbcType=VARCHAR},
+      </if>
+      <if test="videosId != null" >
+        videos_id = #{videosId,jdbcType=INTEGER},
+      </if>
+      <if test="operationType != null" >
+        operation_type = #{operationType,jdbcType=VARCHAR},
+      </if>
+      <if test="createDay != null" >
+        create_day = #{createDay,jdbcType=DATE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.miguan.laidian.entity.LdBuryingUserVideos" >
+    update ld_burying_user_videos
+    set device_id = #{deviceId,jdbcType=VARCHAR},
+      videos_id = #{videosId,jdbcType=INTEGER},
+      operation_type = #{operationType,jdbcType=VARCHAR},
+      create_day = #{createDay,jdbcType=DATE}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByDeviceIdAndVideoIdAndOperationType" resultMap="BaseResultMap" parameterType="com.miguan.laidian.entity.LdBuryingUserVideos" >
+    select
+    <include refid="Base_Column_List" />
+    from ld_burying_user_videos
+    where  videos_id = #{videosId}
+    and device_id = #{deviceId}
+    and operation_type = #{operationType}
+    and app_type = #{appType}
+    and to_days(create_day) = to_days(now())
+    limit 1
+  </select>
+  <select id="selectCountByDeviceIdAndVideoIdAndOperationType" resultType="java.lang.Integer" parameterType="com.miguan.laidian.entity.LdBuryingUserVideos" >
+    select
+     count(*)
+    from ld_burying_user_videos
+    where device_id = #{deviceId}
+    and operation_type = #{operationType}
+    and app_type = #{appType}
+    and to_days(create_day) = to_days(now());
+  </select>
+</mapper>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.laidian.mapper.ActSignRecordMapper">
+    <!--保存签到记录-->
+    <insert id="saveActSignRecord" parameterType="com.miguan.laidian.vo.ActSignRecordVo">
+        INSERT INTO act_sign_record(activity_id,device_id,sign_time,day,created_at,updated_at)
+        VALUES
+        (#{activityId},#{deviceId},#{signTime},#{day},now(),now())
+    </insert>
+    <!-- 根据条件查询签到记录 -->
+    <select id="queryActSignRecord" resultType="com.miguan.laidian.vo.ActSignRecordVo" parameterType="java.util.Map">
+        SELECT id,activity_id,device_id,sign_time,day
+        FROM act_sign_record
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="activityId != null and activityId != ''">
+                AND activity_id = #{activityId}
+            </if>
+            <if test="deviceId != null and deviceId != ''">
+                AND device_id = #{deviceId}
+            </if>
+            <if test="signTime != null and signTime != ''">
+                AND sign_time = #{signTime}
+            </if>
+        </trim>
+    </select>
+</mapper>

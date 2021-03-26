@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.miguan.laidian.mapper.LdBuryingPointMapper" >
+  <resultMap id="BaseResultMap" type="com.miguan.laidian.entity.LdBuryingPoint" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="action_id" property="actionId" jdbcType="VARCHAR" />
+    <result column="open_time" property="openTime" jdbcType="DATE" />
+    <result column="up_open_time" property="upOpenTime" jdbcType="TIMESTAMP" />
+    <result column="channel_id" property="channelId" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="VARCHAR" />
+    <result column="device_id" property="deviceId" jdbcType="VARCHAR" />
+    <result column="app_version" property="appVersion" jdbcType="VARCHAR" />
+    <result column="os_version" property="osVersion" jdbcType="VARCHAR" />
+    <result column="all_permission" property="allPermission" jdbcType="BIT" />
+    <result column="into_fodder_detail" property="intoFodderDetail" jdbcType="BIT" />
+    <result column="set_permission" property="setPermission" jdbcType="BIT" />
+    <result column="app_start" property="appStart" jdbcType="BIT" />
+    <result column="click_set_fodder_button" property="clickSetFodderButton" jdbcType="BIT" />
+    <result column="click_set_fodder_button2" property="clickSetFodderButton2" jdbcType="BIT" />
+    <result column="success_set_fodder" property="successSetFodder" jdbcType="BIT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_day" property="createDay" jdbcType="DATE" />
+    <result column="device_info" property="deviceInfo" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, action_id, open_time, up_open_time, channel_id, user_id, device_id, app_version,
+    os_version, all_permission, into_fodder_detail, set_permission, app_start, click_set_fodder_button,
+    click_set_fodder_button2,success_set_fodder, create_time, create_day, device_info
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from ld_burying_point
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from ld_burying_point
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.miguan.laidian.entity.LdBuryingPoint" >
+    insert into ld_burying_point (id, action_id, open_time,
+      up_open_time, channel_id, user_id,
+      device_id, app_version, os_version,
+      all_permission, into_fodder_detail, set_permission,
+      app_start, click_set_fodder_button, click_set_fodder_button2, success_set_fodder,
+      create_time, create_day, device_info
+      )
+    values (#{id,jdbcType=BIGINT}, #{actionId,jdbcType=VARCHAR}, #{openTime,jdbcType=DATE},
+      #{upOpenTime,jdbcType=TIMESTAMP}, #{channelId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR},
+      #{deviceId,jdbcType=VARCHAR}, #{appVersion,jdbcType=VARCHAR}, #{osVersion,jdbcType=VARCHAR},
+      #{allPermission,jdbcType=BIT}, #{intoFodderDetail,jdbcType=BIT}, #{setPermission,jdbcType=BIT},
+      #{appStart,jdbcType=BIT}, #{clickSetFodderButton,jdbcType=BIT}, #{clickSetFodderButton2,jdbcType=BIT},
+      #{successSetFodder,jdbcType=BIT},#{createTime,jdbcType=TIMESTAMP}, #{createDay,jdbcType=DATE}, #{deviceInfo,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="ldBuryingPoint" parameterType="com.miguan.laidian.entity.LdBuryingPoint" >
+    insert into ld_burying_point
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="actionId != null" >
+        action_id,
+      </if>
+      <if test="openTime != null" >
+        open_time,
+      </if>
+      <if test="upOpenTime != null" >
+        up_open_time,
+      </if>
+      <if test="channelId != null" >
+        channel_id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="deviceId != null" >
+        device_id,
+      </if>
+      <if test="appVersion != null" >
+        app_version,
+      </if>
+      <if test="osVersion != null" >
+        os_version,
+      </if>
+      <if test="allPermission != null" >
+        all_permission,
+      </if>
+      <if test="intoFodderDetail != null" >
+        into_fodder_detail,
+      </if>
+      <if test="setPermission != null" >
+        set_permission,
+      </if>
+      <if test="appStart != null" >
+        app_start,
+      </if>
+      <if test="clickSetFodderButton != null" >
+        click_set_fodder_button,
+      </if>
+      <if test="clickSetFodderButton2 != null" >
+        click_set_fodder_button2,
+      </if>
+      <if test="successSetFodder != null" >
+        success_set_fodder,
+      </if>
+      <if test="createTime == null" >
+        create_time,
+      </if>
+      <if test="createDay == null" >
+        create_day,
+      </if>
+      <if test="deviceInfo != null" >
+        device_info,
+      </if>
+      <if test="appType != null" >
+        app_type,
+      </if>
+      <if test="serialNumber != null" >
+        serial_number,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="actionId != null" >
+        #{actionId,jdbcType=VARCHAR},
+      </if>
+      <if test="openTime != null" >
+        #{openTime,jdbcType=DATE},
+      </if>
+      <if test="upOpenTime != null" >
+        #{upOpenTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="channelId != null" >
+        #{channelId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="deviceId != null" >
+        #{deviceId,jdbcType=VARCHAR},
+      </if>
+      <if test="appVersion != null" >
+        #{appVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="osVersion != null" >
+        #{osVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="allPermission != null" >
+        #{allPermission,jdbcType=BIT},
+      </if>
+      <if test="intoFodderDetail != null" >
+        #{intoFodderDetail,jdbcType=BIT},
+      </if>
+      <if test="setPermission != null" >
+        #{setPermission,jdbcType=BIT},
+      </if>
+      <if test="appStart != null" >
+        #{appStart,jdbcType=BIT},
+      </if>
+      <if test="clickSetFodderButton != null" >
+        #{clickSetFodderButton,jdbcType=BIT},
+      </if>
+      <if test="clickSetFodderButton2 != null" >
+        #{clickSetFodderButton2,jdbcType=BIT},
+      </if>
+      <if test="successSetFodder != null" >
+        #{successSetFodder,jdbcType=BIT},
+      </if>
+      <if test="createTime == null" >
+        now(),
+      </if>
+      <if test="createDay == null" >
+        now(),
+      </if>
+      <if test="deviceInfo != null" >
+        #{deviceInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="appType != null" >
+        #{appType,jdbcType=VARCHAR},
+      </if>
+      <if test="serialNumber != null" >
+        #{serialNumber,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.miguan.laidian.entity.LdBuryingPoint" >
+    update ld_burying_point
+    <set >
+      <if test="actionId != null" >
+        action_id = #{actionId,jdbcType=VARCHAR},
+      </if>
+      <if test="openTime != null" >
+        open_time = #{openTime,jdbcType=DATE},
+      </if>
+      <if test="upOpenTime != null" >
+        up_open_time = #{upOpenTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="channelId != null" >
+        channel_id = #{channelId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="deviceId != null" >
+        device_id = #{deviceId,jdbcType=VARCHAR},
+      </if>
+      <if test="appVersion != null" >
+        app_version = #{appVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="osVersion != null" >
+        os_version = #{osVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="allPermission != null" >
+        all_permission = #{allPermission,jdbcType=BIT},
+      </if>
+      <if test="intoFodderDetail != null" >
+        into_fodder_detail = #{intoFodderDetail,jdbcType=BIT},
+      </if>
+      <if test="setPermission != null" >
+        set_permission = #{setPermission,jdbcType=BIT},
+      </if>
+      <if test="appStart != null" >
+        app_start = #{appStart,jdbcType=BIT},
+      </if>
+      <if test="clickSetFodderButton != null" >
+        click_set_fodder_button = #{clickSetFodderButton,jdbcType=BIT},
+      </if>
+      <if test="clickSetFodderButton2 != null" >
+        click_set_fodder_button2 = #{clickSetFodderButton2,jdbcType=BIT},
+      </if>
+      <if test="successSetFodder != null" >
+        success_set_fodder = #{successSetFodder,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createDay != null" >
+        create_day = #{createDay,jdbcType=DATE},
+      </if>
+      <if test="deviceInfo != null" >
+        device_info = #{deviceInfo,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.miguan.laidian.entity.LdBuryingPoint" >
+    update ld_burying_point
+    set action_id = #{actionId,jdbcType=VARCHAR},
+      open_time = #{openTime,jdbcType=DATE},
+      up_open_time = #{upOpenTime,jdbcType=TIMESTAMP},
+      channel_id = #{channelId,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=VARCHAR},
+      device_id = #{deviceId,jdbcType=VARCHAR},
+      app_version = #{appVersion,jdbcType=VARCHAR},
+      os_version = #{osVersion,jdbcType=VARCHAR},
+      all_permission = #{allPermission,jdbcType=BIT},
+      into_fodder_detail = #{intoFodderDetail,jdbcType=BIT},
+      set_permission = #{setPermission,jdbcType=BIT},
+      app_start = #{appStart,jdbcType=BIT},
+      click_set_fodder_button = #{clickSetFodderButton,jdbcType=BIT},
+      click_set_fodder_button2 = #{clickSetFodderButton2,jdbcType=BIT},
+      success_set_fodder = #{successSetFodder,jdbcType=BIT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_day = #{createDay,jdbcType=DATE},
+      device_info = #{deviceInfo,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByDeviceIdAndAppTypeOrderByCreateTimeAsc" parameterType="com.miguan.laidian.entity.LdBuryingPoint" resultType="com.miguan.laidian.entity.LdBuryingPoint">
+    select * from ld_burying_point where device_id = #{deviceId} and app_type = #{appType} order by create_time ASC limit 1
+  </select>
+
+  <select id="selectByDeviceIdAndAppTypeOrderByCreateTimeDESC" parameterType="com.miguan.laidian.entity.LdBuryingPoint" resultType="com.miguan.laidian.entity.LdBuryingPoint">
+    select * from ld_burying_point where device_id = #{deviceId} and app_type = #{appType} order by create_time DESC limit 1
+  </select>
+
+  <update id="updateByIdAndTimeDESC" parameterType="com.miguan.laidian.entity.LdBuryingPoint">
+    UPDATE ld_burying_point
+    <set>
+      <trim suffixOverrides=",">
+        <if test="actionId == 'App_start'">
+          App_start = 1,
+        </if>
+        <if test="actionId == 'into_fodder_detail'">
+          into_fodder_detail = 1,
+        </if>
+        <if test="actionId == 'click_set_fodder_button'">
+          click_set_fodder_button = 1,
+        </if>
+        <if test="actionId == 'click_set_fodder_button2'">
+          click_set_fodder_button2 = 1,
+        </if>
+        <if test="actionId == 'set_permission'">
+          set_permission = 1,
+        </if>
+        <if test="actionId == 'success_set_fodder'">
+          success_set_fodder = 1,
+        </if>
+        <if test="actionId == 'index_show'">
+          index_show = 1,
+        </if>
+        <if test="actionId == 'basic_permission_show'">
+          basic_permission_show = 1,
+        </if>
+        <if test="actionId == 'basic_permission_click'">
+          basic_permission_click = 1,
+        </if>
+        <if test="actionId == 'free_permission_success'">
+          free_permission_success = 1,
+        </if>
+        <if test="actionId == 'interrupt_show'">
+          interrupt_show = 1,
+        </if>
+        <if test="actionId == 'interrupt_click'">
+          interrupt_click = 1,
+        </if>
+        <!-- 2019年12月16日16:44:36  HYL  新增埋点字段 -->
+        <if test="actionId == 'shortcut_fodder_detail'">
+          shortcut_fodder_detail = 1,
+        </if>
+        <if test="actionId == 'shortcut_set_click'">
+          shortcut_set_click = 1,
+        </if>
+        <!-- 2019年12月18日16:20:32 HYL 埋点为设置快捷来电秀成功，那么设置来电秀也修改为成功 -->
+        <if test="actionId == 'shortcut_set_success'">
+          shortcut_set_success = 1,
+          success_set_fodder = 1,
+        </if>
+        <if test="allPermission != null">
+          all_permission = #{allPermission},
+        </if>
+        <if test="serialNumber != null">
+          serial_number = #{serialNumber},
+        </if>
+      </trim>
+    </set>
+    WHERE id = #{id}
+  </update>
+</mapper>

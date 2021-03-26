@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.laidian.mapper.ClMenuConfigMapper">
+
+    <!-- 通过条件查询菜单栏配置列表 -->
+    <select id="findClMenuConfigList" resultType="com.miguan.laidian.entity.ClMenuConfig"
+            parameterType="java.util.HashMap">
+        SELECT a.id, a.title,a.key, a.img_url, a.img_url2, a.link_addr, a.has_adv, a.banner_id,a.app_type
+        FROM cl_menu_config a where a.state = 0
+        <if test="appType != null and appType != ''">
+            AND a.app_type = #{appType}
+        </if>
+        ORDER BY sort ASC
+    </select>
+
+</mapper>

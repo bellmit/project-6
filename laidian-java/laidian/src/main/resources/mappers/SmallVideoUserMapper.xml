@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.laidian.mapper.SmallVideoUserMapper">
+
+    <resultMap type="com.miguan.laidian.vo.SmallVideoUserVo" id="clUserVideosMap">
+        <id property="id" column="id" javaType="java.lang.Long"></id>
+        <result property="userId" column="user_id" javaType="java.lang.Long"></result>
+        <result property="videoId" column="video_id" javaType="java.lang.Long"></result>
+        <result property="collection" column="collection" javaType="java.lang.String"></result>
+        <result property="love" column="love" javaType="java.lang.String"></result>
+        <result property="interest" column="interest" javaType="java.lang.String"></result>
+    </resultMap>
+
+    <!-- 通用查询结果列-->
+    <sql id="Base_Column_List">
+		id, user_id, video_id, collection, love, interest
+	</sql>
+
+    <!-- 基本用户信息的sql查询条件公共引用-->
+    <sql id="searchBaseBy">
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="id != null and id != ''">
+                AND id = #{id}
+            </if>
+            <if test="userId != null and userId != ''">
+                AND user_id = #{userId}
+            </if>
+            <if test="videoId != null and videoId != ''">
+                AND video_id = #{videoId}
+            </if>
+            <if test="collection != null and collection != ''">
+                AND collection = #{collection}
+            </if>
+            <if test="love != null and love != ''">
+                AND love = #{love}
+            </if>
+            <if test="interest != null and interest != ''">
+                AND interest = #{interest}
+            </if>
+            <if test="appType != null and appType != ''">
+                AND app_type = #{appType}
+            </if>
+        </trim>
+    </sql>
+
+    <!-- 通过条件查询用户视频关联列表 -->
+    <select id="findClUserVideosList" resultMap="clUserVideosMap" parameterType="java.util.HashMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM small_video_user
+        <include refid="searchBaseBy"/>
+    </select>
+
+    <!-- 新增用户视频关联信息 -->
+    <insert id="saveClUserVideos" parameterType="com.miguan.laidian.vo.SmallVideoUserVo">
+		 INSERT INTO small_video_user
+ 		(user_id,video_id,collection,love,interest,update_time,create_time,app_type)
+		 VALUES 
+ 		(#{userId},#{videoId},#{collection},#{love},#{interest},#{updateTime},now(),#{appType})
+	</insert>
+
+    <!-- 修改用户视频关联信息 -->
+    <update id="updateClUserVideos" parameterType="com.miguan.laidian.vo.SmallVideoUserVo">
+        UPDATE small_video_user
+        <set>
+            <trim suffixOverrides=",">
+                <if test="opType == 10">
+                    collection = 1,
+                </if>
+                <if test="opType == 20">
+                    love = 1,
+                </if>
+                <if test="opType == 40">
+                    collection = 0,
+                </if>
+                <if test="opType == 50">
+                    love = 0,
+                </if>
+                <if test="opType == 60">
+                    interest = 1,
+                </if>
+                <if test="updateTime != null">
+                    update_time = #{updateTime},
+                </if>
+            </trim>
+        </set>
+        WHERE user_id = #{userId} AND video_id = #{videoId}
+        <if test="appType != null">
+            AND app_type = #{appType}
+        </if>
+    </update>
+    <!--更新收藏状态-->
+    <update id="batchDelCollections">
+        update small_video_user set collection = 0 where id in
+        <foreach collection="collectionIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <!--更新收藏状态根据用户id-->
+    <update id="emptyMyCollectionByUserId">
+        update small_video_user set collection = 0 where user_id = #{userId}
+    </update>
+
+    <!--查询批量删除收藏的相关信息-->
+    <select id="findCollectionsList" resultMap="clUserVideosMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM small_video_user where id in
+        <foreach collection="collectionIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <!--查询批量删除收藏的相关信息根据用户id-->
+    <select id="findCollectionsListByUserId" resultMap="clUserVideosMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM small_video_user where user_id = #{userId}
+    </select>
+    <!--更新IOS视频收藏数-->
+    <update id="batchUpdateSmallvideos">
+        update small_video set user_like_count = user_like_count-1 where id in
+        <foreach collection="smallIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+</mapper>

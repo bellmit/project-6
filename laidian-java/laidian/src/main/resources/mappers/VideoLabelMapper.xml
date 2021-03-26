@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.laidian.mapper.VideoLabelMapper">
+	<!--查询热门搜索标签-->
+    <select id="topSearchLabel" resultType="com.miguan.laidian.vo.VideoLabelVo">
+    	select vl.id,vl.cat_id,vl.name,MAX(vl.weight) weight from video_label vl
+    	INNER JOIN videos_cat vc ON vl.cat_id = vc.id AND vc.status = 1
+    	WHERE vc.type = 1
+    	GROUP BY vl.cat_id
+    </select>
+	<!--根据标签名称查询标签ID-->
+	<select id="queryLabelIdsByName" resultType="java.lang.Long" parameterType="java.lang.String">
+		select vl.id from video_label vl INNER JOIN videos_cat vc ON vl.cat_id = vc.id
+		WHERE vc.status = 1
+		<if test="likeLabelName != null">
+			AND LOCATE(#{likeLabelName}, vl.name)>0
+		</if>
+	</select>
+	<!-- 通过标签信息查询视频列表 -->
+	<select id="findLabelVideosList" resultType="com.miguan.laidian.entity.Video" parameterType="java.util.HashMap">
+		SELECT
+		v.id,v.recommend,v.title,v.cat_id,v.bsy_url,v.bsy_img_url,
+		(case when (v.like_count+v.user_like_count)>10000 then concat(round((v.like_count+v.user_like_count)/10000, 1),
+		'W')
+		else (v.like_count+v.user_like_count) end) like_count,v.force_adv,v.success_num,approval_state,type as
+		videoType,
+		v.share_count,v.user_id,v.created_at,v.updated_at,v.state,v.bsy_audio_url,v.user_name,
+		(v.like_count+v.user_like_count) original_like_count,v.video_label_names as label_name
+		FROM videos v FORCE INDEX(INDEX_BASE_WEIGHT)
+		WHERE v.state = 1 AND v.approval_state = 2 AND v.recommend = 1 AND v.bsy_img_url != '' AND v.bsy_url != ''
+		<if test="likeLabelName != null">
+			AND (locate(#{likeLabelName},v.video_label_names) OR locate(#{likeLabelName},v.title))
+		</if>
+	</select>
+</mapper>

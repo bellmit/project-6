@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.laidian.mapper.UserContactMapper">
+
+    <!-- 通过条件查询通讯录列表 -->
+    <select id="findUserContactList" resultType="com.miguan.laidian.vo.UserContactVo" parameterType="java.util.HashMap">
+        SELECT
+        id, device_id, name, phone, create_time
+        FROM user_contact
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="deviceId != null and deviceId != ''">
+                AND device_id = #{deviceId}
+            </if>
+            <if test="phone != null and phone != ''">
+                AND phone = #{phone}
+            </if>
+        </trim>
+    </select>
+
+    <!-- 批量保存通讯录 -->
+    <insert id="batchSaveUserContact">
+        INSERT INTO user_contact
+        (device_id,name,phone,create_time)
+        VALUES
+        <foreach collection="userContacts" item="userContact" separator=",">
+            (#{userContact.deviceId},#{userContact.name},#{userContact.phone},now())
+        </foreach>
+    </insert>
+
+</mapper>

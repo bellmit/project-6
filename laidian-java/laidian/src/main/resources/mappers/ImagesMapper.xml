@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.laidian.mapper.ImagesMapper">
+
+    <!-- 通过条件查询图片列表 -->
+    <select id="findImagesList" resultType="com.miguan.laidian.vo.ImagesVo" parameterType="java.util.HashMap">
+        SELECT
+        id, category, cover_url, description, name, preview_url, source_url, type, local_url, bsy_url,
+        (case when (like_count+user_like_count)>10000 then concat(round((like_count+user_like_count)/10000, 1), 'W') else (like_count+user_like_count) end) like_count,
+        share_count, created_at, updated_at, state
+        FROM images
+        <trim prefix="where" prefixOverrides="and|or">
+            AND  LENGTH (IFNULL(bsy_url,''))>0
+            <if test="category != null and category != ''">
+                AND category = #{category}
+            </if>
+            <if test="state != null and state != ''">
+                AND state = #{state}
+            </if>
+            <if test="imageType == '30'">
+                ORDER BY created_at DESC
+            </if>
+            <if test="imageType == '10'">
+                ORDER BY id ASC
+            </if>
+        </trim>
+    </select>
+
+    <!-- 修改图片收藏、分享数量 -->
+    <update id="updateCount" parameterType="java.util.HashMap">
+        UPDATE images
+        <set>
+            <trim suffixOverrides=",">
+                <if test="opType == 10">
+                    user_like_count = user_like_count+1,
+                </if>
+                <if test="opType == 30">
+                    user_like_count = user_like_count-1,
+                </if>
+                <if test="opType == 40">
+                    click_count = click_count+1,
+                </if>
+            </trim>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+</mapper>

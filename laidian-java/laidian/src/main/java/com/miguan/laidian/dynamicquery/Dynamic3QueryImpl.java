@@ -1,0 +1,144 @@
+package com.miguan.laidian.dynamicquery;
+
+import com.miguan.laidian.common.util.adv.AdvSQLUtils;
+import com.miguan.laidian.dynamicquery.former.MyResultTransformer;
+import com.miguan.laidian.redis.util.CacheConstant;
+import com.miguan.laidian.vo.AdvertCodeVo;
+import com.miguan.laidian.vo.AdvertPositionVo;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.SQLQuery;
+import org.hibernate.transform.Transformers;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.stereotype.Repository;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 动态jpql/nativesql查询的实现类（98运营广告后台）
+ *
+ * @author shixh
+ */
+@Slf4j
+@Repository
+public class Dynamic3QueryImpl implements Dynamic3Query {
+
+    @PersistenceContext(unitName = "entityManagerFactory3")
+    private EntityManager em;
+
+    public EntityManager getEntityManager() {
+        return em;
+    }
+
+    @Override
+    public void save(Object entity) {
+        em.persist(entity);
+    }
+
+    @Override
+    public void update(Object entity) {
+        em.merge(entity);
+    }
+
+    @Override
+    public <T> void delete(Class<T> entityClass, Object entityid) {
+        delete(entityClass, new Object[]{entityid});
+    }
+
+    @Override
+    public <T> void delete(Class<T> entityClass, Object[] entityids) {
+        for (Object id : entityids) {
+            em.remove(em.getReference(entityClass, id));
+        }
+    }
+
+    private Query createNativeQuery(String sql, Object... params) {
+        try {
+            Query q = em.createNativeQuery(sql);
+            if (params != null && params.length > 0) {
+                for (int i = 0; i < params.length; i++) {
+                    q.setParameter(i + 1, params[i]);
+                }
+            }
+            return q;
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> List<T> nativeQueryList(String nativeSql, Object... params) {
+        Query q = createNativeQuery(nativeSql, params);
+        q.unwrap(SQLQuery.class).setResultTransformer(Transformers.TO_LIST);
+        return q.getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> List<T> nativeQueryList(Class<T> resultClass,
+                                       String nativeSql, Object... params) {
+        Query q = createNativeQuery(nativeSql, params);
+        ;
+        q.unwrap(SQLQuery.class).setResultTransformer(new MyResultTransformer(resultClass));
+        return q.getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> List<T> nativeQueryListMap(String nativeSql, Object... params) {
+        Query q = createNativeQuery(nativeSql, params);
+        q.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+        return q.getResultList();
+    }
+
+    @Override
+    public Object nativeQueryObject(String nativeSql, Object... params) {
+        return createNativeQuery(nativeSql, params).getSingleResult();
+    }
+
+    @Override
+    public int nativeExecuteUpdate(String nativeSql, Object... params) {
+        return createNativeQuery(nativeSql, params).executeUpdate();
+    }
+
+    @Override
+    public Object[] nativeQueryArray(String nativeSql, Object... params) {
+        return (Object[]) createNativeQuery(nativeSql, params).getSingleResult();
+    }
+
+    /**
+     * 广告查询
+     *
+     * @param param
+     * @param fieldType
+     * @return
+     */
+    //@Cacheable(value = CacheConstant.GET_ADVERSWITHCACHE, unless = "#result == null || #result.size()==0")
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<AdvertCodeVo> getAdversWithCache(Map<String, Object> param, int fieldType) {
+        Query q = createNativeQuery(AdvSQLUtils.getAdverByParams(param, fieldType), null);
+        q.unwrap(SQLQuery.class).setResultTransformer(new MyResultTransformer(AdvertCodeVo.class));
+        return q.getResultList();
+    }
+
+    /**
+     * 广告位置信息查询
+     *
+     * @param param
+     * @param fieldType
+     * @return
+     */
+    @Cacheable(value = CacheConstant.GET_ADVERSPOSITION, unless = "#result == null")
+    @Override
+    public List<AdvertPositionVo> getAdversPositionInfo(Map<String, Object> param, int fieldType) {
+        Query q = createNativeQuery(AdvSQLUtils.getAdverPositionByParams(param, fieldType), null);
+        q.unwrap(SQLQuery.class).setResultTransformer(new MyResultTransformer(AdvertPositionVo.class));
+        return q.getResultList();
+    }
+}

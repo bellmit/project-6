@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.laidian.mapper.ClUserMapper">
+
+	<resultMap type="com.miguan.laidian.vo.ClUserVo" id="clUserMap">
+		<id property="id" column="id" javaType="java.lang.Long"></id>
+		<result property="name" column="name" javaType="java.lang.String"></result>
+		<result property="login_name" column="loginName" javaType="java.lang.String"></result>
+		<result property="deviceId" column="device_id" javaType="java.lang.String"></result>
+		<result property="state" column="state" javaType="java.lang.String"></result>
+		<result property="img_url" column="imgUrl" javaType="java.lang.String"></result>
+		<result property="sign" column="sign" javaType="java.lang.String"></result>
+		<result property="createTime" column="create_time" javaType="java.lang.String"></result>
+		<result property="updateTime" column="update_time" javaType="java.lang.String"></result>
+		<result property="huaweiToken" column="huawei_token" javaType="java.lang.String"></result>
+		<result property="vivoToken" column="vivo_token" javaType="java.lang.String"></result>
+		<result property="oppoToken" column="oppo_token" javaType="java.lang.String"></result>
+		<result property="xiaomiToken" column="xiaomi_token" javaType="java.lang.String"></result>
+	</resultMap>
+
+	<!-- 通用查询结果列-->
+	<sql id="Base_Column_List">
+		id, name, login_name, device_id, img_url, sign, state, create_time, update_time,huawei_token,vivo_token,oppo_token,xiaomi_token
+	</sql>
+
+	<!-- 基本用户信息的sql查询条件公共引用-->
+	<sql id="searchBaseBy">
+		<trim prefix="where" prefixOverrides="and|or">
+			<if test="id != null and id != ''">
+				AND id = #{id}
+			</if>
+			<if test="name != null and name != ''">
+				AND name = #{name}
+			</if>
+			<if test="loginName != null and loginName != ''">
+				AND login_name = #{loginName}
+			</if>
+			<if test="deviceId != null and deviceId != ''">
+				AND device_id = #{deviceId}
+			</if>
+			<if test="state != null and state != ''">
+				AND state = #{state}
+			</if>
+			<if test="createTime != null and createTime != ''">
+				AND create_time = #{createTime}
+			</if>
+			<if test="updateTime != null and updateTime != ''">
+				AND update_time = #{updateTime}
+			</if>
+		</trim>
+	</sql>
+
+	<!-- 通过条件查询用户列表 -->
+	<select id="findClUserList" resultMap="clUserMap" parameterType="java.util.HashMap">
+		 SELECT
+		 <include refid="Base_Column_List" />
+		 FROM cl_user
+		 <include refid="searchBaseBy" />
+	</select>
+
+	<!-- 新增用户信息 -->
+	<insert id="saveClUser" parameterType="com.miguan.laidian.vo.ClUserVo">
+		 INSERT INTO cl_user
+ 		(name,login_name,device_id, img_url, sign,state,create_time,update_time,huawei_token,vivo_token,oppo_token,xiaomi_token)
+		 VALUES 
+ 		(#{name},#{loginName},#{deviceId},#{imgUrl},#{sign},#{state},now(),now(),#{huaweiToken},#{vivoToken},#{oppoToken},#{xiaomiToken})
+	</insert>
+
+	<!-- 修改用户信息 -->
+	<update id="updateClUser" parameterType="com.miguan.laidian.vo.ClUserVo">
+		UPDATE cl_user set update_time = now()
+		<if test="name != null and name != ''">
+			,name = #{name}
+		</if>
+		<if test="deviceId != null and deviceId != ''">
+			,device_id = #{deviceId}
+		</if>
+		<if test="imgUrl != null and imgUrl != ''">
+			,img_url = #{imgUrl}
+		</if>
+		<if test="sign != null and sign != ''">
+			,sign = #{sign}
+		</if>
+		<if test="state != null and state != ''">
+			,state = #{state}
+		</if>
+		<if test="huaweiToken != null and huaweiToken != ''">
+			,huawei_token = #{huaweiToken}
+		</if>
+		<if test="vivoToken != null and vivoToken != ''">
+			,vivo_token = #{vivoToken}
+		</if>
+		<if test="oppoToken != null and oppoToken != ''">
+			,oppo_token = #{oppoToken}
+		</if>
+		<if test="xiaomiToken != null and xiaomiToken != ''">
+			,xiaomi_token = #{xiaomiToken}
+		</if>
+		where login_name = #{loginName}
+	</update>
+
+	<select id="findAllTokens" resultMap="clUserMap" parameterType="java.util.HashMap">
+		select distinct huawei_token,vivo_token,oppo_token,xiaomi_token
+		from cl_user
+		where state = '10'
+		and (huawei_token !='' OR vivo_token!='' OR oppo_token !='' OR xiaomi_token !='')
+	</select>
+
+</mapper>

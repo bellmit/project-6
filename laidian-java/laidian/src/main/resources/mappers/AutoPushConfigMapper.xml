@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.laidian.mapper.AutoPushConfigMapper">
+
+    <resultMap id="BaseResultMap" type="com.miguan.laidian.entity.AutoPushConfig" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="app_package" property="appPackage" jdbcType="VARCHAR" />
+        <result column="title" property="title" jdbcType="VARCHAR" />
+        <result column="title_type" property="titleType" jdbcType="INTEGER" />
+        <result column="content" property="content" jdbcType="VARCHAR" />
+        <result column="content_type" property="contentType" jdbcType="INTEGER" />
+        <result column="new_activity_start_days" property="newActivityStartDays" jdbcType="INTEGER" />
+        <result column="new_activity_end_days" property="newActivityEndDays" jdbcType="INTEGER" />
+        <result column="activity_type" property="activityType" jdbcType="INTEGER" />
+        <result column="not_activity_start_days" property="notActivityStartDays" jdbcType="INTEGER" />
+        <result column="not_activity_end_days" property="notActivityEndDays" jdbcType="INTEGER" />
+        <result column="trigger_type" property="triggerType" jdbcType="INTEGER" />
+        <result column="trigger_time" property="triggerTime" jdbcType="VARCHAR" />
+        <result column="event_type" property="eventType" jdbcType="INTEGER" />
+        <result column="jump_key" property="jumpKey" jdbcType="INTEGER" />
+        <result column="jump_value" property="jumpValue" jdbcType="VARCHAR" />
+        <result column="status" property="status" jdbcType="INTEGER" />
+        <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+        <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, app_package, title, title_type, content, content_type, new_activity_start_days, new_activity_end_days, activity_type,
+        not_activity_start_days,not_activity_end_days, trigger_type, trigger_time,
+        event_type,jump_key,jump_value,status,created_at ,updated_at
+    </sql>
+
+    <select id="queryAllByStatus" resultType="com.miguan.laidian.entity.AutoPushConfig" parameterType="java.util.Map">
+        select  <include refid="Base_Column_List" />
+        from auto_push_config
+        where  status = #{status}
+    </select>
+
+    <select id="queryById" resultType="com.miguan.laidian.entity.AutoPushConfig" parameterType="java.lang.Long">
+        select  <include refid="Base_Column_List" />
+        from auto_push_config
+        where   id = #{id}
+        limit 1
+    </select>
+
+    <select id="queryByEventType" resultType="com.miguan.laidian.entity.AutoPushConfig" parameterType="java.util.Map">
+        select  <include refid="Base_Column_List" />
+        from auto_push_config
+        where  status = 1
+        and event_type = #{eventType}
+    </select>
+</mapper>

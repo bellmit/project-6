@@ -1,0 +1,62 @@
+server:
+  port: 8092
+
+spring:
+  redis:
+    host: 112.74.179.254
+    port: 6379
+    password: e8cFnj3CoWZdUFyXg8Dkv9Vp66c=
+    database: 0
+    timeout: 30000
+    jedis:
+      pool:
+        max-active: 10000
+        max-idle: 100
+        min-idle: 20
+        max-wait: 3000
+  session:
+    store-type: redis
+  jpa:
+    database: mysql
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+      #方言
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
+  profiles:
+    active: localdev
+  mvc:
+    static-path-pattern: /static/**
+    throw-exception-if-no-handler-found: true
+  main:
+    allow-bean-definition-overriding: true
+  jackson:
+     time-zone: GMT+8
+cgcg:
+  format:
+    response-data: true
+    class-name: com.miguan.laidian.common.util.ResultMap
+  swagger:
+    name: Laidian-在线文档
+    desc: Http Online Documentation
+    version: 1.0.0
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+  mapper-locations: classpath:/mappers/*.xml
+#pagehelper:
+#  helper-dialect: mysql
+#  reasonable: true
+#  support-methods-arguments: true
+#白山云
+aws:
+   endPoint: http://ss.bscstorage.com
+   accessKey: k98oumchga6z5l42j0fe
+   secretKey: fFiLIjjvg5Q2qcMGa/kEGi6Xi9on3uj7Mp8TRKfB
+   bucketName: oss/p
+   #devs
+   prefix_dev: dev-opinonimg-laidian
+   #prod
+   prefix_prod: pro-opinonimg-laidian

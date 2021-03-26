@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.laidian.mapper.LockScreenCopywritingMapper">
+
+    <select id="queryCopywritingInfo" resultType="com.miguan.laidian.vo.LockScreenCopywritingVo" parameterType="java.util.Map">
+        select ls.id, ls.title, ls.type, ls.type_value, ls.effective_date, ls.click_nums
+        from lock_screen_copywriting ls
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="state != null and state != ''">
+                and ls.state = #{state}
+            </if>
+            <if test="effectiveDate != null and effectiveDate != ''">
+                and (ls.effective_date = #{effectiveDate} or ls.effective_date = '-1')
+            </if>
+            <!--排除已浏览文案-->
+            <if test="excludeIds != null">
+                AND ls.id not in
+                <foreach collection="excludeIds" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </trim>
+    </select>
+
+    <!-- 修改锁屏文案点击次数 -->
+    <update id="updateClickNum" parameterType="java.lang.Long">
+        UPDATE lock_screen_copywriting set click_nums = click_nums+1
+        WHERE id = #{id}
+    </update>
+
+</mapper>
+
+
+
+
+
+
+
+

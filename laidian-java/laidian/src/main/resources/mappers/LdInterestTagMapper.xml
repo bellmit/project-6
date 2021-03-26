@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.laidian.mapper.LdInterestTagMapper">
+
+    <select id="getUserTagList" resultType="com.miguan.laidian.vo.LdInterestTagVo" parameterType="java.util.Map">
+        select t.cat_id from ld_user_tag_relation r
+        left join ld_interest_tag t on t.id = r.tag_id
+        where t.is_delete = 0
+        and r.device_id = #{deviceId}
+        <if test="userId != null">
+            and r.user_id = #{userId}
+        </if>
+        <if test="excludeCatIds != null">
+            AND t.cat_id NOT in
+            <foreach collection="excludeCatIds" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+</mapper>

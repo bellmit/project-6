@@ -1,0 +1,557 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.laidian.mapper.VideoMapper">
+
+    <!-- 通过条件查询视频源列列表 -->
+    <select id="findVideosList" resultType="com.miguan.laidian.entity.Video" parameterType="java.util.HashMap">
+        SELECT
+        v.id,v.recommend,v.title,v.url,v.cat_id,v.url_audio,v.url_img,v.local_url,v.bsy_url,v.local_img_url,v.bsy_img_url,
+        (case when (v.like_count+v.user_like_count)>10000 then concat(round((v.like_count+v.user_like_count)/10000, 1),
+        'W')
+        else (v.like_count+v.user_like_count) end) like_count,v.force_adv,v.success_num,approval_state,type as
+        videoType,
+        v.share_count,v.user_id,v.created_at,v.updated_at,v.state,v.local_audio_url,v.bsy_audio_url,v.user_name,
+        (v.like_count+v.user_like_count) original_like_count,v.video_label_names as label_name
+        FROM videos v
+        FORCE INDEX(INDEX_BASE_WEIGHT)
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="bsyImgUrl == null || bsyImgUrl == ''">
+                AND v.bsy_url!=''
+            </if>
+            AND v.bsy_img_url!=''
+            <if test="videoId != null and videoId != ''">
+                AND v.id = #{videoId}
+            </if>
+            <if test="catId != null and catId != ''">
+                AND v.cat_id = #{catId}
+            </if>
+            <if test="state != null and state != ''">
+                AND v.state = #{state}
+            </if>
+            <if test="recommend != null and recommend != ''">
+                AND v.recommend = #{recommend}
+            </if>
+            <if test="type != null and type != ''">
+                AND v.type = #{type}
+            </if>
+            <if test="approvalState != null and approvalState != ''">
+                AND v.approval_state = #{approvalState}
+            </if>
+            <if test="bsyUrl != null and bsyUrl != ''">
+                AND v.bsy_url = #{bsyUrl}
+            </if>
+            <if test="bsyImgUrl != null and bsyImgUrl != ''">
+                AND v.bsy_img_url = #{bsyImgUrl}
+            </if>
+            <if test="userId != null and userId != ''">
+                AND v.user_id = #{userId}
+            </if>
+            <if test="quickSetting != null and quickSetting != ''">
+                AND v.quick_setting = #{quickSetting}
+            </if>
+            <if test="excludeCatIds != null">
+                AND v.cat_id NOT in
+                <foreach collection="excludeCatIds" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="settingIds != null and settingIds!=''">
+                AND v.id in (${settingIds})
+                ORDER BY FIELD(v.id,${settingIds})
+            </if>
+            <if test="uploadVideoOrder != null and uploadVideoOrder != ''">
+                ORDER BY v.approval_state asc,v.created_at DESC
+            </if>
+            <if test="firstVideoOrder != null and firstVideoOrder != ''">
+                ORDER BY v.created_at DESC
+            </if>
+            <!-- 如果videoType 等于10的时候，那么根据权重排序。如果videoType不等于10的时候根据时间倒序排序  2019年10月14日14:47:46   HYL -->
+            <if test="videoType == '10'and videoType != '' ">
+                ORDER BY v.base_weight DESC
+            </if>
+            <if test="videoType != null and videoType != '10'and videoType != ''">
+                ORDER BY v.created_at DESC
+            </if>
+            <if test="randomTag != null ">
+                ORDER BY RAND()
+            </if>
+            <if test="queryNumber != null">
+                limit ${queryNumber}
+            </if>
+        </trim>
+    </select>
+    <!-- 根据渠道查询热门视频源列列表 -->
+    <select id="findVideosListByChannel" resultType="com.miguan.laidian.entity.Video" parameterType="java.util.HashMap">
+        <if test="ids != null and ids != ''">
+            SELECT
+                v.id,v.recommend,v.title,v.url,v.cat_id,v.url_audio,v.url_img,v.local_url,v.bsy_url,v.local_img_url,v.bsy_img_url,
+                (case when (v.like_count+v.user_like_count)>10000 then concat(round((v.like_count+v.user_like_count)/10000, 1),
+                'W')
+                else (v.like_count+v.user_like_count) end) like_count,v.force_adv,v.success_num,approval_state,type as
+                videoType,
+                v.share_count,v.user_id,v.created_at,v.updated_at,v.state,v.local_audio_url,v.bsy_audio_url,v.user_name,
+                (v.like_count+v.user_like_count) original_like_count,v.video_label_names as label_name
+            FROM videos v
+            WHERE v.id in (${ids})
+            UNION ALL
+        </if>
+        SELECT m.*  FROM
+        (SELECT
+            v.id,v.recommend,v.title,v.url,v.cat_id,v.url_audio,v.url_img,v.local_url,v.bsy_url,v.local_img_url,v.bsy_img_url,
+            (case when (v.like_count+v.user_like_count)>10000 then concat(round((v.like_count+v.user_like_count)/10000, 1),
+            'W')
+            else (v.like_count+v.user_like_count) end) like_count,v.force_adv,v.success_num,approval_state,type as
+            videoType,
+            v.share_count,v.user_id,v.created_at,v.updated_at,v.state,v.local_audio_url,v.bsy_audio_url,v.user_name,
+            (v.like_count+v.user_like_count) original_like_count,v.video_label_names as label_name
+        FROM videos v
+        FORCE INDEX(INDEX_BASE_WEIGHT)
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="bsyImgUrl == null || bsyImgUrl == ''">
+                AND v.bsy_url!=''
+            </if>
+            AND v.bsy_img_url!=''
+            <if test="videoId != null and videoId != ''">
+                AND v.id = #{videoId}
+            </if>
+            <if test="catId != null and catId != ''">
+                AND v.cat_id = #{catId}
+            </if>
+            <if test="state != null and state != ''">
+                AND v.state = #{state}
+            </if>
+            <if test="recommend != null and recommend != ''">
+                AND v.recommend = #{recommend}
+            </if>
+            <if test="type != null and type != ''">
+                AND v.type = #{type}
+            </if>
+            <if test="approvalState != null and approvalState != ''">
+                AND v.approval_state = #{approvalState}
+            </if>
+            <if test="bsyUrl != null and bsyUrl != ''">
+                AND v.bsy_url = #{bsyUrl}
+            </if>
+            <if test="bsyImgUrl != null and bsyImgUrl != ''">
+                AND v.bsy_img_url = #{bsyImgUrl}
+            </if>
+            <if test="userId != null and userId != ''">
+                AND v.user_id = #{userId}
+            </if>
+            <if test="quickSetting != null and quickSetting != ''">
+                AND v.quick_setting = #{quickSetting}
+            </if>
+            <if test="excludeCatIds != null">
+                AND v.cat_id NOT in
+                <foreach collection="excludeCatIds" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="ids != null and ids!=''">
+                AND v.id not in (${ids})
+            </if>
+            <if test="settingIds != null and settingIds!=''">
+                AND v.id in (${settingIds})
+                ORDER BY FIELD(v.id,${settingIds})
+            </if>
+            <if test="uploadVideoOrder != null and uploadVideoOrder != ''">
+                ORDER BY v.approval_state asc,v.created_at DESC
+            </if>
+            <if test="firstVideoOrder != null and firstVideoOrder != ''">
+                ORDER BY v.created_at DESC
+            </if>
+            <!-- 如果videoType 等于10的时候，那么根据权重排序。如果videoType不等于10的时候根据时间倒序排序  2019年10月14日14:47:46   HYL -->
+            <if test="videoType == '10'and videoType != '' ">
+                ORDER BY v.base_weight DESC
+            </if>
+            <if test="videoType != null and videoType != '10'and videoType != ''">
+                ORDER BY v.created_at DESC
+            </if>
+            <if test="randomTag != null ">
+                ORDER BY RAND()
+            </if>
+        </trim>
+        <!--解决mysql版本查询乱序问题-->
+         limit 1000000 ) m
+</select>
+
+
+    <!-- 根据渠道查询热门视频源列列表 -->
+    <select id="countVideosListByChannelDoublePage" resultType="java.lang.Long" parameterType="java.util.HashMap">
+        SELECT COUNT(*) FROM (
+        <if test="ids != null and ids != ''">
+            SELECT
+            v.id
+            FROM videos v
+            WHERE v.id in (${ids})
+            UNION ALL
+        </if>
+        SELECT m.*  FROM
+        (SELECT
+        v.id
+        FROM videos v
+        FORCE INDEX(INDEX_BASE_WEIGHT)
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="bsyImgUrl == null || bsyImgUrl == ''">
+                AND v.bsy_url!=''
+            </if>
+            AND v.bsy_img_url!=''
+            <if test="videoId != null and videoId != ''">
+                AND v.id = #{videoId}
+            </if>
+            <if test="catId != null and catId != ''">
+                AND v.cat_id = #{catId}
+            </if>
+            <if test="state != null and state != ''">
+                AND v.state = #{state}
+            </if>
+            <if test="recommend != null and recommend != ''">
+                AND v.recommend = #{recommend}
+            </if>
+            <if test="type != null and type != ''">
+                AND v.type = #{type}
+            </if>
+            <if test="approvalState != null and approvalState != ''">
+                AND v.approval_state = #{approvalState}
+            </if>
+            <if test="bsyUrl != null and bsyUrl != ''">
+                AND v.bsy_url = #{bsyUrl}
+            </if>
+            <if test="bsyImgUrl != null and bsyImgUrl != ''">
+                AND v.bsy_img_url = #{bsyImgUrl}
+            </if>
+            <if test="userId != null and userId != ''">
+                AND v.user_id = #{userId}
+            </if>
+            <if test="quickSetting != null and quickSetting != ''">
+                AND v.quick_setting = #{quickSetting}
+            </if>
+            <if test="excludeCatIds != null">
+                AND v.cat_id NOT in
+                <foreach collection="excludeCatIds" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="ids != null and ids!=''">
+                AND v.id not in (${ids})
+            </if>
+            <if test="settingIds != null and settingIds!=''">
+                AND v.id in (${settingIds})
+            </if>
+        </trim>) m ) t
+    </select>
+
+    <!-- 根据渠道查询热门视频源列列表 -->
+    <select id="findVideosListByChannelDoublePage" resultType="com.miguan.laidian.entity.Video" parameterType="java.util.HashMap">
+        <if test="ids != null and ids != ''">
+            select * from (
+            SELECT
+            v.id,v.recommend,v.title,v.url,v.cat_id,v.url_audio,v.url_img,v.local_url,v.bsy_url,v.local_img_url,v.bsy_img_url,
+            (case when (v.like_count+v.user_like_count)>10000 then concat(round((v.like_count+v.user_like_count)/10000,
+            1),
+            'W')
+            else (v.like_count+v.user_like_count) end) like_count,v.force_adv,v.success_num,approval_state,type as
+            videoType,
+            v.share_count,v.user_id,v.created_at,v.updated_at,v.state,v.local_audio_url,v.bsy_audio_url,v.user_name,
+            (v.like_count+v.user_like_count) original_like_count,v.video_label_names as label_name
+            FROM videos v
+            WHERE v.id in (${ids})
+            limit #{recoPage},#{recoPageSize}
+            ) re
+            UNION ALL
+        </if>
+        SELECT m.*  FROM
+        (SELECT
+        v.id,v.recommend,v.title,v.url,v.cat_id,v.url_audio,v.url_img,v.local_url,v.bsy_url,v.local_img_url,v.bsy_img_url,
+        (case when (v.like_count+v.user_like_count)>10000 then concat(round((v.like_count+v.user_like_count)/10000, 1),
+        'W')
+        else (v.like_count+v.user_like_count) end) like_count,v.force_adv,v.success_num,approval_state,type as
+        videoType,
+        v.share_count,v.user_id,v.created_at,v.updated_at,v.state,v.local_audio_url,v.bsy_audio_url,v.user_name,
+        (v.like_count+v.user_like_count) original_like_count,v.video_label_names as label_name
+        FROM videos v
+        FORCE INDEX(INDEX_BASE_WEIGHT)
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="bsyImgUrl == null || bsyImgUrl == ''">
+                AND v.bsy_url!=''
+            </if>
+            AND v.bsy_img_url!=''
+            <if test="videoId != null and videoId != ''">
+                AND v.id = #{videoId}
+            </if>
+            <if test="catId != null and catId != ''">
+                AND v.cat_id = #{catId}
+            </if>
+            <if test="state != null and state != ''">
+                AND v.state = #{state}
+            </if>
+            <if test="recommend != null and recommend != ''">
+                AND v.recommend = #{recommend}
+            </if>
+            <if test="type != null and type != ''">
+                AND v.type = #{type}
+            </if>
+            <if test="approvalState != null and approvalState != ''">
+                AND v.approval_state = #{approvalState}
+            </if>
+            <if test="bsyUrl != null and bsyUrl != ''">
+                AND v.bsy_url = #{bsyUrl}
+            </if>
+            <if test="bsyImgUrl != null and bsyImgUrl != ''">
+                AND v.bsy_img_url = #{bsyImgUrl}
+            </if>
+            <if test="userId != null and userId != ''">
+                AND v.user_id = #{userId}
+            </if>
+            <if test="quickSetting != null and quickSetting != ''">
+                AND v.quick_setting = #{quickSetting}
+            </if>
+            <if test="excludeCatIds != null">
+                AND v.cat_id NOT in
+                <foreach collection="excludeCatIds" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="ids != null and ids!=''">
+                AND v.id not in (${ids})
+            </if>
+            <if test="settingIds != null and settingIds!=''">
+                AND v.id in (${settingIds})
+                ORDER BY FIELD(v.id,${settingIds})
+            </if>
+            <if test="uploadVideoOrder != null and uploadVideoOrder != ''">
+                ORDER BY v.approval_state asc,v.created_at DESC
+            </if>
+            <if test="firstVideoOrder != null and firstVideoOrder != ''">
+                ORDER BY v.created_at DESC
+            </if>
+            <!-- 如果videoType 等于10的时候，那么根据权重排序。如果videoType不等于10的时候根据时间倒序排序  2019年10月14日14:47:46   HYL -->
+            <if test="videoType == '10'and videoType != '' ">
+                ORDER BY v.base_weight DESC
+            </if>
+            <if test="videoType != null and videoType != '10'and videoType != ''">
+                ORDER BY v.created_at DESC
+            </if>
+            <if test="randomTag != null ">
+                ORDER BY RAND()
+            </if>
+        </trim>
+        <!--解决mysql版本查询乱序问题-->
+        limit #{wavedioPage},#{wavedioPageSize} ) m
+    </select>
+
+<select id="findOne" resultType="com.miguan.laidian.entity.Video" parameterType="java.util.HashMap">
+    SELECT
+    v.id,v.recommend,v.title,v.url,v.cat_id,v.url_audio,v.url_img,v.local_url,v.bsy_url,v.local_img_url,v.bsy_img_url,
+    (case when (v.like_count+v.user_like_count)>10000 then concat(round((v.like_count+v.user_like_count)/10000, 1),
+    'W')
+    else (v.like_count+v.user_like_count) end) like_count,v.force_adv,v.success_num,approval_state,type as
+    videoType,
+    v.share_count,v.user_id,v.created_at,v.updated_at,v.state,v.local_audio_url,v.bsy_audio_url,v.user_name,
+    (v.like_count+v.user_like_count) original_like_count,v.video_label_names as label_name
+    FROM videos v
+    <trim prefix="where" prefixOverrides="and|or">
+        <if test="bsyImgUrl == null || bsyImgUrl == ''">
+            AND v.bsy_url!=''
+        </if>
+        AND v.bsy_img_url!=''
+        AND v.id = #{id}
+        <if test="catId != null and catId != ''">
+            AND v.cat_id = #{catId}
+        </if>
+        <if test="state != null and state != ''">
+            AND v.state = #{state}
+        </if>
+        <if test="recommend != null and recommend != ''">
+            AND v.recommend = #{recommend}
+        </if>
+        <if test="type != null and type != ''">
+            AND v.type = #{type}
+        </if>
+        <if test="approvalState != null and approvalState != ''">
+            AND v.approval_state = #{approvalState}
+        </if>
+        <if test="bsyUrl != null and bsyUrl != ''">
+            AND v.bsy_url = #{bsyUrl}
+        </if>
+        <if test="bsyImgUrl != null and bsyImgUrl != ''">
+            AND v.bsy_img_url = #{bsyImgUrl}
+        </if>
+        <if test="userId != null and userId != ''">
+            AND v.user_id = #{userId}
+        </if>
+        limit 1
+    </trim>
+</select>
+
+
+    <select id="findVideoById" resultType="com.miguan.laidian.entity.Video"  parameterType="java.lang.Long">
+        select v.id,v.recommend,v.title,v.url,v.cat_id,v.url_audio,v.url_img,v.local_url,v.bsy_url,v.local_img_url,v.bsy_img_url,
+            (case when (v.like_count+v.user_like_count)>10000 then concat(round((v.like_count+v.user_like_count)/10000, 1),
+            'W')
+            else (v.like_count+v.user_like_count) end) like_count,v.force_adv,v.success_num,approval_state,type as
+            videoType,
+            v.share_count,v.user_id,v.created_at,v.updated_at,v.state,v.local_audio_url,v.bsy_audio_url,v.user_name,
+            (v.like_count+v.user_like_count) original_like_count,v.video_label_names as label_name
+        from videos v
+        where id = #{id} limit 1
+    </select>
+
+<!-- 修改视频收藏、分享数量 -->
+    <update id="updateCount" parameterType="java.util.HashMap">
+        UPDATE videos
+        <set>
+            <trim suffixOverrides=",">
+                <if test="opType == 10">
+                    user_like_count = user_like_count+1,
+                </if>
+                <if test="opType == 20">
+                    share_count = share_count+1,
+                </if>
+                <if test="opType == 30">
+                    user_like_count = (if(user_like_count>1,user_like_count-1,0)),
+                </if>
+                <if test="opType == 40">
+                    click_count = click_count+1,
+                </if>
+                <if test="opType == 50">
+                    success_num = success_num+1,
+                </if>
+            </trim>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 设置收藏类型 -->
+    <update id="updateType" parameterType="java.util.HashMap">
+        UPDATE cl_collection
+        <set>
+            <if test="opType != null and opType != ''">
+                type = #{opType},
+            </if>
+            update_time = now()
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 通过条件查询收藏信息列表 -->
+    <select id="findCollectionList" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+        SELECT
+        c.*,v.bsy_url,
+        (case when (v.like_count+v.user_like_count)>10000 then concat(round((v.like_count+v.user_like_count)/10000, 1),
+        'W') else (v.like_count+v.user_like_count) end) like_count
+        FROM cl_collection c,videos v
+        WHERE c.videos_id = v.id
+        <if test="deviceId != null and deviceId != ''">
+            AND c.device_id = #{deviceId}
+        </if>
+        ORDER BY type ASC
+    </select>
+
+    <!-- 新增收藏信息 -->
+    <insert id="saveCollection" parameterType="com.miguan.laidian.vo.ClCollectionVo">
+        INSERT INTO cl_collection
+        (device_id,videos_id,type,create_time,update_time)
+        VALUES
+        (#{deviceId},#{videosId},#{type},now(),now())
+    </insert>
+
+    <!-- 通过条件删除收藏信息 -->
+    <delete id="delCollection" parameterType="java.util.HashMap">
+        DELETE FROM cl_collection
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="deviceId != null and deviceId != ''">
+                AND device_id = #{deviceId}
+            </if>
+            <if test="videosId != null and videosId != ''">
+                AND videos_id = #{videosId}
+            </if>
+        </trim>
+    </delete>
+
+    <select id="gainShareVideos" parameterType="java.lang.String" resultType="java.util.Map">
+        select id, url_audio, bsy_img_url, bsy_url,(case when (like_count+user_like_count)>10000 then concat(round((like_count+user_like_count)/10000, 1),
+        'W') else (like_count+user_like_count) end) like_count,user_name,title from videos where id = #{videoId}
+        union
+        (select id, url_audio, bsy_img_url, bsy_url, (case when (like_count+user_like_count)>10000 then concat(round((like_count+user_like_count)/10000, 1),
+        'W') else (like_count+user_like_count) end) like_count,user_name,title from videos where id != #{videoId} limit 8)
+    </select>
+
+    <!--保存上传视频信息-->
+    <insert id="saveUploadVideos" parameterType="com.miguan.laidian.entity.Video">
+        insert into videos (type,title,bsy_url,bsy_audio_url,bsy_img_url,user_id,user_name,click_count,success_num,share_count,like_count,created_at,updated_at,approval_state,app_type)
+        values (#{videoType}, #{title}, #{bsyUrl}, #{bsyAudioUrl}, #{bsyImgUrl}, #{userId}, #{userName}, #{clickCount},#{successNum},#{shareCount}, #{likeCount}, now(), now(), #{approvalState},#{appType})
+    </insert>
+
+    <!--批量删除上传视频信息-->
+    <delete id="batchDelUploadVideos">
+        DELETE FROM videos where id in
+        <foreach collection="uploadVideosIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <select id="findVideosIdList" resultType="java.lang.Long" parameterType="java.util.HashMap">
+        SELECT
+        v.id
+        FROM videos v
+        <trim prefix="where" prefixOverrides="and|or">
+            v.bsy_url!=''
+            AND v.bsy_img_url!=''
+            AND v.click_count >= 300
+            AND v.success_rate > 2
+            <if test="interestCatIds != null and interestCatIds != ''">
+                AND v.cat_id in (${interestCatIds})
+            </if>
+            <if test="exceptCatIds != null and exceptCatIds != ''">
+                AND v.cat_id not in (${exceptCatIds})
+            </if>
+            <if test="state != null and state != ''">
+                AND v.state = #{state}
+            </if>
+            <if test="recommend != null and recommend != ''">
+                AND v.recommend = #{recommend}
+            </if>
+            <if test="approvalState != null and approvalState != ''">
+                AND v.approval_state = #{approvalState}
+            </if>
+        </trim>
+        ORDER BY RAND() LIMIT #{number}
+    </select>
+
+    <select id="findVideosIdCount" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+        SELECT
+        COUNT(*)
+        FROM videos v
+        <trim prefix="where" prefixOverrides="and|or">
+            v.bsy_url!=''
+            AND v.bsy_img_url!=''
+            AND v.click_count >= 300
+            AND v.success_rate > 2
+            <if test="interestCatIds != null and interestCatIds != ''">
+                AND v.cat_id in (${interestCatIds})
+            </if>
+            <if test="state != null and state != ''">
+                AND v.state = #{state}
+            </if>
+            <if test="recommend != null and recommend != ''">
+                AND v.recommend = #{recommend}
+            </if>
+            <if test="approvalState != null and approvalState != ''">
+                AND v.approval_state = #{approvalState}
+            </if>
+        </trim>
+    </select>
+
+    <select id="findVideosListById" resultType="com.miguan.laidian.entity.Video" parameterType="java.util.HashMap">
+        SELECT
+        v.id,v.recommend,v.title,v.url,v.cat_id,v.url_audio,v.url_img,v.local_url,v.bsy_url,v.local_img_url,v.bsy_img_url,
+        (case when (v.like_count+v.user_like_count)>10000 then concat(round((v.like_count+v.user_like_count)/10000, 1),'W')
+        else (v.like_count+v.user_like_count) end) like_count,v.force_adv,v.success_num,approval_state,type as videoType,
+        v.share_count,v.user_id,v.created_at,v.updated_at,v.state,v.local_audio_url,v.bsy_audio_url,v.user_name,
+        (v.like_count+v.user_like_count) original_like_count,v.video_label_names as label_name
+        FROM videos v
+        where v.id in (${tagIds})
+    </select>
+</mapper>

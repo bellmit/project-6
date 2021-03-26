@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.laidian.mapper.AboutUsMapper">
+
+    <resultMap type="com.miguan.laidian.vo.AboutUsVo" id="aboutUsMap">
+        <id property="id" column="id" javaType="java.lang.Long"></id>
+        <result property="company" column="company" javaType="java.lang.String"></result>
+        <result property="business" column="business" javaType="java.lang.String"></result>
+        <result property="version" column="version" javaType="java.lang.String"></result>
+        <result property="createdAt" column="created_at" javaType="java.lang.String"></result>
+        <result property="updatedAt" column="updated_at" javaType="java.lang.String"></result>
+        <result property="appType" column="app_type" javaType="java.lang.String"></result>
+    </resultMap>
+
+    <!-- 通用查询结果列-->
+    <sql id="Base_Column_List">
+		id, company, business, version, created_at, updated_at, app_type
+	</sql>
+
+    <!-- 通过条件查询关于我们列表 -->
+    <select id="findAboutUsList" resultMap="aboutUsMap" parameterType="java.util.HashMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM about_us
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="id != null and id != ''">
+                AND id = #{id}
+            </if>
+            <if test="company != null and company != ''">
+                AND company = #{company}
+            </if>
+            <if test="business != null and business != ''">
+                AND business = #{business}
+            </if>
+            <if test="version != null and version != ''">
+                AND version = #{version}
+            </if>
+            <if test="createdAt != null and createdAt != ''">
+                AND created_at = #{createdAt}
+            </if>
+            <if test="updatedAt != null and updatedAt != ''">
+                AND updated_at = #{updatedAt}
+            </if>
+            <if test="appType != null and appType != ''">
+                AND app_type = #{appType}
+            </if>
+        </trim>
+    </select>
+
+</mapper>

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.laidian.mapper.SmallVideoMapper">
+
+    <sql id="Base_small_video_list" >
+       v.id,v.title,v.url,v.cat_id,v.url_img,v.local_url,v.bsy_url,v.local_img_url,v.bsy_img_url,v.like_count,
+       v.click_count,v.user_like_count,v.share_count,v.user_id,v.state,
+       v.name,v.comment_count,v.url_headimg,v.local_headimg,v.bsy_head_url,v.phone_type,v.video_time
+    </sql>
+
+    <!-- 通过条件查询iOS视频源列列表 -->
+    <select id="findVideosList" resultType="com.miguan.laidian.vo.SmallVideoVo" parameterType="java.util.HashMap">
+        SELECT <include refid="Base_small_video_list" />,v.report_count as report
+        <if test="userId != null and userId != ''">
+            ,(case when cv.collection='1' then '1' else '0' end) collection,
+            (case when cv.love='1' then '1' else '0' end)  love
+        </if>
+        <if test="userId == null or userId == ''">
+            ,'0'  collection,'0'  love
+        </if>
+        FROM small_video v
+        FORCE INDEX(INDEX_CREATED_AT)
+        <if test="userId != null and userId != ''">
+            LEFT JOIN small_video_user cv on v.id = cv.video_id AND cv.user_id = #{userId}
+        </if>
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="state != null and state != ''">
+                AND v.state = #{state}
+            </if>
+            <if test="userId != null and userId != '' and appType!=null and appType!=''">
+                AND cv.app_type = #{appType}
+            </if>
+            and v.bsy_url!='' and v.bsy_img_url!=''
+            ORDER BY v.created_at DESC
+        </trim>
+    </select>
+
+    <!-- 修改举报次数 -->
+    <update id="updateReportCount" parameterType="java.util.HashMap">
+        UPDATE small_video set report_count = IFNULL(report_count, 0)+1
+        WHERE id = #{id}
+    </update>
+
+    <!-- 通过条件查询小视频列表 -->
+    <select id="findSmallVideosList" resultType="com.miguan.laidian.vo.SmallVideoVo" parameterType="java.util.HashMap">
+        SELECT
+        <include refid="Base_small_video_list" />
+        <if test="userId != null and userId != ''">
+            ,(case when cv.collection='1' then '1' else '0' end) collection,
+            (case when cv.love='1' then '1' else '0' end)  love
+        </if>
+        <if test="userId == null or userId == ''">
+            ,0  collection,0  love
+        </if>
+        FROM small_video v
+        LEFT JOIN small_video_user cv on v.id = cv.video_id
+        <if test="userId != null and userId != ''">
+            AND cv.user_id = #{userId}
+        </if>
+        <trim prefix="where" prefixOverrides="and|or">
+            v.bsy_url!='' and v.bsy_img_url!=''
+            <if test="userId != null and userId != ''">
+                AND  (cv.interest != 1 OR cv.interest is NULL)
+            </if>
+            <if test="userId != null and userId != '' and appType!=null and appType!=''">
+                AND cv.app_type = #{appType}
+            </if>
+            <if test="catId != null and catId != ''">
+                AND v.cat_id = #{catId}
+            </if>
+            <if test="state != null and state != ''">
+                AND v.state = #{state}
+            </if>
+            <if test="id != null and id != ''">
+                AND v.id = #{id}
+            </if>
+            ORDER BY v.created_at DESC
+        </trim>
+    </select>
+
+    <!-- 通过条件查询小视频列表 -->
+    <select id="findVideosDetailByOne" resultType="com.miguan.laidian.vo.SmallVideoVo" parameterType="java.util.HashMap">
+        SELECT
+        <include refid="Base_small_video_list" />
+        <if test="userId != null and userId != ''">
+            ,(case when cv.collection='1' then '1' else '0' end) collection,
+            (case when cv.love='1' then '1' else '0' end)  love
+        </if>
+        <if test="userId == null or userId == ''">
+            ,0  collection,0  love
+        </if>
+        FROM small_video v
+        FORCE INDEX(INDEX_CREATED_AT)
+        LEFT JOIN small_video_user cv on v.id = cv.video_id
+        <if test="userId != null and userId != ''">
+            AND cv.user_id = #{userId}
+        </if>
+        <if test="appType!=null and appType!=''">
+            AND cv.app_type = #{appType}
+        </if>
+        <trim prefix="where" prefixOverrides="and|or">
+            AND v.bsy_url!='' AND v.bsy_img_url!=''
+            <if test="userId != null and userId != ''">
+                AND  (cv.interest != 1 OR cv.interest is NULL)
+            </if>
+            <if test="catId != null and catId != ''">
+                AND v.cat_id = #{catId}
+            </if>
+            <if test="state != null and state != ''">
+                AND v.state = #{state}
+            </if>
+                AND v.id = #{id}
+            limit 1
+        </trim>
+    </select>
+
+
+    <!-- 更新小视频收藏数、点赞数、评论数、观看数 -->
+    <update id="updateIOSVideosCount" parameterType="java.util.HashMap">
+        UPDATE small_video
+        <set>
+            <trim suffixOverrides=",">
+                <if test="opType == 10">
+                    user_like_count = user_like_count+1,
+                </if>
+                <if test="opType == 20">
+                    like_count = like_count+1,
+                </if>
+                <if test="opType == 30">
+                    click_count = click_count+1,
+                </if>
+                <if test="opType == 40">
+                    user_like_count = (case when user_like_count = 0 then 0 else user_like_count-1 end),
+                </if>
+                <if test="opType == 50">
+                    like_count = (case when like_count = 0 then 0 else like_count-1 end),
+                </if>
+                <if test="opType == 60">
+                    comment_count = comment_count+1
+                </if>
+            </trim>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <select id="findFirstVideoListByMyCollection" resultType="com.miguan.laidian.vo.SmallVideoVo" parameterType="java.util.HashMap">
+        select sv.*,cuv.update_time as updatedAt ,cuv.id as collectionId
+        from small_video_user cuv
+        left join small_video sv on sv.id = cuv.video_id
+        where cuv.user_id = #{userId} and cuv.collection = #{collection}
+        and cuv.app_type = #{appType}
+        order by cuv.update_time DESC
+    </select>
+
+</mapper>

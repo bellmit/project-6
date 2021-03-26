@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.laidian.mapper.AdvertMapper">
+
+    <select id="queryAdertList" resultType="com.miguan.laidian.vo.Advert" parameterType="java.util.Map">
+        select p.id,n.id as xId, p.name postitionName, p.keyword postitionType, p.adv_count, n.title, n.url, n.remark, n.img_path,
+        n.img_path2, n.ad_type ,n.ad_code, n.ad_id,n.state
+        from news_feed_ads n, banner_position p
+        where p.id = n.banner_position_id
+        and p.state = 0
+        <!--and n.state = 0 -->
+        <if test="state != null">
+            and n.state = #{state}
+        </if>
+        and ((n.ad_type='1' and now() BETWEEN n.start_time and n.end_time) OR (n.ad_type='2'))
+        and n.channel_id = #{channelId}
+        <if test="postitionType != null and postitionType != ''">
+            and p.keyword = #{postitionType}
+        </if>
+        <if test="mobileType != null and mobileType != ''">
+            and p.mobile_type = #{mobileType}
+        </if>
+        <if test="appType != null and appType != ''">
+            and p.app_type = #{appType}
+            and n.app_type = #{appType}
+        </if>
+        <!--1百度 2广点通 3穿山甲-激励视频 4穿山甲-全屏广告 5穿山甲-开屏广告 6穿山甲-banner广告 7穿山甲-draw信息流广告 8穿山甲-信息流广告 9广点通-激励视频广告 10广点通-自渲染广告 -->
+        <if test="adPermission != null and adPermission == 0">
+            and (n.ad_code != 2 OR n.ad_code is null)
+        </if>
+        order by p.keyword, n.sort
+    </select>
+
+</mapper>

@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.miguan.laidian.mapper.LdBuryingPointAdditionalMapper" >
+    <resultMap id="BaseResultMap" type="com.miguan.laidian.entity.LdBuryingPointAdditional" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="action_id" property="actionId" jdbcType="VARCHAR" />
+        <result column="channel_id" property="channelId" jdbcType="VARCHAR" />
+        <result column="user_id" property="userId" jdbcType="VARCHAR" />
+        <result column="device_id" property="deviceId" jdbcType="VARCHAR" />
+        <result column="app_version" property="appVersion" jdbcType="VARCHAR" />
+        <result column="os_version" property="osVersion" jdbcType="VARCHAR" />
+        <result column="app_type" property="appType" jdbcType="VARCHAR" />
+        <result column="device_info" property="deviceInfo" jdbcType="VARCHAR" />
+        <result column="set_the_call_1" property="setTheCall1" jdbcType="BIT" />
+        <result column="set_the_call_2" property="setTheCall2" jdbcType="BIT" />
+        <result column="set_the_call_3" property="setTheCall3" jdbcType="BIT" />
+        <result column="selection_sort" property="selectionSort" jdbcType="BIT" />
+        <result column="a_small_video" property="aSmallVideo" jdbcType="BIT" />
+        <result column="a_small_video_1" property="aSmallVideo1" jdbcType="BIT" />
+        <result column="a_small_video_2" property="aSmallVideo2" jdbcType="BIT" />
+        <result column="a_small_video_5" property="aSmallVideo5" jdbcType="BIT" />
+        <result column="news_click" property="newsClick" jdbcType="BIT" />
+        <result column="make_money" property="makeMoney" jdbcType="BIT" />
+        <result column="has_logged_on" property="hasLoggedOn" jdbcType="BIT" />
+        <result column="the_task_center" property="theTaskCenter" jdbcType="BIT" />
+        <result column="users_to_upload" property="usersToUpload" jdbcType="BIT" />
+        <result column="submit_time" property="submitTime" jdbcType="DATE" />
+        <result column="user_state" property="userState" jdbcType="BIT" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+    id, action_id, channel_id, user_id, device_id, app_version, os_version, app_type,
+    device_info, set_the_call_1, set_the_call_2, set_the_call_3, selection_sort, a_small_video,
+    a_small_video_1, a_small_video_2, a_small_video_5, news_click, make_money, has_logged_on,
+    the_task_center, users_to_upload, submit_time, user_state
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+        select
+        <include refid="Base_Column_List" />
+        from ld_burying_point_additional
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from ld_burying_point_additional
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.miguan.laidian.entity.LdBuryingPointAdditional" >
+    insert into ld_burying_point_additional (id, action_id, channel_id,
+      user_id, device_id, app_version,
+      os_version, app_type, device_info,
+      set_the_call_1, set_the_call_2, set_the_call_3,
+      selection_sort, a_small_video, a_small_video_1,
+      a_small_video_2, a_small_video_5, news_click,
+      make_money, has_logged_on, the_task_center,
+      users_to_upload, submit_time, user_state
+      )
+    values (#{id,jdbcType=BIGINT}, #{actionId,jdbcType=VARCHAR}, #{channelId,jdbcType=VARCHAR},
+      #{userId,jdbcType=VARCHAR}, #{deviceId,jdbcType=VARCHAR}, #{appVersion,jdbcType=VARCHAR},
+      #{osVersion,jdbcType=VARCHAR}, #{appType,jdbcType=VARCHAR}, #{deviceInfo,jdbcType=VARCHAR},
+      #{setTheCall1,jdbcType=BIT}, #{setTheCall2,jdbcType=BIT}, #{setTheCall3,jdbcType=BIT},
+      #{selectionSort,jdbcType=BIT}, #{aSmallVideo,jdbcType=BIT}, #{aSmallVideo1,jdbcType=BIT},
+      #{aSmallVideo2,jdbcType=BIT}, #{aSmallVideo5,jdbcType=BIT}, #{newsClick,jdbcType=BIT},
+      #{makeMoney,jdbcType=BIT}, #{hasLoggedOn,jdbcType=BIT}, #{theTaskCenter,jdbcType=BIT},
+      #{usersToUpload,jdbcType=BIT}, #{submitTime,jdbcType=DATE}, #{userState,jdbcType=BIT}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.miguan.laidian.entity.LdBuryingPointAdditional" >
+        insert into ld_burying_point_additional
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="actionId != null" >
+                action_id,
+            </if>
+            <if test="channelId != null" >
+                channel_id,
+            </if>
+            <if test="userId != null" >
+                user_id,
+            </if>
+            <if test="deviceId != null" >
+                device_id,
+            </if>
+            <if test="appVersion != null" >
+                app_version,
+            </if>
+            <if test="osVersion != null" >
+                os_version,
+            </if>
+            <if test="appType != null" >
+                app_type,
+            </if>
+            <if test="deviceInfo != null" >
+                device_info,
+            </if>
+            <if test="setTheCall1 != null" >
+                set_the_call_1,
+            </if>
+            <if test="setTheCall2 != null" >
+                set_the_call_2,
+            </if>
+            <if test="setTheCall3 != null" >
+                set_the_call_3,
+            </if>
+            <if test="selectionSort != null" >
+                selection_sort,
+            </if>
+            <if test="aSmallVideo != null" >
+                a_small_video,
+            </if>
+            <if test="aSmallVideo1 != null" >
+                a_small_video_1,
+            </if>
+            <if test="aSmallVideo2 != null" >
+                a_small_video_2,
+            </if>
+            <if test="aSmallVideo5 != null" >
+                a_small_video_5,
+            </if>
+            <if test="newsClick != null" >
+                news_click,
+            </if>
+            <if test="makeMoney != null" >
+                make_money,
+            </if>
+            <if test="hasLoggedOn != null" >
+                has_logged_on,
+            </if>
+            <if test="theTaskCenter != null" >
+                the_task_center,
+            </if>
+            <if test="usersToUpload != null" >
+                users_to_upload,
+            </if>
+            <if test="submitTime != null" >
+                submit_time,
+            </if>
+            <if test="userState != null" >
+                user_state,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="actionId != null" >
+                #{actionId,jdbcType=VARCHAR},
+            </if>
+            <if test="channelId != null" >
+                #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null" >
+                #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="deviceId != null" >
+                #{deviceId,jdbcType=VARCHAR},
+            </if>
+            <if test="appVersion != null" >
+                #{appVersion,jdbcType=VARCHAR},
+            </if>
+            <if test="osVersion != null" >
+                #{osVersion,jdbcType=VARCHAR},
+            </if>
+            <if test="appType != null" >
+                #{appType,jdbcType=VARCHAR},
+            </if>
+            <if test="deviceInfo != null" >
+                #{deviceInfo,jdbcType=VARCHAR},
+            </if>
+            <if test="setTheCall1 != null" >
+                #{setTheCall1,jdbcType=BIT},
+            </if>
+            <if test="setTheCall2 != null" >
+                #{setTheCall2,jdbcType=BIT},
+            </if>
+            <if test="setTheCall3 != null" >
+                #{setTheCall3,jdbcType=BIT},
+            </if>
+            <if test="selectionSort != null" >
+                #{selectionSort,jdbcType=BIT},
+            </if>
+            <if test="aSmallVideo != null" >
+                #{aSmallVideo,jdbcType=BIT},
+            </if>
+            <if test="aSmallVideo1 != null" >
+                #{aSmallVideo1,jdbcType=BIT},
+            </if>
+            <if test="aSmallVideo2 != null" >
+                #{aSmallVideo2,jdbcType=BIT},
+            </if>
+            <if test="aSmallVideo5 != null" >
+                #{aSmallVideo5,jdbcType=BIT},
+            </if>
+            <if test="newsClick != null" >
+                #{newsClick,jdbcType=BIT},
+            </if>
+            <if test="makeMoney != null" >
+                #{makeMoney,jdbcType=BIT},
+            </if>
+            <if test="hasLoggedOn != null" >
+                #{hasLoggedOn,jdbcType=BIT},
+            </if>
+            <if test="theTaskCenter != null" >
+                #{theTaskCenter,jdbcType=BIT},
+            </if>
+            <if test="usersToUpload != null" >
+                #{usersToUpload,jdbcType=BIT},
+            </if>
+            <if test="submitTime != null" >
+                #{submitTime,jdbcType=DATE},
+            </if>
+            <if test="userState != null" >
+                #{userState,jdbcType=BIT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.miguan.laidian.entity.LdBuryingPointAdditional" >
+        update ld_burying_point_additional
+        <set >
+            <if test="actionId != null" >
+                action_id = #{actionId,jdbcType=VARCHAR},
+            </if>
+            <if test="channelId != null" >
+                channel_id = #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null" >
+                user_id = #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="deviceId != null" >
+                device_id = #{deviceId,jdbcType=VARCHAR},
+            </if>
+            <if test="appVersion != null" >
+                app_version = #{appVersion,jdbcType=VARCHAR},
+            </if>
+            <if test="osVersion != null" >
+                os_version = #{osVersion,jdbcType=VARCHAR},
+            </if>
+            <if test="appType != null" >
+                app_type = #{appType,jdbcType=VARCHAR},
+            </if>
+            <if test="deviceInfo != null" >
+                device_info = #{deviceInfo,jdbcType=VARCHAR},
+            </if>
+            <if test="setTheCall1 != null" >
+                set_the_call_1 = #{setTheCall1,jdbcType=BIT},
+            </if>
+            <if test="setTheCall2 != null" >
+                set_the_call_2 = #{setTheCall2,jdbcType=BIT},
+            </if>
+            <if test="setTheCall3 != null" >
+                set_the_call_3 = #{setTheCall3,jdbcType=BIT},
+            </if>
+            <if test="selectionSort != null" >
+                selection_sort = #{selectionSort,jdbcType=BIT},
+            </if>
+            <if test="aSmallVideo != null" >
+                a_small_video = #{aSmallVideo,jdbcType=BIT},
+            </if>
+            <if test="aSmallVideo1 != null" >
+                a_small_video_1 = #{aSmallVideo1,jdbcType=BIT},
+            </if>
+            <if test="aSmallVideo2 != null" >
+                a_small_video_2 = #{aSmallVideo2,jdbcType=BIT},
+            </if>
+            <if test="aSmallVideo5 != null" >
+                a_small_video_5 = #{aSmallVideo5,jdbcType=BIT},
+            </if>
+            <if test="newsClick != null" >
+                news_click = #{newsClick,jdbcType=BIT},
+            </if>
+            <if test="makeMoney != null" >
+                make_money = #{makeMoney,jdbcType=BIT},
+            </if>
+            <if test="hasLoggedOn != null" >
+                has_logged_on = #{hasLoggedOn,jdbcType=BIT},
+            </if>
+            <if test="theTaskCenter != null" >
+                the_task_center = #{theTaskCenter,jdbcType=BIT},
+            </if>
+            <if test="usersToUpload != null" >
+                users_to_upload = #{usersToUpload,jdbcType=BIT},
+            </if>
+            <if test="submitTime != null" >
+                submit_time = #{submitTime,jdbcType=DATE},
+            </if>
+            <if test="userState != null" >
+                user_state = #{userState,jdbcType=BIT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.miguan.laidian.entity.LdBuryingPointAdditional" >
+    update ld_burying_point_additional
+    set action_id = #{actionId,jdbcType=VARCHAR},
+      channel_id = #{channelId,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=VARCHAR},
+      device_id = #{deviceId,jdbcType=VARCHAR},
+      app_version = #{appVersion,jdbcType=VARCHAR},
+      os_version = #{osVersion,jdbcType=VARCHAR},
+      app_type = #{appType,jdbcType=VARCHAR},
+      device_info = #{deviceInfo,jdbcType=VARCHAR},
+      set_the_call_1 = #{setTheCall1,jdbcType=BIT},
+      set_the_call_2 = #{setTheCall2,jdbcType=BIT},
+      set_the_call_3 = #{setTheCall3,jdbcType=BIT},
+      selection_sort = #{selectionSort,jdbcType=BIT},
+      a_small_video = #{aSmallVideo,jdbcType=BIT},
+      a_small_video_1 = #{aSmallVideo1,jdbcType=BIT},
+      a_small_video_2 = #{aSmallVideo2,jdbcType=BIT},
+      a_small_video_5 = #{aSmallVideo5,jdbcType=BIT},
+      news_click = #{newsClick,jdbcType=BIT},
+      make_money = #{makeMoney,jdbcType=BIT},
+      has_logged_on = #{hasLoggedOn,jdbcType=BIT},
+      the_task_center = #{theTaskCenter,jdbcType=BIT},
+      users_to_upload = #{usersToUpload,jdbcType=BIT},
+      submit_time = #{submitTime,jdbcType=DATE},
+      user_state = #{userState,jdbcType=BIT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+    <update id="updateLdBuryingUserVideosByActionId" parameterType="com.miguan.laidian.entity.LdBuryingPointAdditional">
+        UPDATE ld_burying_point_additional
+        <set>
+            <trim suffixOverrides=",">
+                <if test="actionId == 'set_the_call_1'">
+                    set_the_call_1 = 1,
+                </if>
+                <if test="actionId == 'set_the_call_2'">
+                    set_the_call_2 = 1,
+                </if>
+                <if test="actionId == 'set_the_call_3'">
+                    set_the_call_3 = 1,
+                </if>
+                <if test="actionId == 'selection_sort'">
+                    selection_sort = 1,
+                </if>
+                <if test="actionId == 'a_small_video'">
+                    a_small_video = 1,
+                </if>
+                <if test="actionId == 'a_small_video_1'">
+                    a_small_video_1 = 1,
+                </if>
+                <if test="actionId == 'a_small_video_2'">
+                    a_small_video_2 = 1,
+                </if>
+                <if test="actionId == 'a_small_video_5'">
+                    a_small_video_5 = 1,
+                </if>
+                <if test="actionId == 'news_click'">
+                    news_click = 1,
+                </if>
+                <if test="actionId == 'has_logged_on'">
+                    has_logged_on = 1,
+                </if>
+                <if test="actionId == 'the_task_center'">
+                    the_task_center = 1,
+                </if>
+                <if test="actionId == 'make_money'">
+                    make_money = 1,
+                </if>
+                <if test="actionId == 'users_to_upload'">
+                    users_to_upload = 1,
+                </if>
+                <if test="actionId == 'no_users_to_upload'">
+                    users_to_upload = 0,
+                </if>
+                <if test="userId != '' and userId != null ">
+                    user_id = #{userId},
+                </if>
+            </trim>
+        </set>
+        WHERE device_id = #{deviceId}
+        and to_days(submit_time) = to_days(now());
+    </update>
+
+    <select id="findTodayBuryingPoint" resultMap="BaseResultMap" parameterType="com.miguan.laidian.entity.LdBuryingPointAdditional">
+        select
+        <include refid="Base_Column_List" />
+        from ld_burying_point_additional
+        where device_id = #{deviceId}
+        and app_type = #{appType}
+        and to_days(submit_time) = to_days(now());
+    </select>
+</mapper>

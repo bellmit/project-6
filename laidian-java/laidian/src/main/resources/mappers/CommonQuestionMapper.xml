@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.miguan.laidian.mapper.CommonQuestionMapper" >
+  <resultMap id="BaseResultMap" type="com.miguan.laidian.entity.CommonQuestion" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="tel_brand_id" property="telBrandId" jdbcType="INTEGER" />
+    <result column="tel_type" property="telType" jdbcType="VARCHAR" />
+    <result column="app_type" property="appType" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="click_num" property="clickNum" jdbcType="INTEGER" />
+    <result column="useful_num" property="usefulNum" jdbcType="INTEGER" />
+    <result column="unuseful_num" property="unusefulNum" jdbcType="INTEGER" />
+    <result column="weight" property="weight" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, title, tel_brand_id, tel_type, app_type, state, click_num, useful_num, unuseful_num, 
+    weight, create_time, update_time,content
+  </sql>
+
+  <update id="updateCommonQuestionNumber" parameterType="com.miguan.laidian.vo.CommonQuestionVO" >
+    UPDATE common_question
+    <set>
+      <trim suffixOverrides=",">
+        <if test="clickType == 'clickNum'">
+          click_num = click_num+1,
+        </if>
+        <if test="clickType == 'usefulNum'">
+          useful_num = useful_num+1,
+        </if>
+        <if test="clickType == 'unusefulNum'">
+          unuseful_num = unuseful_num+1,
+        </if>
+      </trim>
+    </set>
+    WHERE id = #{id}
+  </update>
+
+  <select id="findAllCommonQuestionList" resultMap="BaseResultMap" parameterType="com.miguan.laidian.entity.CommonQuestion">
+    select
+    <include refid="Base_Column_List" />
+    from common_question
+    <where>
+      <if test="id != null" >
+        id = #{id,jdbcType=BIGINT}
+      </if>
+      <if test="telBrandId != null" >
+        and tel_brand_id like CONCAT('%','${telBrandId}','%')
+      </if>
+      <if test="telType != null" >
+        and tel_type like CONCAT('%','${telType}','%')
+      </if>
+      <if test="appType != null" >
+        and app_type like CONCAT('%','${appType}','%')
+      </if>
+      and state = 1
+    </where>
+    order by weight desc
+  </select>
+
+
+  <select id="findAllByCommonQuestionList" resultMap="BaseResultMap" parameterType="com.miguan.laidian.vo.CommonQuestionVO">
+    select
+    <include refid="Base_Column_List" />
+    from common_question
+    <where>
+      <if test="id != null" >
+        id = #{id,jdbcType=BIGINT}
+      </if>
+      <if test="telBrandId != null" >
+          and tel_brand_id REGEXP #{telBrandId}
+      </if>
+      <if test="appType != null" >
+          and app_type like CONCAT('%','${appType}','%')
+      </if>
+      and state = 1
+    </where>
+    order by weight desc
+  </select>
+</mapper>

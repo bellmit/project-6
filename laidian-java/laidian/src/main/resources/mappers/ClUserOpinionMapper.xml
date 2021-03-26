@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.laidian.mapper.ClUserOpinionMapper">
+
+	<resultMap type="com.miguan.laidian.vo.ClUserOpinionVo" id="clUserOpinionMap">
+		<id property="id" column="id" javaType="java.lang.Long"></id>
+		<result property="userId" column="user_id" javaType="java.lang.Long"></result>
+		<result property="content" column="content" javaType="java.lang.String"></result>
+		<result property="imageUrl" column="image_url" javaType="java.lang.String"></result>
+		<result property="state" column="state" javaType="java.lang.String"></result>
+		<result property="reply" column="reply" javaType="java.lang.String"></result>
+		<result property="createTime" column="create_time" javaType="java.lang.String"></result>
+		<result property="updateTime" column="update_time" javaType="java.lang.String"></result>
+		<result property="deviceId" column="device_id" javaType="java.lang.String"></result>
+		<result property="replyState" column="reply_state" javaType="java.lang.String"></result>
+	</resultMap>
+
+	<!-- 通用查询结果列-->
+	<sql id="Base_Column_List">
+		id, user_id, content, image_url, state, reply, create_time, update_time, device_id,
+		reply_state, app_type
+	</sql>
+
+	<!-- 基本用户信息的sql查询条件公共引用-->
+	<sql id="searchBaseBy">
+		<trim prefix="where" prefixOverrides="and|or">
+			<if test="id != null and id != ''">
+				AND id = #{id}
+			</if>
+			<if test="userId != null and userId != ''">
+				AND user_id = #{userId}
+			</if>
+			<if test="content != null and content != ''">
+				AND content = #{content}
+			</if>
+			<if test="imageUrl != null and imageUrl != ''">
+				AND image_url = #{imageUrl}
+			</if>
+			<if test="state != null and state != ''">
+				AND state = #{state}
+			</if>
+			<if test="reply != null and reply != ''">
+				AND reply = #{reply}
+			</if>
+			<if test="createTime != null and createTime != ''">
+				AND create_time = #{createTime}
+			</if>
+			<if test="updateTime != null and updateTime != ''">
+				AND update_time = #{updateTime}
+			</if>
+			<if test="deviceId != null and deviceId != ''">
+				AND device_id = #{deviceId}
+			</if>
+		</trim>
+	</sql>
+
+	<!-- 通过ID查询用户意见反馈信息 -->
+	<select id="getClUserOpinionById" resultMap="clUserOpinionMap" parameterType="java.lang.String">
+		 SELECT
+		 <include refid="Base_Column_List" />
+		 FROM cl_user_opinion
+		 WHERE id = #{id}
+	</select>
+
+	<!-- 通过条件查询用户意见反馈列表 -->
+	<select id="findClUserOpinionList" resultMap="clUserOpinionMap" parameterType="java.util.HashMap">
+		 SELECT
+		 <include refid="Base_Column_List" />
+		 FROM cl_user_opinion
+		 <include refid="searchBaseBy" />
+		 order by update_time desc
+	</select>
+
+	<!-- 新增用户意见反馈信息 -->
+	<insert id="saveClUserOpinion" parameterType="com.miguan.laidian.vo.ClUserOpinionVo">
+		 INSERT INTO cl_user_opinion
+ 		(user_id,content,image_url,state,reply,create_time,update_time,app_type,
+ 		device_id,contact,tel_brand,tel_type,tel_type_vision,android_vision,noopen_permission)
+		 VALUES 
+ 		(#{userId},#{content},#{imageUrl},#{state},#{reply},now(),now(),#{appType},
+ 		#{deviceId},#{contact},#{telBrand},#{telType},#{telTypeVision},#{androidVision},#{noopenPermission})
+	</insert>
+
+	<update id="updateUserOpinionState" parameterType="java.lang.String">
+		UPDATE cl_user_opinion SET reply_state = 1 WHERE id = #{id}
+	</update>
+
+	<!-- 通过条件查询用户意见反馈列表 -->
+	<select id="findClUserOpinionNumber" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+		SELECT
+			count(*)
+		FROM cl_user_opinion
+		where device_id = #{deviceId} and reply_state = #{replyState} and state = 1
+	</select>
+
+</mapper>

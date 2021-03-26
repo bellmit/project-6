@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.miguan.laidian.mapper.TelBrandMapper" >
+  <resultMap id="BaseResultMap" type="com.miguan.laidian.entity.TelBrand" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="tel_brand" property="telBrand" jdbcType="VARCHAR" />
+    <result column="tel_key" property="telKey" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, tel_brand, tel_key, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from tel_brand
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from tel_brand
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.miguan.laidian.entity.TelBrand" >
+    insert into tel_brand (id, tel_brand, tel_key, 
+      create_time, update_time)
+    values (#{id,jdbcType=BIGINT}, #{telBrand,jdbcType=VARCHAR}, #{telKey,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.miguan.laidian.entity.TelBrand" >
+    insert into tel_brand
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="telBrand != null" >
+        tel_brand,
+      </if>
+      <if test="telKey != null" >
+        tel_key,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="telBrand != null" >
+        #{telBrand,jdbcType=VARCHAR},
+      </if>
+      <if test="telKey != null" >
+        #{telKey,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.miguan.laidian.entity.TelBrand" >
+    update tel_brand
+    <set >
+      <if test="telBrand != null" >
+        tel_brand = #{telBrand,jdbcType=VARCHAR},
+      </if>
+      <if test="telKey != null" >
+        tel_key = #{telKey,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.miguan.laidian.entity.TelBrand" >
+    update tel_brand
+    set tel_brand = #{telBrand,jdbcType=VARCHAR},
+      tel_key = #{telKey,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <select id="selectTelBrandByTelKey" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tel_brand
+    where tel_key = #{telKey}
+  </select>
+
+  <select id="selectTelBrandByTelKeyList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tel_brand
+    where tel_key in
+    <foreach collection="telKeyList" item="telKey" index="index" open="(" close=")" separator=",">
+      #{telKey}
+    </foreach>
+  </select>
+</mapper>

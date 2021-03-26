@@ -1,0 +1,20 @@
+INSERT INTO `arc_sys_config`(`type`, `name`, `code`, `value`, `status`, `remark`, `creator`, `created_at`, `updated_at`) VALUES (20, 'android来电列表广告位次数', 'call_list_count', '5', 1, '所有分类（收藏除外）每5个视频插入一个广告', 1, NULL, NULL);
+INSERT INTO `arc_sys_config`(`type`, `name`, `code`, `value`, `status`, `remark`, `creator`, `created_at`, `updated_at`) VALUES (20, 'android来电详情广告位次数', 'call_details_count', '5', 1, '所有分类（收藏除外）每5个视频插入一个广告', 1, NULL, NULL);
+INSERT INTO `arc_sys_config`(`type`, `name`, `code`, `value`, `status`, `remark`, `creator`, `created_at`, `updated_at`) VALUES (20, 'android来电详情解锁广告位次数', 'call_details_deblocking_count', '2', 1, '所有的来电视频，两次设置来电秀成功后，出现解锁样式', 1, NULL, NULL);
+INSERT INTO `arc_sys_config`(`type`, `name`, `code`, `value`, `status`, `remark`, `creator`, `created_at`, `updated_at`) VALUES (20, 'android来电详情退出广告位次数', 'call_details_quit_count', '3', 1, '从来电详情页面返回到来单列表页面，每返回3次显示1次广告', 1, NULL, NULL);
+INSERT INTO `arc_sys_config`(`type`, `name`, `code`, `value`, `status`, `remark`, `creator`, `created_at`, `updated_at`) VALUES (20, 'android来电详情退出广告位每天上限', 'call_details_quit_limit', '5', 1, '从来电详情页面返回到来单列表页面,广告每天只显示5次', 1, NULL, NULL);
+INSERT INTO `arc_sys_config`(`type`, `name`, `code`, `value`, `status`, `remark`, `creator`, `created_at`, `updated_at`) VALUES (20, 'iOS来电详情广告位次数', 'detail_page_count', '6', 1, '来电图片和视频每滑动6次，显示广告', 1, NULL, NULL);
+
+INSERT INTO `banner_position`( `name`, `keyword`, `remark`, `state`, `mobile_type`, `created_at`, `updated_at`) VALUES ('启动页', 'openScreenPageAndroid', NULL, 0, '2', '2019-08-02 14:15:05', '2019-06-27 18:26:00');
+INSERT INTO `banner_position`( `name`, `keyword`, `remark`, `state`, `mobile_type`, `created_at`, `updated_at`) VALUES ('退出页', 'exitPage', NULL, 0, '2', '2019-08-02 14:15:05', NULL);
+INSERT INTO `banner_position`( `name`, `keyword`, `remark`, `state`, `mobile_type`, `created_at`, `updated_at`) VALUES ('来电列表', 'callList', NULL, 0, '2', '2019-08-02 14:15:05', NULL);
+INSERT INTO `banner_position`( `name`, `keyword`, `remark`, `state`, `mobile_type`, `created_at`, `updated_at`) VALUES ('来电详情', 'callDetails', NULL, 0, '2', '2019-08-02 14:15:05', NULL);
+INSERT INTO `banner_position`( `name`, `keyword`, `remark`, `state`, `mobile_type`, `created_at`, `updated_at`) VALUES ('来电详情-悬浮窗', 'callDetailsFloatingWindow', NULL, 0, '2', '2019-08-02 14:15:05', NULL);
+INSERT INTO `banner_position`( `name`, `keyword`, `remark`, `state`, `mobile_type`, `created_at`, `updated_at`) VALUES ('来电详情-解锁', 'callDetailsDeblocking', NULL, 0, '2', '2019-08-02 14:15:05', NULL);
+INSERT INTO `banner_position`( `name`, `keyword`, `remark`, `state`, `mobile_type`, `created_at`, `updated_at`) VALUES ('来电详情-弹窗', 'callDetailsPopupWindows', NULL, 0, '2', '2019-08-02 14:15:05', NULL);
+INSERT INTO `banner_position`( `name`, `keyword`, `remark`, `state`, `mobile_type`, `created_at`, `updated_at`) VALUES ('来电详情-退出', 'callDetailsQuit', NULL, 0, '2', '2019-08-02 14:15:05', NULL);
+INSERT INTO `banner_position`( `name`, `keyword`, `remark`, `state`, `mobile_type`, `created_at`, `updated_at`) VALUES ('来电分类解锁', 'callClassificationDeblocking', NULL, 0, '2', '2019-08-02 14:15:05', NULL);
+INSERT INTO `banner_position`( `name`, `keyword`, `remark`, `state`, `mobile_type`, `created_at`, `updated_at`) VALUES ('资讯-信息流', 'informationFlow', NULL, 0, '2', '2019-08-02 14:15:05', NULL);
+INSERT INTO `banner_position`( `name`, `keyword`, `remark`, `state`, `mobile_type`, `created_at`, `updated_at`) VALUES ('启动页', 'openScreenPageIos', NULL, 0, '1', '2019-08-02 14:25:50', NULL);
+INSERT INTO `banner_position`( `name`, `keyword`, `remark`, `state`, `mobile_type`, `created_at`, `updated_at`) VALUES ('个人页面', 'personalPage', NULL, 0, '1', '2019-08-02 14:27:21', NULL);
+INSERT INTO `banner_position`( `name`, `keyword`, `remark`, `state`, `mobile_type`, `created_at`, `updated_at`) VALUES ('详情页', 'detailPage', NULL, 0, '1', '2019-08-02 14:27:46', NULL);

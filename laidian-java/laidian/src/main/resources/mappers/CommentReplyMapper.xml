@@ -1,0 +1,645 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.miguan.laidian.mapper.CommentReplyMapper" >
+    <resultMap id="BaseResultMap" type="com.miguan.laidian.entity.CommentReply" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="comment_id" property="commentId" jdbcType="VARCHAR" />
+        <result column="reply_type" property="replyType" jdbcType="INTEGER" />
+        <result column="reply_id" property="replyId" jdbcType="VARCHAR" />
+        <result column="content" property="content" jdbcType="VARCHAR" />
+        <result column="to_nickname" property="toNickname" jdbcType="VARCHAR" />
+        <result column="to_from_uid" property="toFromUid" jdbcType="BIGINT" />
+        <result column="from_uid" property="fromUid" jdbcType="BIGINT" />
+        <result column="from_thumb_img" property="fromThumbImg" jdbcType="VARCHAR" />
+        <result column="from_nickname" property="fromNickname" jdbcType="VARCHAR" />
+        <result column="nick_time" property="nickTime" jdbcType="TIMESTAMP" />
+        <result column="is_author" property="isAuthor" jdbcType="INTEGER" />
+        <result column="is_top" property="isTop" jdbcType="INTEGER" />
+        <result column="is_hot" property="isHot" jdbcType="INTEGER" />
+        <result column="like_num" property="likeNum" jdbcType="BIGINT" />
+        <result column="reply_num" property="replyNum" jdbcType="BIGINT" />
+        <result column="p_comment_id" property="pCommentId" jdbcType="VARCHAR" />
+        <result column="video_id" property="videoId" jdbcType="BIGINT" />
+        <result column="status" property="status" jdbcType="INTEGER" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="create_no" property="createNo" jdbcType="BIGINT" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="update_no" property="updateNo" jdbcType="BIGINT" />
+        <result column="already_read" property="alreadyRead" jdbcType="INTEGER" />
+        <result column="my_content" property="myContent" jdbcType="VARCHAR" />
+        <result column="video_type" property="videoType" jdbcType="INTEGER" />
+        <result column="app_type" property="appType" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap id="CLBaseResultMap" type="com.miguan.laidian.entity.CommentReply" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="comment_id" property="commentId" jdbcType="VARCHAR" />
+        <result column="reply_type" property="replyType" jdbcType="INTEGER" />
+        <result column="reply_id" property="replyId" jdbcType="VARCHAR" />
+        <result column="content" property="content" jdbcType="VARCHAR" />
+        <result column="to_nickname" property="toNickname" jdbcType="VARCHAR" />
+        <result column="to_from_uid" property="toFromUid" jdbcType="BIGINT" />
+        <result column="from_uid" property="fromUid" jdbcType="BIGINT" />
+        <result column="fromThumbImg" property="fromThumbImg" jdbcType="VARCHAR" />
+        <result column="fromNickname1" property="fromNickname1" jdbcType="VARCHAR" />
+        <result column="from_nickname" property="fromNickname" jdbcType="VARCHAR" />
+        <result column="nick_time" property="nickTime" jdbcType="TIMESTAMP" />
+        <result column="is_author" property="isAuthor" jdbcType="INTEGER" />
+        <result column="is_top" property="isTop" jdbcType="INTEGER" />
+        <result column="is_hot" property="isHot" jdbcType="INTEGER" />
+        <result column="like_num" property="likeNum" jdbcType="BIGINT" />
+        <result column="reply_num" property="replyNum" jdbcType="BIGINT" />
+        <result column="p_comment_id" property="pCommentId" jdbcType="VARCHAR" />
+        <result column="video_id" property="videoId" jdbcType="BIGINT" />
+        <result column="status" property="status" jdbcType="INTEGER" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="create_no" property="createNo" jdbcType="BIGINT" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="update_no" property="updateNo" jdbcType="BIGINT" />
+        <result column="MyContent" property="MyContent" jdbcType="VARCHAR" />
+        <result column="already_read" property="alreadyRead" jdbcType="INTEGER" />
+        <result column="video_type" property="videoType" jdbcType="INTEGER" />
+        <result column="app_type" property="appType" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap id="BaseResultMapResponse" type="com.miguan.laidian.entity.CommentReplyResponse" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="comment_id" property="commentId" jdbcType="VARCHAR" />
+        <result column="reply_type" property="replyType" jdbcType="INTEGER" />
+        <result column="reply_id" property="replyId" jdbcType="VARCHAR" />
+        <result column="content" property="content" jdbcType="VARCHAR" />
+        <result column="toNickname" property="toNickname" jdbcType="VARCHAR" />
+        <result column="to_from_uid" property="toFromUid" jdbcType="BIGINT" />
+        <result column="from_uid" property="fromUid" jdbcType="BIGINT" />
+        <result column="fromThumbImg" property="fromThumbImg" jdbcType="VARCHAR" />
+        <result column="fromNickname" property="fromNickname" jdbcType="VARCHAR" />
+        <result column="nick_time" property="nickTime" jdbcType="TIMESTAMP" />
+        <result column="is_author" property="isAuthor" jdbcType="INTEGER" />
+        <result column="is_top" property="isTop" jdbcType="INTEGER" />
+        <result column="is_hot" property="isHot" jdbcType="INTEGER" />
+        <result column="like_num" property="likeNum" jdbcType="BIGINT" />
+        <result column="reply_num" property="replyNum" jdbcType="BIGINT" />
+        <result column="p_comment_id" property="pCommentId" jdbcType="VARCHAR" />
+        <result column="video_id" property="videoId" jdbcType="BIGINT" />
+        <result column="status" property="status" jdbcType="INTEGER" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="create_no" property="createNo" jdbcType="BIGINT" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="update_no" property="updateNo" jdbcType="BIGINT" />
+        <result column="MyContent" property="MyContent" jdbcType="VARCHAR" />
+        <result column="already_read" property="alreadyRead" jdbcType="INTEGER" />
+        <result column="video_type" property="videoType" jdbcType="INTEGER" />
+        <result column="app_type" property="appType" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+    id, comment_id, reply_type, reply_id, content, to_nickname, to_from_uid, from_uid,
+    from_thumb_img, from_nickname, nick_time, is_author, is_top, is_hot, like_num, reply_num,
+    p_comment_id, video_id, status, create_time, create_no, update_time, update_no,already_read,video_type,app_type
+  </sql>
+    <sql id="CL_Base_Column_List" >
+    cr.id, cr.comment_id, cr.reply_type, cr.reply_id, cr.content, cr.to_from_uid, cr.from_uid,
+    cr.nick_time, cr.is_author, cr.is_top, cr.is_hot, cr.like_num, cr.reply_num,cr.p_comment_id,
+    cr.video_id, cr.status, cr.create_time, cr.create_no, cr.update_time, cr.update_no,cr.already_read,cr.video_type,cr.app_type
+  </sql>
+    <sql id="Base_Column_List_Response" >
+    cc.id, cc.comment_id, cc.reply_type, cc.reply_id, cc.content, cc.to_nickname, cc.to_from_uid, cc.from_uid,cc.fromThumbImg as fromThumbImg,
+    cc.from_nickname, cc.nick_time, cc.is_author, cc.is_top, cc.is_hot, cc.like_num, cc.reply_num,cc.p_comment_id, cc.video_id, cc.status,
+    cc.create_time, cc.create_no, cc.update_time, cc.update_no,cc.already_read,cc.video_type,cc.fromNickname,cc.app_type
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+        select
+        <include refid="Base_Column_List" />
+        from comment_reply
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from comment_reply
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.miguan.laidian.entity.CommentReply" >
+   insert into comment_reply (id, comment_id, reply_type,
+      reply_id, content, to_nickname,
+      to_from_uid, from_uid, from_thumb_img,
+      from_nickname, nick_time, is_author,
+      is_top, is_hot, like_num,
+      reply_num, p_comment_id, video_id,
+      status, create_time, create_no,
+      update_time, update_no, my_content,
+      already_read, video_type, app_type)
+    values (#{id,jdbcType=BIGINT}, #{commentId,jdbcType=VARCHAR}, #{replyType,jdbcType=INTEGER},
+      #{replyId,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, #{toNickname,jdbcType=VARCHAR},
+      #{toFromUid,jdbcType=BIGINT}, #{fromUid,jdbcType=BIGINT}, #{fromThumbImg,jdbcType=VARCHAR},
+      #{fromNickname,jdbcType=VARCHAR}, #{nickTime,jdbcType=TIMESTAMP}, #{isAuthor,jdbcType=INTEGER},
+      #{isTop,jdbcType=INTEGER}, #{isHot,jdbcType=INTEGER}, #{likeNum,jdbcType=BIGINT},
+      #{replyNum,jdbcType=BIGINT}, #{pCommentId,jdbcType=VARCHAR}, #{videoId,jdbcType=BIGINT},
+      #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{createNo,jdbcType=BIGINT},
+      #{updateTime,jdbcType=TIMESTAMP}, #{updateNo,jdbcType=BIGINT}, #{myContent,jdbcType=VARCHAR},
+      #{alreadyRead,jdbcType=INTEGER}, #{videoType,jdbcType=INTEGER}, #{appType,jdbcType=VARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="com.miguan.laidian.entity.CommentReply" >
+        insert into comment_reply
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="commentId != null" >
+                comment_id,
+            </if>
+            <if test="replyType != null" >
+                reply_type,
+            </if>
+            <if test="replyId != null" >
+                reply_id,
+            </if>
+            <if test="content != null" >
+                content,
+            </if>
+            <if test="toNickname != null" >
+                to_nickname,
+            </if>
+            <if test="toFromUid != null" >
+                to_from_uid,
+            </if>
+            <if test="fromUid != null" >
+                from_uid,
+            </if>
+            <if test="fromThumbImg != null" >
+                from_thumb_img,
+            </if>
+            <if test="fromNickname != null" >
+                from_nickname,
+            </if>
+            <if test="nickTime != null" >
+                nick_time,
+            </if>
+            <if test="isAuthor != null" >
+                is_author,
+            </if>
+            <if test="isTop != null" >
+                is_top,
+            </if>
+            <if test="isHot != null" >
+                is_hot,
+            </if>
+            <if test="likeNum != null" >
+                like_num,
+            </if>
+            <if test="replyNum != null" >
+                reply_num,
+            </if>
+            <if test="pCommentId != null" >
+                p_comment_id,
+            </if>
+            <if test="videoId != null" >
+                video_id,
+            </if>
+            <if test="status != null" >
+                status,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="createNo != null" >
+                create_no,
+            </if>
+            <if test="updateTime != null" >
+                update_time,
+            </if>
+            <if test="updateNo != null" >
+                update_no,
+            </if>
+            <if test="myContent != null" >
+                my_content,
+            </if>
+            <if test="alreadyRead != null" >
+                already_read,
+            </if>
+            <if test="videoType != null" >
+                video_type,
+            </if>
+            <if test="appType != null" >
+                app_type,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="commentId != null" >
+                #{commentId,jdbcType=VARCHAR},
+            </if>
+            <if test="replyType != null" >
+                #{replyType,jdbcType=INTEGER},
+            </if>
+            <if test="replyId != null" >
+                #{replyId,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null" >
+                #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="toNickname != null" >
+                #{toNickname,jdbcType=VARCHAR},
+            </if>
+            <if test="toFromUid != null" >
+                #{toFromUid,jdbcType=BIGINT},
+            </if>
+            <if test="fromUid != null" >
+                #{fromUid,jdbcType=BIGINT},
+            </if>
+            <if test="fromThumbImg != null" >
+                #{fromThumbImg,jdbcType=VARCHAR},
+            </if>
+            <if test="fromNickname != null" >
+                #{fromNickname,jdbcType=VARCHAR},
+            </if>
+            <if test="nickTime != null" >
+                #{nickTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isAuthor != null" >
+                #{isAuthor,jdbcType=INTEGER},
+            </if>
+            <if test="isTop != null" >
+                #{isTop,jdbcType=INTEGER},
+            </if>
+            <if test="isHot != null" >
+                #{isHot,jdbcType=INTEGER},
+            </if>
+            <if test="likeNum != null" >
+                #{likeNum,jdbcType=BIGINT},
+            </if>
+            <if test="replyNum != null" >
+                #{replyNum,jdbcType=BIGINT},
+            </if>
+            <if test="pCommentId != null" >
+                #{pCommentId,jdbcType=VARCHAR},
+            </if>
+            <if test="videoId != null" >
+                #{videoId,jdbcType=BIGINT},
+            </if>
+            <if test="status != null" >
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createNo != null" >
+                #{createNo,jdbcType=BIGINT},
+            </if>
+            <if test="updateTime != null" >
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateNo != null" >
+                #{updateNo,jdbcType=BIGINT},
+            </if>
+            <if test="myContent != null" >
+                #{myContent,jdbcType=VARCHAR},
+            </if>
+            <if test="alreadyRead != null" >
+                #{alreadyRead,jdbcType=INTEGER},
+            </if>
+            <if test="videoType != null" >
+                #{videoType,jdbcType=INTEGER},
+            </if>
+            <if test="appType != null" >
+                #{appType,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.miguan.laidian.entity.CommentReply" >
+        update comment_reply
+        <set >
+            <if test="commentId != null" >
+                comment_id = #{commentId,jdbcType=VARCHAR},
+            </if>
+            <if test="replyType != null" >
+                reply_type = #{replyType,jdbcType=INTEGER},
+            </if>
+            <if test="replyId != null" >
+                reply_id = #{replyId,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null" >
+                content = #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="toNickname != null" >
+                to_nickname = #{toNickname,jdbcType=VARCHAR},
+            </if>
+            <if test="toFromUid != null" >
+                to_from_uid = #{toFromUid,jdbcType=BIGINT},
+            </if>
+            <if test="fromUid != null" >
+                from_uid = #{fromUid,jdbcType=BIGINT},
+            </if>
+            <if test="fromThumbImg != null" >
+                from_thumb_img = #{fromThumbImg,jdbcType=VARCHAR},
+            </if>
+            <if test="fromNickname != null" >
+                from_nickname = #{fromNickname,jdbcType=VARCHAR},
+            </if>
+            <if test="nickTime != null" >
+                nick_time = #{nickTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isAuthor != null" >
+                is_author = #{isAuthor,jdbcType=INTEGER},
+            </if>
+            <if test="isTop != null" >
+                is_top = #{isTop,jdbcType=INTEGER},
+            </if>
+            <if test="isHot != null" >
+                is_hot = #{isHot,jdbcType=INTEGER},
+            </if>
+            <if test="likeNum != null" >
+                like_num = #{likeNum,jdbcType=BIGINT},
+            </if>
+            <if test="replyNum != null" >
+                reply_num = #{replyNum,jdbcType=BIGINT},
+            </if>
+            <if test="pCommentId != null" >
+                p_comment_id = #{pCommentId,jdbcType=VARCHAR},
+            </if>
+            <if test="videoId != null" >
+                video_id = #{videoId,jdbcType=BIGINT},
+            </if>
+            <if test="status != null" >
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createNo != null" >
+                create_no = #{createNo,jdbcType=BIGINT},
+            </if>
+            <if test="updateTime != null" >
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateNo != null" >
+                update_no = #{updateNo,jdbcType=BIGINT},
+            </if>
+            <if test="alreadyRead != null" >
+                already_read = #{alreadyRead,jdbcType=INTEGER},
+            </if>
+            <if test="videoType != null" >
+                video_type = #{videoType,jdbcType=INTEGER},
+            </if>
+            <if test="appType != null" >
+                video_type = #{appType,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.miguan.laidian.entity.CommentReply" >
+    update comment_reply
+    set comment_id = #{commentId,jdbcType=VARCHAR},
+      reply_type = #{replyType,jdbcType=INTEGER},
+      reply_id = #{replyId,jdbcType=VARCHAR},
+      content = #{content,jdbcType=VARCHAR},
+      to_nickname = #{toNickname,jdbcType=VARCHAR},
+      to_from_uid = #{toFromUid,jdbcType=BIGINT},
+      from_uid = #{fromUid,jdbcType=BIGINT},
+      from_thumb_img = #{fromThumbImg,jdbcType=VARCHAR},
+      from_nickname = #{fromNickname,jdbcType=VARCHAR},
+      nick_time = #{nickTime,jdbcType=TIMESTAMP},
+      is_author = #{isAuthor,jdbcType=INTEGER},
+      is_top = #{isTop,jdbcType=INTEGER},
+      is_hot = #{isHot,jdbcType=INTEGER},
+      like_num = #{likeNum,jdbcType=BIGINT},
+      reply_num = #{replyNum,jdbcType=BIGINT},
+      p_comment_id = #{pCommentId,jdbcType=VARCHAR},
+      video_id = #{videoId,jdbcType=BIGINT},
+      status = #{status,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_no = #{createNo,jdbcType=BIGINT},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_no = #{updateNo,jdbcType=BIGINT},
+      my_content = #{myContent,jdbcType=VARCHAR},
+      already_read = #{alreadyRead,jdbcType=INTEGER},
+      video_type = #{videoType,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+    <sql id="contion_query">
+        <trim prefix="where" prefixOverrides="and">
+            <if test="commentId != null" >
+                cr.comment_id = #{commentId,jdbcType=VARCHAR}
+            </if>
+            <if test="replyType != null" >
+                AND   cr.reply_type = #{replyType,jdbcType=INTEGER}
+            </if>
+            <if test="replyId != null" >
+                AND  cr.reply_id = #{replyId,jdbcType=VARCHAR}
+            </if>
+            <if test="content != null" >
+                AND  cr.content = #{content,jdbcType=VARCHAR}
+            </if>
+            <if test="toNickname != null" >
+                AND  cr.to_nickname = #{toNickname,jdbcType=VARCHAR}
+            </if>
+            <if test="toFromUid != null" >
+                AND  cr.to_from_uid = #{toFromUid,jdbcType=BIGINT}
+            </if>
+            <if test="fromUid != null" >
+                AND  cr.from_uid = #{fromUid,jdbcType=BIGINT}
+            </if>
+            <if test="fromThumbImg != null" >
+                AND  cr.from_thumb_img = #{fromThumbImg,jdbcType=VARCHAR}
+            </if>
+            <if test="fromNickname != null" >
+                AND  cr.from_nickname = #{fromNickname,jdbcType=VARCHAR}
+            </if>
+            <if test="nickTime != null" >
+                AND  cr.nick_time = #{nickTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="isAuthor != null" >
+                AND  cr.is_author = #{isAuthor,jdbcType=INTEGER}
+            </if>
+            <if test="isTop != null" >
+                AND   cr.is_top = #{isTop,jdbcType=INTEGER}
+            </if>
+            <if test="isHot != null" >
+                AND   cr.is_hot = #{isHot,jdbcType=INTEGER}
+            </if>
+            <if test="likeNum != null" >
+                AND   cr.like_num = #{likeNum,jdbcType=BIGINT}
+            </if>
+            <if test="replyNum != null" >
+                AND  cr.reply_num = #{replyNum,jdbcType=BIGINT}
+            </if>
+            <if test="ppCommentId != null" >
+                AND   cr.p_comment_id = #{ppCommentId,jdbcType=VARCHAR}
+            </if>
+            <if test="videoId != null" >
+                AND  cr.video_id = #{videoId,jdbcType=BIGINT}
+            </if>
+            <if test="videoType != null" >
+                AND  cr.video_type = #{videoType,jdbcType=INTEGER}
+            </if>
+            <if test="status != null" >
+                AND  cr.status = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="appType != null" >
+                AND  cr.app_type = #{appType,jdbcType=VARCHAR}
+            </if>
+        </trim>
+    </sql>
+
+    <sql id="contion_query_by_like_number">
+        <trim prefix="where" prefixOverrides="and">
+            <if test="commentId != null" >
+                cr.comment_id = #{commentId,jdbcType=VARCHAR}
+            </if>
+            <if test="replyType != null" >
+                AND   cr.reply_type = #{replyType,jdbcType=INTEGER}
+            </if>
+            <if test="replyId != null" >
+                AND  cr.reply_id = #{replyId,jdbcType=VARCHAR}
+            </if>
+            <if test="content != null" >
+                AND  cr.content = #{content,jdbcType=VARCHAR}
+            </if>
+            <if test="toNickname != null" >
+                AND  cr.to_nickname = #{toNickname,jdbcType=VARCHAR}
+            </if>
+            <if test="toFromUid != null" >
+                AND  cr.to_from_uid = #{toFromUid,jdbcType=BIGINT}
+            </if>
+            <if test="fromUid != null" >
+                AND  cr.from_uid = #{fromUid,jdbcType=BIGINT}
+            </if>
+            <if test="fromThumbImg != null" >
+                AND  cr.from_thumb_img = #{fromThumbImg,jdbcType=VARCHAR}
+            </if>
+            <if test="fromNickname != null" >
+                AND  cr.from_nickname = #{fromNickname,jdbcType=VARCHAR}
+            </if>
+            <if test="nickTime != null" >
+                AND  cr.nick_time = #{nickTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="isAuthor != null" >
+                AND  cr.is_author = #{isAuthor,jdbcType=INTEGER}
+            </if>
+            <if test="isTop != null" >
+                AND   cr.is_top = #{isTop,jdbcType=INTEGER}
+            </if>
+            <if test="isHot != null" >
+                AND   cr.is_hot = #{isHot,jdbcType=INTEGER}
+            </if>
+            <if test="likeNum != null" >
+                AND   cr.like_num = #{likeNum,jdbcType=BIGINT}
+            </if>
+            <if test="replyNum != null" >
+                AND  cr.reply_num = #{replyNum,jdbcType=BIGINT}
+            </if>
+            <if test="ppCommentId != null" >
+                AND   cr.p_comment_id = #{ppCommentId,jdbcType=VARCHAR}
+            </if>
+            <if test="videoId != null" >
+                AND  cr.video_id = #{videoId,jdbcType=BIGINT}
+            </if>
+            <if test="videoType != null" >
+                AND  cr.video_type = #{videoType,jdbcType=INTEGER}
+            </if>
+            <if test="status != null" >
+                AND  cr.status = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="appType != null" >
+                AND  cr.app_type = #{appType,jdbcType=VARCHAR}
+            </if>
+            AND cr.comment_id NOT IN (
+            SELECT a.comment_id
+            FROM comment_reply  a
+            INNER JOIN (SELECT id FROM comment_reply where video_id = #{videoId} and reply_type = 1 ORDER BY like_num DESC LIMIT 0,3) b
+            ON a.id = b.id
+            )
+        </trim>
+    </sql>
+
+    <select id="findAllCommentReplyTow" resultMap="BaseResultMapResponse" parameterType="com.miguan.laidian.entity.CommentReplyRequest" >
+        SELECT cuu.`name` as toNickname,aa.* from cl_user cuu join ( select  <include refid="CL_Base_Column_List" /> ,cu.img_url as fromThumbImg,cu.name as fromNickname
+        from comment_reply cr
+        left join cl_user cu on cr.from_uid = cu.id
+        <include refid="contion_query"/>
+        order by cr.create_time desc) aa
+        on aa.to_from_uid  = cuu.id
+    </select>
+
+    <select id="findAllCommentReply" resultMap="BaseResultMapResponse" parameterType="com.miguan.laidian.entity.CommentReplyRequest" >
+        select <include refid="CL_Base_Column_List" /> ,cu.img_url as fromThumbImg,cu.name as fromNickname
+        from comment_reply cr
+        left join cl_user cu on cr.from_uid = cu.id
+        <include refid="contion_query"/>
+        order by cr.create_time desc
+    </select>
+
+    <select id="findAllCommentReplyByGiveUp" resultMap="BaseResultMapResponse" parameterType="com.miguan.laidian.entity.CommentReplyRequest" >
+        select <include refid="CL_Base_Column_List" /> ,cu.img_url as fromThumbImg,cu.name as fromNickname
+        from comment_reply cr
+        left join cl_user cu on cr.from_uid = cu.id
+        <include refid="contion_query"/>
+        order by cr.like_num desc LIMIT 0,3
+    </select>
+
+
+    <select id="findAllCommentReplyByNoGiveUpNumber" resultMap="BaseResultMapResponse" parameterType="com.miguan.laidian.entity.CommentReplyRequest" >
+        SELECT
+        <include refid="CL_Base_Column_List" />,
+        cu.img_url AS fromThumbImg,
+        cu. NAME AS fromNickname
+        FROM
+        comment_reply cr
+        LEFT JOIN cl_user cu ON cr.from_uid = cu.id
+        <include refid="contion_query_by_like_number"/>
+        ORDER BY
+        cr.create_time DESC
+    </select>
+
+    <select id="findMessageCenter" resultMap="BaseResultMapResponse" parameterType="com.miguan.laidian.entity.CommentReplyRequest" >
+        SELECT
+        cuu.`name` as toNickname,aa.*
+        FROM
+        cl_user cuu
+        JOIN (
+        SELECT
+        <include refid="Base_Column_List_Response" />, cr.content AS myContent
+        FROM
+        comment_reply cr
+        JOIN (
+        SELECT
+        cr.*, cu.img_url AS fromThumbImg,
+        cu. NAME AS fromNickname
+        FROM
+        comment_reply cr
+        LEFT JOIN cl_user cu ON cr.from_uid = cu.id
+        WHERE
+        cr.to_from_uid = #{toFromUid}
+        <if test="appType != null" >
+            AND  cr.app_type = #{appType}
+        </if>
+        )
+         AS cc ON cr.comment_id = cc.reply_id
+        ORDER BY
+        cc.create_time DESC
+        ) aa ON aa.to_from_uid = cuu.id
+    </select>
+
+    <update id="updateCommentReplyByPComment" parameterType="java.lang.Long">
+      update comment_reply set already_read = 1 where to_from_uid = #{toFromUid}
+        <if test="appType != null" >
+            AND  app_type = #{appType}
+        </if>
+  </update>
+
+    <update id="updateCommentReplyByToFromUserIdAndName" parameterType="com.miguan.laidian.entity.CommentReply" >
+    update comment_reply set to_nickname = #{toNickname} where to_from_uid = #{toFromUid}
+        <if test="appType != null" >
+            AND  app_type = #{appType}
+        </if>
+  </update>
+
+    <select id="findAllCommentReplyByAlreadyRead" resultType="java.lang.Integer">
+       SELECT COUNT(*) from (select COUNT(cr.id) from comment_reply cr where cr.to_from_uid = #{userId}
+        <if test="appType != null" >
+            AND  app_type = #{appType}
+        </if>
+       and cr.already_read = 0 GROUP BY cr.already_read) T;
+    </select>
+</mapper>

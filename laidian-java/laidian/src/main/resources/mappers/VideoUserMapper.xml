@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.laidian.mapper.VideoUserMapper">
+
+    <resultMap type="com.miguan.laidian.vo.VideoUserVo" id="videoUserVoMap">
+        <id property="id" column="id" javaType="java.lang.Long"></id>
+        <result property="videoId" column="video_id" javaType="java.lang.Long"></result>
+        <result property="userLikeCount" column="user_like_count" javaType="java.lang.String"></result>
+        <result property="shareCount" column="share_count" javaType="java.lang.String"></result>
+        <result property="clickCount" column="click_count" javaType="java.lang.String"></result>
+        <result property="successNum" column="success_num" javaType="java.lang.String"></result>
+        <result property="appType" column="app_type" javaType="java.lang.String"></result>
+    </resultMap>
+
+    <!-- 通用查询结果列-->
+    <sql id="Base_Column_List">
+		id,video_id, user_like_count, share_count, click_count,success_num,app_type
+	</sql>
+
+    <select id="findOne" resultMap="videoUserVoMap" parameterType="java.util.HashMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM videos_user where video_Id = #{videoId} and app_type = #{appType}
+    </select>
+    <insert id="save" parameterType="com.miguan.laidian.vo.SmallVideoUserVo">
+        INSERT INTO videos_user
+        (video_id,share_count,click_count,user_like_count,success_num,app_type)
+        VALUES
+        (#{videoId},#{shareCount},#{clickCount},#{userLikeCount},#{successNum},#{appType})
+    </insert>
+
+    <update id="updateCount" parameterType="java.util.HashMap">
+        UPDATE videos_user
+        <set>
+            <trim suffixOverrides=",">
+                <if test="opType == 10">
+                    user_like_count = user_like_count+1,
+                </if>
+                <if test="opType == 20">
+                    share_count = share_count+1,
+                </if>
+                <if test="opType == 30">
+                    user_like_count = (if(user_like_count>1,user_like_count-1,0)),
+                </if>
+                <if test="opType == 40">
+                    click_count = click_count+1,
+                </if>
+                <if test="opType == 50">
+                    success_num = success_num+1,
+                </if>
+            </trim>
+        </set>
+        WHERE video_id = #{videoId}
+    </update>
+
+</mapper>

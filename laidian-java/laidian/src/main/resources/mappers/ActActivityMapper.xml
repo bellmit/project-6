@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.laidian.mapper.ActActivityMapper">
+  <resultMap id="BaseResultMap" type="com.miguan.laidian.entity.ActActivity">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="pop_up_flag" jdbcType="INTEGER" property="popUpFlag" />
+    <result column="floating_window_flag" jdbcType="INTEGER" property="floatingWindowFlag" />
+    <result column="banner_flag" jdbcType="INTEGER" property="bannerFlag" />
+    <result column="day_draw_num" jdbcType="INTEGER" property="dayDrawNum" />
+    <result column="ldx_task_flag" jdbcType="INTEGER" property="ldxTaskFlag" />
+    <result column="ls_task_flag" jdbcType="INTEGER" property="lsTaskFlag" />
+    <result column="video_task_flag" jdbcType="INTEGER" property="videoTaskFlag" />
+    <result column="link_url" jdbcType="VARCHAR" property="linkUrl" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="draw_num" jdbcType="INTEGER" property="drawNum" />
+    <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
+    <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, name, start_time, end_time, pop_up_flag, floating_window_flag, banner_flag, day_draw_num, 
+    ldx_task_flag, ls_task_flag, share_task_flag, video_task_flag, link_url, state, draw_num, created_at,
+    updated_at, home_jump_img, home_float_img, home_banner_img
+  </sql>
+  <select id="selectByExample" parameterType="com.miguan.laidian.entity.ActActivityExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from act_activity
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from act_activity
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from act_activity
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.miguan.laidian.entity.ActActivityExample">
+    delete from act_activity
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.miguan.laidian.entity.ActActivity">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into act_activity (name, start_time, end_time, 
+      pop_up_flag, floating_window_flag, banner_flag, 
+      day_draw_num, ldx_task_flag, ls_task_flag, 
+      video_task_flag, link_url, state, 
+      draw_num, created_at, updated_at,
+      home_jump_img, home_float_img, home_banner_img
+      )
+    values (#{name,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, 
+      #{popUpFlag,jdbcType=INTEGER}, #{floatingWindowFlag,jdbcType=INTEGER}, #{bannerFlag,jdbcType=INTEGER}, 
+      #{dayDrawNum,jdbcType=INTEGER}, #{ldxTaskFlag,jdbcType=INTEGER}, #{lsTaskFlag,jdbcType=INTEGER}, 
+      #{videoTaskFlag,jdbcType=INTEGER}, #{linkUrl,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER}, 
+      #{drawNum,jdbcType=INTEGER}, #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP},
+      #{homeJumpImg,jdbcType=VARCHAR}, #{homeFloatImg,jdbcType=VARCHAR}, #{homeBannerImg,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.miguan.laidian.entity.ActActivity">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into act_activity
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        name,
+      </if>
+      <if test="startTime != null">
+        start_time,
+      </if>
+      <if test="endTime != null">
+        end_time,
+      </if>
+      <if test="popUpFlag != null">
+        pop_up_flag,
+      </if>
+      <if test="floatingWindowFlag != null">
+        floating_window_flag,
+      </if>
+      <if test="bannerFlag != null">
+        banner_flag,
+      </if>
+      <if test="dayDrawNum != null">
+        day_draw_num,
+      </if>
+      <if test="ldxTaskFlag != null">
+        ldx_task_flag,
+      </if>
+      <if test="lsTaskFlag != null">
+        ls_task_flag,
+      </if>
+      <if test="videoTaskFlag != null">
+        video_task_flag,
+      </if>
+      <if test="linkUrl != null">
+        link_url,
+      </if>
+      <if test="state != null">
+        state,
+      </if>
+      <if test="drawNum != null">
+        draw_num,
+      </if>
+      <if test="createdAt != null">
+        created_at,
+      </if>
+      <if test="updatedAt != null">
+        updated_at,
+      </if>
+      <if test="homeJumpImg != null">
+        home_jump_img,
+      </if>
+      <if test="homeFloatImg != null">
+        home_float_img,
+      </if>
+      <if test="homeBannerImg != null">
+        home_banner_img,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null">
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="popUpFlag != null">
+        #{popUpFlag,jdbcType=INTEGER},
+      </if>
+      <if test="floatingWindowFlag != null">
+        #{floatingWindowFlag,jdbcType=INTEGER},
+      </if>
+      <if test="bannerFlag != null">
+        #{bannerFlag,jdbcType=INTEGER},
+      </if>
+      <if test="dayDrawNum != null">
+        #{dayDrawNum,jdbcType=INTEGER},
+      </if>
+      <if test="ldxTaskFlag != null">
+        #{ldxTaskFlag,jdbcType=INTEGER},
+      </if>
+      <if test="lsTaskFlag != null">
+        #{lsTaskFlag,jdbcType=INTEGER},
+      </if>
+      <if test="videoTaskFlag != null">
+        #{videoTaskFlag,jdbcType=INTEGER},
+      </if>
+      <if test="linkUrl != null">
+        #{linkUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null">
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="drawNum != null">
+        #{drawNum,jdbcType=INTEGER},
+      </if>
+      <if test="createdAt != null">
+        #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedAt != null">
+        #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="homeJumpImg != null">
+        #{homeJumpImg,jdbcType=VARCHAR},
+      </if>
+      <if test="homeFloatImg != null">
+        #{homeFloatImg,jdbcType=VARCHAR},
+      </if>
+      <if test="homeBannerImg != null">
+        #{homeBannerImg,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.miguan.laidian.entity.ActActivityExample" resultType="java.lang.Long">
+    select count(*) from act_activity
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update act_activity
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.name != null">
+        name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.startTime != null">
+        start_time = #{record.startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.endTime != null">
+        end_time = #{record.endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.popUpFlag != null">
+        pop_up_flag = #{record.popUpFlag,jdbcType=INTEGER},
+      </if>
+      <if test="record.floatingWindowFlag != null">
+        floating_window_flag = #{record.floatingWindowFlag,jdbcType=INTEGER},
+      </if>
+      <if test="record.bannerFlag != null">
+        banner_flag = #{record.bannerFlag,jdbcType=INTEGER},
+      </if>
+      <if test="record.dayDrawNum != null">
+        day_draw_num = #{record.dayDrawNum,jdbcType=INTEGER},
+      </if>
+      <if test="record.ldxTaskFlag != null">
+        ldx_task_flag = #{record.ldxTaskFlag,jdbcType=INTEGER},
+      </if>
+      <if test="record.lsTaskFlag != null">
+        ls_task_flag = #{record.lsTaskFlag,jdbcType=INTEGER},
+      </if>
+      <if test="record.videoTaskFlag != null">
+        video_task_flag = #{record.videoTaskFlag,jdbcType=INTEGER},
+      </if>
+      <if test="record.linkUrl != null">
+        link_url = #{record.linkUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.state != null">
+        state = #{record.state,jdbcType=INTEGER},
+      </if>
+      <if test="record.drawNum != null">
+        draw_num = #{record.drawNum,jdbcType=INTEGER},
+      </if>
+      <if test="record.createdAt != null">
+        created_at = #{record.createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updatedAt != null">
+        updated_at = #{record.updatedAt,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update act_activity
+    set id = #{record.id,jdbcType=BIGINT},
+      name = #{record.name,jdbcType=VARCHAR},
+      start_time = #{record.startTime,jdbcType=TIMESTAMP},
+      end_time = #{record.endTime,jdbcType=TIMESTAMP},
+      pop_up_flag = #{record.popUpFlag,jdbcType=INTEGER},
+      floating_window_flag = #{record.floatingWindowFlag,jdbcType=INTEGER},
+      banner_flag = #{record.bannerFlag,jdbcType=INTEGER},
+      day_draw_num = #{record.dayDrawNum,jdbcType=INTEGER},
+      ldx_task_flag = #{record.ldxTaskFlag,jdbcType=INTEGER},
+      ls_task_flag = #{record.lsTaskFlag,jdbcType=INTEGER},
+      video_task_flag = #{record.videoTaskFlag,jdbcType=INTEGER},
+      link_url = #{record.linkUrl,jdbcType=VARCHAR},
+      state = #{record.state,jdbcType=INTEGER},
+      draw_num = #{record.drawNum,jdbcType=INTEGER},
+      created_at = #{record.createdAt,jdbcType=TIMESTAMP},
+      updated_at = #{record.updatedAt,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.miguan.laidian.entity.ActActivity">
+    update act_activity
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null">
+        start_time = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="popUpFlag != null">
+        pop_up_flag = #{popUpFlag,jdbcType=INTEGER},
+      </if>
+      <if test="floatingWindowFlag != null">
+        floating_window_flag = #{floatingWindowFlag,jdbcType=INTEGER},
+      </if>
+      <if test="bannerFlag != null">
+        banner_flag = #{bannerFlag,jdbcType=INTEGER},
+      </if>
+      <if test="dayDrawNum != null">
+        day_draw_num = #{dayDrawNum,jdbcType=INTEGER},
+      </if>
+      <if test="ldxTaskFlag != null">
+        ldx_task_flag = #{ldxTaskFlag,jdbcType=INTEGER},
+      </if>
+      <if test="lsTaskFlag != null">
+        ls_task_flag = #{lsTaskFlag,jdbcType=INTEGER},
+      </if>
+      <if test="videoTaskFlag != null">
+        video_task_flag = #{videoTaskFlag,jdbcType=INTEGER},
+      </if>
+      <if test="linkUrl != null">
+        link_url = #{linkUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null">
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="drawNum != null">
+        draw_num = #{drawNum,jdbcType=INTEGER},
+      </if>
+      <if test="createdAt != null">
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedAt != null">
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="homeJumpImg != null">
+        home_jump_img = #{homeJumpImg,jdbcType=VARCHAR},
+      </if>
+      <if test="homeFloatImg != null">
+        home_float_img = #{homeFloatImg,jdbcType=VARCHAR},
+      </if>
+      <if test="homeBannerImg != null">
+        home_banner_img = #{homeBannerImg,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.miguan.laidian.entity.ActActivity">
+    update act_activity
+    set name = #{name,jdbcType=VARCHAR},
+      start_time = #{startTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP},
+      pop_up_flag = #{popUpFlag,jdbcType=INTEGER},
+      floating_window_flag = #{floatingWindowFlag,jdbcType=INTEGER},
+      banner_flag = #{bannerFlag,jdbcType=INTEGER},
+      day_draw_num = #{dayDrawNum,jdbcType=INTEGER},
+      ldx_task_flag = #{ldxTaskFlag,jdbcType=INTEGER},
+      ls_task_flag = #{lsTaskFlag,jdbcType=INTEGER},
+      video_task_flag = #{videoTaskFlag,jdbcType=INTEGER},
+      link_url = #{linkUrl,jdbcType=VARCHAR},
+      state = #{state,jdbcType=INTEGER},
+      draw_num = #{drawNum,jdbcType=INTEGER},
+      created_at = #{createdAt,jdbcType=TIMESTAMP},
+      updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+      home_jump_img = #{homeJumpImg,jdbcType=VARCHAR},
+      home_float_img = #{homeFloatImg,jdbcType=VARCHAR},
+      home_banner_img = #{homeBannerImg,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="findActActivity" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from act_activity where state = 1
+    <if test="channelId != null and channelId != ''">
+      AND find_in_set(#{channelId},channel_ids) = 0
+    </if>
+    <if test="appVersion != null and appVersion != ''">
+      AND find_in_set(#{appVersion},version_ids)
+    </if>
+    <if test="curDate != null">
+      AND #{curDate} BETWEEN start_time AND end_time
+    </if>
+  </select>
+</mapper>

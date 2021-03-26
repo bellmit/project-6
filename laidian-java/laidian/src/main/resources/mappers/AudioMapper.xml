@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.laidian.mapper.AudioMapper">
+    <!-- 查询音频类别列表 -->
+    <select id="findAudioCatList" resultType="com.miguan.laidian.vo.AudioCatVo">
+        SELECT id,name,sort FROM audio_cat order by sort
+    </select>
+    <!-- 通过条件查询音频信息列表 -->
+    <select id="findAudioList" resultType="com.miguan.laidian.vo.AudioVo" parameterType="java.util.HashMap">
+        SELECT
+        id, cat_id, title, singer, bsy_img_url, bsy_audio_url, audio_time, share_count, audition_count, download_count,base_weight,
+        (case when (like_count+user_like_count)>=10000 then concat(round((like_count+user_like_count)/10000, 1),'W')
+        else (like_count+user_like_count) end) totalLikeCount
+        FROM audio
+        where state = '1'
+        <if test="likeParam != null and likeParam != ''">
+            AND (title like CONCAT('%',#{likeParam},'%') OR singer like CONCAT('%',#{likeParam},'%'))
+        </if>
+        <if test="catId != null and catId != ''">
+            AND cat_id = #{catId}
+        </if>
+        <if test="audioId != null and audioId != ''">
+            AND id = #{audioId}
+        </if>
+        <!-- 热门：按权重值降序排列,最新和其余标签：按后台采集创建时间降序排列-->
+        <if test="audioType == 10">
+            ORDER BY base_weight DESC
+        </if>
+        <if test="audioType == 20 || audioType == 30">
+            ORDER BY created_at DESC
+        </if>
+    </select>
+
+    <!-- 修改音频信息 -->
+    <update id="updateAudioCount" parameterType="java.util.HashMap">
+        UPDATE audio
+        <set>
+            <trim suffixOverrides=",">
+                <if test="opType == '10'">
+                    user_like_count = user_like_count+1,
+                </if>
+                <if test="opType == '20'">
+                    share_count = share_count+1,
+                </if>
+                <if test="opType == '30'">
+                    user_like_count = (if(user_like_count>1,user_like_count-1,0)),
+                </if>
+                <if test="opType == '40'">
+                    audition_count = audition_count+1,
+                </if>
+                <if test="opType == '50'">
+                    download_count = download_count+1,
+                </if>
+            </trim>
+        </set>
+        WHERE id = #{audioId}
+    </update>
+</mapper>

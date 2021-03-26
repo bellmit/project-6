@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.laidian.mapper.ActActivityConfigMapper">
+  <resultMap id="BaseResultMap" type="com.miguan.laidian.entity.ActActivityConfig">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="activity_id" jdbcType="BIGINT" property="activityId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="cost_price" jdbcType="DECIMAL" property="costPrice" />
+    <result column="pic" jdbcType="VARCHAR" property="pic" />
+    <result column="prize_virtual_num" jdbcType="INTEGER" property="prizeVirtualNum" />
+    <result column="prize_real_num" jdbcType="INTEGER" property="prizeRealNum" />
+    <result column="prize_recive_num" jdbcType="INTEGER" property="prizeReciveNum" />
+    <result column="debris_reach_num" jdbcType="INTEGER" property="debrisReachNum" />
+    <result column="debris_draw_rate" jdbcType="INTEGER" property="debrisDrawRate" />
+    <result column="last_debris_draw_rate" jdbcType="INTEGER" property="lastDebrisDrawRate" />
+    <result column="sort" jdbcType="INTEGER" property="sort" />
+    <result column="rotary_sort" jdbcType="INTEGER" property="rotarySort" />
+    <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
+    <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, activity_id, name, price, cost_price, pic, prize_virtual_num, prize_real_num, 
+    prize_recive_num, debris_reach_num, debris_draw_rate, last_debris_draw_rate, sort, 
+    rotary_sort, created_at, updated_at
+  </sql>
+  <select id="selectByExample" parameterType="com.miguan.laidian.entity.ActActivityConfigExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from act_activity_config
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from act_activity_config
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from act_activity_config
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.miguan.laidian.entity.ActActivityConfigExample">
+    delete from act_activity_config
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.miguan.laidian.entity.ActActivityConfig">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into act_activity_config (activity_id, name, price, 
+      cost_price, pic, prize_virtual_num, 
+      prize_real_num, prize_recive_num, debris_reach_num, 
+      debris_draw_rate, last_debris_draw_rate, sort, 
+      rotary_sort, created_at, updated_at
+      )
+    values (#{activityId,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{price,jdbcType=DECIMAL}, 
+      #{costPrice,jdbcType=DECIMAL}, #{pic,jdbcType=VARCHAR}, #{prizeVirtualNum,jdbcType=INTEGER}, 
+      #{prizeRealNum,jdbcType=INTEGER}, #{prizeReciveNum,jdbcType=INTEGER}, #{debrisReachNum,jdbcType=INTEGER}, 
+      #{debrisDrawRate,jdbcType=INTEGER}, #{lastDebrisDrawRate,jdbcType=INTEGER}, #{sort,jdbcType=INTEGER}, 
+      #{rotarySort,jdbcType=INTEGER}, #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.miguan.laidian.entity.ActActivityConfig">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into act_activity_config
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="activityId != null">
+        activity_id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="price != null">
+        price,
+      </if>
+      <if test="costPrice != null">
+        cost_price,
+      </if>
+      <if test="pic != null">
+        pic,
+      </if>
+      <if test="prizeVirtualNum != null">
+        prize_virtual_num,
+      </if>
+      <if test="prizeRealNum != null">
+        prize_real_num,
+      </if>
+      <if test="prizeReciveNum != null">
+        prize_recive_num,
+      </if>
+      <if test="debrisReachNum != null">
+        debris_reach_num,
+      </if>
+      <if test="debrisDrawRate != null">
+        debris_draw_rate,
+      </if>
+      <if test="lastDebrisDrawRate != null">
+        last_debris_draw_rate,
+      </if>
+      <if test="sort != null">
+        sort,
+      </if>
+      <if test="rotarySort != null">
+        rotary_sort,
+      </if>
+      <if test="createdAt != null">
+        created_at,
+      </if>
+      <if test="updatedAt != null">
+        updated_at,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="activityId != null">
+        #{activityId,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null">
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="costPrice != null">
+        #{costPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="pic != null">
+        #{pic,jdbcType=VARCHAR},
+      </if>
+      <if test="prizeVirtualNum != null">
+        #{prizeVirtualNum,jdbcType=INTEGER},
+      </if>
+      <if test="prizeRealNum != null">
+        #{prizeRealNum,jdbcType=INTEGER},
+      </if>
+      <if test="prizeReciveNum != null">
+        #{prizeReciveNum,jdbcType=INTEGER},
+      </if>
+      <if test="debrisReachNum != null">
+        #{debrisReachNum,jdbcType=INTEGER},
+      </if>
+      <if test="debrisDrawRate != null">
+        #{debrisDrawRate,jdbcType=INTEGER},
+      </if>
+      <if test="lastDebrisDrawRate != null">
+        #{lastDebrisDrawRate,jdbcType=INTEGER},
+      </if>
+      <if test="sort != null">
+        #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="rotarySort != null">
+        #{rotarySort,jdbcType=INTEGER},
+      </if>
+      <if test="createdAt != null">
+        #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedAt != null">
+        #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.miguan.laidian.entity.ActActivityConfigExample" resultType="java.lang.Long">
+    select count(*) from act_activity_config
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update act_activity_config
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.activityId != null">
+        activity_id = #{record.activityId,jdbcType=BIGINT},
+      </if>
+      <if test="record.name != null">
+        name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.price != null">
+        price = #{record.price,jdbcType=DECIMAL},
+      </if>
+      <if test="record.costPrice != null">
+        cost_price = #{record.costPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.pic != null">
+        pic = #{record.pic,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prizeVirtualNum != null">
+        prize_virtual_num = #{record.prizeVirtualNum,jdbcType=INTEGER},
+      </if>
+      <if test="record.prizeRealNum != null">
+        prize_real_num = #{record.prizeRealNum,jdbcType=INTEGER},
+      </if>
+      <if test="record.prizeReciveNum != null">
+        prize_recive_num = #{record.prizeReciveNum,jdbcType=INTEGER},
+      </if>
+      <if test="record.debrisReachNum != null">
+        debris_reach_num = #{record.debrisReachNum,jdbcType=INTEGER},
+      </if>
+      <if test="record.debrisDrawRate != null">
+        debris_draw_rate = #{record.debrisDrawRate,jdbcType=INTEGER},
+      </if>
+      <if test="record.lastDebrisDrawRate != null">
+        last_debris_draw_rate = #{record.lastDebrisDrawRate,jdbcType=INTEGER},
+      </if>
+      <if test="record.sort != null">
+        sort = #{record.sort,jdbcType=INTEGER},
+      </if>
+      <if test="record.rotarySort != null">
+        rotary_sort = #{record.rotarySort,jdbcType=INTEGER},
+      </if>
+      <if test="record.createdAt != null">
+        created_at = #{record.createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updatedAt != null">
+        updated_at = #{record.updatedAt,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update act_activity_config
+    set id = #{record.id,jdbcType=BIGINT},
+      activity_id = #{record.activityId,jdbcType=BIGINT},
+      name = #{record.name,jdbcType=VARCHAR},
+      price = #{record.price,jdbcType=DECIMAL},
+      cost_price = #{record.costPrice,jdbcType=DECIMAL},
+      pic = #{record.pic,jdbcType=VARCHAR},
+      prize_virtual_num = #{record.prizeVirtualNum,jdbcType=INTEGER},
+      prize_real_num = #{record.prizeRealNum,jdbcType=INTEGER},
+      prize_recive_num = #{record.prizeReciveNum,jdbcType=INTEGER},
+      debris_reach_num = #{record.debrisReachNum,jdbcType=INTEGER},
+      debris_draw_rate = #{record.debrisDrawRate,jdbcType=INTEGER},
+      last_debris_draw_rate = #{record.lastDebrisDrawRate,jdbcType=INTEGER},
+      sort = #{record.sort,jdbcType=INTEGER},
+      rotary_sort = #{record.rotarySort,jdbcType=INTEGER},
+      created_at = #{record.createdAt,jdbcType=TIMESTAMP},
+      updated_at = #{record.updatedAt,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.miguan.laidian.entity.ActActivityConfig">
+    update act_activity_config
+    <set>
+      <if test="activityId != null">
+        activity_id = #{activityId,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null">
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="costPrice != null">
+        cost_price = #{costPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="pic != null">
+        pic = #{pic,jdbcType=VARCHAR},
+      </if>
+      <if test="prizeVirtualNum != null">
+        prize_virtual_num = #{prizeVirtualNum,jdbcType=INTEGER},
+      </if>
+      <if test="prizeRealNum != null">
+        prize_real_num = #{prizeRealNum,jdbcType=INTEGER},
+      </if>
+      <if test="prizeReciveNum != null">
+        prize_recive_num = #{prizeReciveNum,jdbcType=INTEGER},
+      </if>
+      <if test="debrisReachNum != null">
+        debris_reach_num = #{debrisReachNum,jdbcType=INTEGER},
+      </if>
+      <if test="debrisDrawRate != null">
+        debris_draw_rate = #{debrisDrawRate,jdbcType=INTEGER},
+      </if>
+      <if test="lastDebrisDrawRate != null">
+        last_debris_draw_rate = #{lastDebrisDrawRate,jdbcType=INTEGER},
+      </if>
+      <if test="sort != null">
+        sort = #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="rotarySort != null">
+        rotary_sort = #{rotarySort,jdbcType=INTEGER},
+      </if>
+      <if test="createdAt != null">
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedAt != null">
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.miguan.laidian.entity.ActActivityConfig">
+    update act_activity_config
+    set activity_id = #{activityId,jdbcType=BIGINT},
+      name = #{name,jdbcType=VARCHAR},
+      price = #{price,jdbcType=DECIMAL},
+      cost_price = #{costPrice,jdbcType=DECIMAL},
+      pic = #{pic,jdbcType=VARCHAR},
+      prize_virtual_num = #{prizeVirtualNum,jdbcType=INTEGER},
+      prize_real_num = #{prizeRealNum,jdbcType=INTEGER},
+      prize_recive_num = #{prizeReciveNum,jdbcType=INTEGER},
+      debris_reach_num = #{debrisReachNum,jdbcType=INTEGER},
+      debris_draw_rate = #{debrisDrawRate,jdbcType=INTEGER},
+      last_debris_draw_rate = #{lastDebrisDrawRate,jdbcType=INTEGER},
+      sort = #{sort,jdbcType=INTEGER},
+      rotary_sort = #{rotarySort,jdbcType=INTEGER},
+      created_at = #{createdAt,jdbcType=TIMESTAMP},
+      updated_at = #{updatedAt,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <select id="getUserActConfigById" resultType="com.miguan.laidian.vo.ActivityConfigVo">
+        SELECT
+            config.*,
+            (select count(1) from act_user_draw_record dr where dr.activity_config_id = config.id and dr.device_id = #{deviceId} and dr.state = 1 and dr.is_exchange = 0) as debrisNum,
+            IFNULL((select state from act_user_prize_exchange_record pe where pe.activity_config_id = config.id  and pe.device_id = #{deviceId}),2) as state
+        FROM act_activity_config config
+        where config.activity_id = #{activityId}
+        ORDER BY config.sort
+  </select>
+</mapper>

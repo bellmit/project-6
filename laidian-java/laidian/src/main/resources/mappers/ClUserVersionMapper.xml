@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.laidian.mapper.ClUserVersionMapper">
+
+	<resultMap type="com.miguan.laidian.vo.ClUserVersion" id="clUserVersion">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="device_id" property="deviceId" jdbcType="VARCHAR" />
+		<result column="login_name" property="loginName" jdbcType="VARCHAR" />
+		<result column="version_number" property="versionNumber" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="app_type" property="appType" jdbcType="VARCHAR" />
+	</resultMap>
+
+
+	<insert id="insertSelective" parameterType="com.miguan.laidian.vo.ClUserVersion" >
+		insert into cl_user_version
+		<trim prefix="(" suffix=")" suffixOverrides="," >
+			<if test="id != null" >
+				id,
+			</if>
+			<if test="deviceId != null" >
+				device_id,
+			</if>
+			<if test="loginName != null" >
+				login_name,
+			</if>
+			<if test="versionNumber != null" >
+				version_number,
+			</if>
+			<if test="createTime != null" >
+				create_time,
+			</if>
+			<if test="appType != null" >
+				app_type,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides="," >
+			<if test="id != null" >
+				#{id,jdbcType=BIGINT},
+			</if>
+			<if test="deviceId != null" >
+				#{deviceId,jdbcType=VARCHAR},
+			</if>
+			<if test="loginName != null" >
+				#{loginName,jdbcType=VARCHAR},
+			</if>
+			<if test="versionNumber != null" >
+				#{versionNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null" >
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="appType != null" >
+				#{appType,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+
+	<select id="findUserVersionByVersionId" resultType="java.lang.Integer" parameterType="java.lang.String">
+			SELECT
+				COUNT(cuv.id)
+			FROM
+				cl_user_version cuv
+			WHERE
+				cuv.version_number = #{version}
+			and
+				cuv.app_type = #{appType}
+	</select>
+</mapper>

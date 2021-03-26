@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.laidian.mapper.AudioDownloadMapper">
+	<!-- 删除前一天的音频下载记录 -->
+	<delete id="delAudioDownload">
+		 DELETE FROM audio_download
+		 WHERE date(create_time) = date_sub(curdate(),interval 1 day)
+	</delete>
+
+	<!-- 新增音频下载记录信息 -->
+	<insert id="saveAudioDownload" parameterType="com.miguan.laidian.vo.AudioDownloadVo">
+		 INSERT INTO audio_download
+ 		(device_id,audio_id,create_time,update_time)
+		 VALUES
+ 		(#{deviceId},#{audioId},now(),now())
+	</insert>
+</mapper>
