@@ -1,0 +1,65 @@
+logging:
+  level:
+    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+    com.miguan.cashmore: debug
+    com.miguan.idmapping: debug
+    com.cgcg: debug
+spring:
+  datasource:
+    dynamic:
+      primary: vedieo-db
+      hikari:
+        connectionTimeout: 180000
+        maxLifetime: 60000
+        validationTimeout: 8000
+        idleTimeout: 50000
+        min-idle: 20
+        max-pool-size: 1500
+      datasource:
+        vedieo-db:
+          url: jdbc:mysql://112.74.179.254:3306/ballvideo_dev?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+          username: ballvideo_java
+          password: e7I8vpV7H6FZohOj
+          driverClassName: com.mysql.cj.jdbc.Driver
+        task-db:
+          url: jdbc:mysql://112.74.179.254:3306/ballvideotask?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+          username: ballvideo_java
+          password: e7I8vpV7H6FZohOj
+          driverClassName: com.mysql.cj.jdbc.Driver
+        clickhouse:
+          url: jdbc:clickhouse://192.168.100.10:8123/default
+          username: default
+          password: 98du123#
+          driverClassName: ru.yandex.clickhouse.ClickHouseDriver
+  redis:
+    host: 112.74.179.254
+    port: 6379
+    password: e8cFnj3CoWZdUFyXg8Dkv9Vp66c=
+    timeout: 15000
+    database: 1
+    jedis:
+      pool:
+        max-active: 10000
+        max-idle: 100
+        min-idle: 20
+        max-wait: 3000
+    redisson:
+      config: classpath:/redisson/redisson-local.yaml
+  session:
+    store-type: redis
+  rabbitmq:
+    addresses: 112.74.179.254
+    username: admin
+    port: 5672
+    password: nx8260529
+    open: true
+  data:
+    mongodb:
+      uri: mongodb://idmap_java:MsNF4kJRbxuVDIpP@112.74.179.254:53333/?authSource=idmapping
+      database: idmapping
+  kafka:
+    bootstrap-servers: 192.168.100.10:19092
+    template:
+      default-topic: uuid-digitizing
+swagger:
+  enable: true

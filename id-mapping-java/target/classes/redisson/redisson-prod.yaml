@@ -1,0 +1,19 @@
+singleServerConfig:
+  idleConnectionTimeout: 10000
+  connectTimeout: 10000
+  timeout: 3000
+  retryAttempts: 3
+  retryInterval: 1500
+  password: NapBMeZfTCLbdYFXspgK0XnQ7vCzCQ6n
+  subscriptionsPerConnection: 5
+  clientName: xy-uuid
+  address: "redis://192.168.0.211:6379"
+  subscriptionConnectionMinimumIdleSize: 1
+  subscriptionConnectionPoolSize: 50
+  connectionMinimumIdleSize: 100
+  connectionPoolSize: 10000
+  database: 9
+#threads: 0
+nettyThreads: 64
+codec: !<org.redisson.codec.FstCodec> {}
+transportMode: "NIO"

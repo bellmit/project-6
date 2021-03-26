@@ -1,0 +1,59 @@
+server:
+  port: 8118
+spring:
+  profiles:
+    active: local
+  main:
+    allow-bean-definition-overriding: true
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 100MB
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      compression-type: lz4
+      properties:
+        transaction.timeout.ms: 10000
+        max.block.ms: 3000
+        request.timeout.ms: 3000
+    consumer:
+      enable-auto-commit: true
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      group-id: id-mapping-java
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+  mapper-locations: classpath:/mapper/*.xml
+logging:
+  level:
+    com.github.xiaoymin: off
+    com.miguan.report: debug
+    com.cgcg: debug
+cgcg:
+  rest:
+    read-timeout: 300000
+    connect-timeout: 300000
+    connection-request-timeout: 300000
+  swagger:
+    name: report-在线文档
+    desc: Http Online Documentation
+    headers: token
+    contact-url: http://gitlab.miguan.com/video/report_java.git
+    contact-name: zhicong.lin
+    version: 1.0.0
+  format:
+    response-data: true
+    response-data-ignore:  ##接口返回值不需要在包裹一层data的接口
+      - /api/skypay/payoutQueuePayout
+    des3: S5EXCbIx98nrWA7a
+  interceptor:
+    ignore:
+      auth-ignore:  ##不需要token拦截接口
+        - /api/login

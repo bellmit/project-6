@@ -1,0 +1,17 @@
+{
+  "groups": [
+    {
+      "name": "spring.redis.redisson",
+      "type": "com.miguan.idmapping.common.config.redis.RedissonProperties",
+      "sourceType": "com.miguan.idmapping.common.config.redis.RedissonProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "spring.redis.redisson.config",
+      "type": "java.lang.String",
+      "sourceType": "com.miguan.idmapping.common.config.redis.RedissonProperties"
+    }
+  ],
+  "hints": []
+}
