@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.advert.domain.mapper.PublicInfoMapper">
+
+    <resultMap id="AppInfoResultMap" type="com.miguan.advert.domain.vo.result.AppInfoVo">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="package_name" jdbcType="VARCHAR" property="key" />
+        <result column="operating_system" jdbcType="INTEGER" property="mobile_type" />
+        <result column="app_name" jdbcType="VARCHAR" property="name" />
+    </resultMap>
+
+    <resultMap id="AdPlatResultMap" type="com.miguan.advert.domain.vo.result.AdPlatVo">
+        <result column="plat_key" jdbcType="VARCHAR" property="key" />
+        <result column="adv_name" jdbcType="VARCHAR" property="name" />
+    </resultMap>
+
+    <select id="getApp" resultMap="AppInfoResultMap">
+        select id, package_name, operating_system, app_name
+        from ad_app where status = 1
+    </select>
+
+    <select id="getAdPlat" resultMap="AdPlatResultMap">
+        select plat_key,adv_name
+        from ad_plat
+    </select>
+
+</mapper>

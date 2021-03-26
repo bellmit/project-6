@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.advert.domain.mapper.AdOperationLogMapper">
+
+    <resultMap id="BaseResultMap" type="com.miguan.advert.domain.vo.result.AdOperationLogVo">
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="operation_user" property="operation_user" jdbcType="VARCHAR"/>
+        <result column="path_url" property="path_url" jdbcType="VARCHAR"/>
+        <result column="path_name" property="path_name" jdbcType="VARCHAR"/>
+        <result column="type" property="type" jdbcType="INTEGER"/>
+        <result column="change_content" property="c_content" jdbcType="VARCHAR"/>
+        <result column="code_id" property="code_id" jdbcType="VARCHAR"/>
+        <result column="created_at" property="created_at" jdbcType="TIMESTAMP"/>
+        <result column="updated_at" property="updated_at" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, operation_user, path_url, path_name, type, code_id, created_at, updated_at,change_content
+    </sql>
+
+    <insert id="add" parameterType="com.miguan.advert.domain.vo.result.AdOperationLogVo" >
+        insert into ad_operation_log (id, operation_user, path_url,
+          path_name, type, code_id,change_content,
+          created_at,
+          updated_at)
+        values (#{id,jdbcType=BIGINT}, #{operation_user,jdbcType=VARCHAR},#{path_url,jdbcType=VARCHAR},
+        #{path_name,jdbcType=VARCHAR},#{type,jdbcType=INTEGER},#{code_id,jdbcType=VARCHAR},#{c_content,jdbcType=VARCHAR},
+        now(),now())
+    </insert>
+
+    <select id="findBySelective" resultMap="BaseResultMap" parameterType="com.miguan.advert.domain.vo.request.AdOperationLogQuery">
+        SELECT <include refid="Base_Column_List" />
+        FROM
+            ad_operation_log
+        <trim prefix="where" prefixOverrides="and">
+            <if test="type != null" >
+                type = #{type}
+            </if>
+            <if test="key != null" >
+                AND   path_name like CONCAT('%',#{key,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="path_name != null" >
+                AND   path_name like CONCAT('%',#{path_name,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="s_time != null" >
+                AND   created_at >= s_time
+            </if>
+            <if test="e_time != null" >
+                AND   created_at <![CDATA[<=]]> e_time
+            </if>
+        </trim>
+        ORDER BY
+            created_at desc
+    </select>
+
+</mapper>

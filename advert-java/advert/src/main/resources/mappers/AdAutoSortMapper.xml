@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.advert.domain.mapper.AdAutoSortMapper">
+
+    <!--查询出需要自动排序的代码位列表 -->
+    <select id="listAdAutoSort" resultType="com.miguan.advert.domain.vo.interactive.AdTestCodeSortVo">
+        select r.id, r.config_id, r.code_id, a.ad_id, r.order_num
+        from ad_advert_flow_config f
+        inner join ad_advert_test_config t on f.id = t.flow_id
+        inner join ad_test_code_relation r on t.id = r.config_id
+        inner join ad_advert_code a on r.code_id = a.id
+        where 1=1
+        and t.computer=3  /*自动排序*/
+        and f.state=1
+        and t.state=1
+        and r.state=1
+    </select>
+
+    <insert id="batchUpdateOrderNum" parameterType="java.util.List">
+        insert into ad_test_code_relation(id, order_num)
+        <foreach collection="list" item="data" separator="," open="values " close="">
+            (#{data.id}, #{data.orderNum})
+        </foreach>
+        on duplicate key update order_num = VALUES(order_num)
+    </insert>
+
+    <select id="ifExistAdId" resultType="java.lang.Integer" parameterType="map">
+        select count(1)
+        from ad_test_code_relation r
+        inner join ad_advert_code c on r.code_id = c.id
+        where r.config_id=#{configId}
+        and c.ad_id=#{adId}
+    </select>
+
+    <update id="updateOtherOrderNum" parameterType="map">
+        update ad_test_code_relation r
+        set r.order_num = #{todayOrderNum}
+        where 1=1
+        and r.config_id=#{configId}
+        and r.order_num = #{yesOrderNum}
+    </update>
+
+    <update id="updateOrderNum" parameterType="map">
+        update ad_test_code_relation r inner join ad_advert_code c on r.code_id = c.id
+        set r.order_num = #{yesOrderNum}
+        where 1=1
+        and r.config_id=#{configId}
+        and c.ad_id=#{adId}
+    </update>
+</mapper>

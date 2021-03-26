@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <properties>
+        <!--全局变量设置，自己项目维护自己目录和名字 add laiyd-->
+        <property name="LOG_HOME">/usr/local/webserver/advert/logs</property>
+        <Property name="SERVICE_NAME">advert</Property>
+        <Property name="SERVICE_PACKAGE">com.miguan.advert</Property>
+    </properties>
+    <Appenders>
+        <Console name="consoleAppender" target="SYSTEM_OUT">
+            <!--设置日志格式及颜色-->
+            <PatternLayout
+                    pattern="%clr{%d{${LOG_DATEFORMAT_PATTERN}}}{faint} %clr{%p} %clr{${sys:PID}}{magenta} %clr{---}{faint} %clr{[%15.15t]}{faint} %clr{%-40.40c{1.}}{cyan} %clr{:}{faint} %m%n"
+                    disableAnsi="false" noConsoleNoAnsi="false"/>
+        </Console>
+        <RollingFile name="fileAppender"
+                     fileName="${LOG_HOME}/log4j2-${SERVICE_NAME}.log"
+                     filePattern="${LOG_HOME}/log4j2-${SERVICE_NAME}-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout>
+                <pattern>[%d][%p][%t][%C] %m%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="100MB"/>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy max="100"/>
+        </RollingFile>
+        <!-- 这里会进行压缩，和local不一样-->
+        <RollingFile name="errorAppender" fileName="${LOG_HOME}/log4j2-${SERVICE_NAME}-error.log"
+                     filePattern="${LOG_HOME}/log4j2-${SERVICE_NAME}-error-%d{yyyy-MM-dd}_%i.log.gz">
+            <PatternLayout>
+                <pattern>[%d][%p][%t][%C] %m%n</pattern>
+            </PatternLayout>
+            <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy modulate="true" interval="12"/>
+                <SizeBasedTriggeringPolicy size="100M" />
+            </Policies>
+            <DefaultRolloverStrategy max="100" />
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="consoleAppender" level="debug"/>
+            <!-- <AppenderRef ref="fileAppender" level="debug"/>-->
+            <AppenderRef ref="errorAppender" level="error"/>
+        </Root>
+        <Logger name="org.springframework" level="info"/>
+        <Logger name="${SERVICE_PACKAGE}" level="info" />
+        <logger name="com.miguan.advert.domain.mapper" level="debug"></logger>
+        <logger name="org.mybatis" level="debug"></logger>
+    </Loggers>
+
+</Configuration>

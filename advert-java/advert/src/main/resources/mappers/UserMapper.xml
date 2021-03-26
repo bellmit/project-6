@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.advert.domain.mapper.UserMapper">
+
+    <resultMap id="UserListResultMap" type="com.miguan.advert.domain.vo.result.UserDetailInfoVo">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="username" jdbcType="VARCHAR" property="username" />
+        <result column="password" jdbcType="VARCHAR" property="password" />
+        <result column="nickname" jdbcType="VARCHAR" property="nickname" />
+        <result column="avatar_url" jdbcType="VARCHAR" property="avatar_url" />
+        <result column="email" jdbcType="VARCHAR" property="email" />
+        <result column="mobile" jdbcType="VARCHAR" property="mobile" />
+        <result column="token" jdbcType="VARCHAR" property="token" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+        <result column="created_at" jdbcType="VARCHAR" property="created_at" />
+        <result column="updated_at" jdbcType="VARCHAR" property="updated_at" />
+    </resultMap>
+
+    <select id="getUserList" resultMap="UserListResultMap" parameterType="java.util.HashMap">
+        select *
+        from admin_users order by id desc
+    </select>
+
+</mapper>

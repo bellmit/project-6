@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.advert.domain.mapper.TableInfoMapper">
+
+    <resultMap id="TableInfoResultMap" type="com.miguan.advert.domain.vo.TableInfo">
+        <result column="column_name" property="columnName" jdbcType="VARCHAR"/>
+        <result column="data_type" property="dataType" jdbcType="VARCHAR"/>
+        <result column="column_comment" property="columnComment" jdbcType="VARCHAR"/>
+        <result column="column_key" property="columnKey" jdbcType="VARCHAR"/>
+        <result column="extra" property="extra" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="findTableInfo" resultMap="TableInfoResultMap" parameterType="string">
+        SELECT
+            column_name ,
+            data_type ,
+            column_comment ,
+            column_key ,
+            extra
+        FROM
+            information_schema.COLUMNS
+        WHERE
+         table_schema =(SELECT DATABASE())
+         AND table_name = #{tableName}
+        ORDER BY
+            ordinal_position
+    </select>
+
+    <select id="findTableColumnCommon" resultType="string" parameterType="java.util.Map">
+        SELECT
+            column_comment
+        FROM
+            information_schema.COLUMNS
+        WHERE
+         table_schema =(SELECT DATABASE())
+         AND table_name = #{tableName}
+         AND column_name = #{columnName}
+        LIMIT 1
+    </select>
+
+</mapper>

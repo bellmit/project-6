@@ -1,0 +1,108 @@
+server:
+  tomcat:
+    uri-encoding: UTF-8
+    max-threads: 200
+    max-connections: 10000
+spring:
+  datasource:
+    url: jdbc:mysql://192.168.0.197:3306/ballvideoadv?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+    username: advert_java
+    password: UxEuCXR4rMUN490J
+    driverClassName: com.mysql.cj.jdbc.Driver
+    hikari:
+      connectionTimeout: 120000
+      maximumPoolSize: 2500
+      maxLifetime: 60000
+      minimumIdle: 20
+      validationTimeout: 8000
+      idleTimeout: 50000
+  fifthdatasource:
+    url: jdbc:mysql://rm-wz9r3k68fq34ck17n.mysql.rds.aliyuncs.com:3306/channel_tool_mofang?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+    username: advert_java
+    password: UxEuCXR4rMUN490J
+    driverClassName: com.mysql.cj.jdbc.Driver
+    hikari:
+      connectionTimeout: 180000
+      maximumPoolSize: 1500
+      maxLifetime: 60000
+      minimumIdle: 20
+      validationTimeout: 8000
+      idleTimeout: 50000
+  thirdDataSource:
+    url: jdbc:mysql://192.168.0.192:3306/ballvideoreport?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+    username: bdrep_java
+    password: AlGwK9A2K7eeQBgX
+    driverClassName: com.mysql.cj.jdbc.Driver
+    hikari:
+      connectionTimeout: 180000
+      maximumPoolSize: 1500
+      maxLifetime: 60000
+      minimumIdle: 20
+      validationTimeout: 8000
+      idleTimeout: 50000
+  dspdatasource:
+    url: jdbc:mysql://192.168.0.197:3306/dsp?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+    username: dsp_java
+    password: B8kqJ1KeedzmfNsB
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      connectionTimeout: 180000
+      maximumPoolSize: 1500
+      maxLifetime: 60000
+      minimumIdle: 20
+      validationTimeout: 8000
+      idleTimeout: 50000
+  redis:
+    host: 192.168.0.204
+    port: 6379
+    password: e8cFnj3CoWZdUFyXg8Dkv9Vp66c=
+    database: 12
+    timeout: 15000
+    jedis:
+      pool:
+        max-active: 10000
+        max-idle: 300
+        min-idle: 100
+        max-wait: 3000
+  session:
+    store-type: redis
+  jpa:
+    database: mysql
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 100MB
+send:
+  ndmin-java:
+    url: http://devnadmin-java.uheixia.com
+  abtest:
+    url: http://abtest-go.98du.com
+  abtest-php:
+    userName: ad
+    password: ad123456
+    url: http://lan.abtest-php.98du.com
+swagger:
+  enable: false
+logging:
+  config: classpath:log4j2/Log4j2-prod.xml
+ding:
+  robot:
+    dataInfoUrl: http://bdserver-java.uheixia.com/api/addata/findEarlyWarnList
+    secret: SEC999aad800135a6fd2f214a8884233089604c883e425f88d8e44427c0e675d1c1
+    accessToken: b85b19c6fffba6a9aac360f01d0daab0338d50f542245dd06050c2d4a01e0df5
+#大数据服务接口
+bigdata-server:
+  show-threshold: http://bdserver-java.uheixia.com/api/addata/listAdIdShowThreshold
+#流量策略接口
+strategy-server:
+  count_multi_ecpm: http://strategy-java.98du.com/api/advertCode/countMultiEcpm
+task:
+  scheduled:
+    cron:
+      #代码位自动排序
+      adIdAutoSort: 0 0/10 10,11,12,13 * * ?
+      updateAutoSort: 0 0/5 * * * ?

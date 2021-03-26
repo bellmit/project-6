@@ -1,0 +1,68 @@
+server:
+  port: 8312
+  max-post-size: -1
+  max-http-header-size: 402400
+spring:
+  application:
+    name: advert
+  redis:
+    host: 112.74.179.254
+    port: 6379
+    database: 0
+    password: e8cFnj3CoWZdUFyXg8Dkv9Vp66c=
+    timeout: 3000
+    jedis:
+      pool:
+        max-active: 10000
+        max-idle: 100
+        min-idle: 20
+        max-wait: 3000
+  session:
+    store-type: redis
+  jpa:
+    database: mysql
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+      #方言
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
+  profiles:
+    active: local
+  mvc:
+    static-path-pattern: /static/**
+    throw-exception-if-no-handler-found: true
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 100MB
+  main:
+    allow-bean-definition-overriding: true
+cgcg:
+  swagger:
+    name: advert-在线文档
+    desc: Http Online Documentation
+    version: 1.0.0
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+  mapper-locations: classpath:/mappers/*.xml
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+#大数据服务接口
+bigdata-server:
+  show-threshold: http://localdev.bdserver-java.uheixia.com/api/addata/listAdIdShowThreshold
+#流量策略接口
+strategy-server:
+  count_multi_ecpm: http://localdev.strategy-java.98du.com/api/advertCode/countMultiEcpm
+task:
+  scheduled:
+    cron:
+      #代码位自动排序
+      adIdAutoSort: 0 0/10 10,11,12,13 * * ?
+      updateAutoSort: 0 0/5 * * * ?

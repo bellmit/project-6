@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.advert.domain.mapper.MigratingDataMapper">
+
+    <select id="insertBatchAdAdvertFlowConfig" resultType="java.lang.Integer">
+        INSERT INTO ad_advert_flow_config
+        (id, name, position_id, ab_flow_id, type, test_state, created_at, state)
+        VALUES
+        <foreach collection ="adAdvertFlowConfigList" item="adAdvertFlowConfig" separator =",">
+            (#{adAdvertFlowConfig.id}, #{adAdvertFlowConfig.name}, #{adAdvertFlowConfig.position_id}, #{adAdvertFlowConfig.ab_flow_id}, #{adAdvertFlowConfig.type}, #{adAdvertFlowConfig.test_state}, #{adAdvertFlowConfig.created_at}, #{adAdvertFlowConfig.state})
+        </foreach >
+    </select>
+
+    <select id="insertBatchAdAdvertTestConfig" resultType="java.lang.Integer">
+        INSERT INTO ad_advert_test_config
+        (id, flow_id, computer, type, created_at, state)
+        VALUES
+        <foreach collection ="adAdvertTestConfigList" item="adAdvertTestConfig" separator =",">
+            (#{adAdvertTestConfig.id}, #{adAdvertTestConfig.flow_id}, #{adAdvertTestConfig.computer}, #{adAdvertTestConfig.type}, #{adAdvertTestConfig.created_at},
+             #{adAdvertTestConfig.state})
+        </foreach >
+    </select>
+
+    <select id="insertBatchAdTestCodeRelation" resultType="java.lang.Integer">
+        INSERT INTO ad_test_code_relation
+        (id, config_id, code_id, number, matching, order_num, state, created_at)
+        VALUES
+        <foreach collection ="adTestCodeRelationList" item="adTestCodeRelation" separator =",">
+            (#{adTestCodeRelation.id}, #{adTestCodeRelation.config_id}, #{adTestCodeRelation.code_id}, #{adTestCodeRelation.number}, #{adTestCodeRelation.matching},#{adTestCodeRelation.order_num},#{adTestCodeRelation.state}, #{adTestCodeRelation.created_at})
+        </foreach >
+    </select>
+</mapper>

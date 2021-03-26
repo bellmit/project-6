@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.advert.domain.mapper.SysConfigMapper">
+
+    <select id="listSysConfig" parameterType="map" resultType="com.miguan.advert.domain.dto.SysConfigDto">
+        select *
+        from arc_sys_config
+        where 1=1
+        <if test="id != null">
+            and id = #{id}
+        </if>
+        <if test="type != null">
+            and type = #{type}
+        </if>
+        <if test="name != null">
+            and name like CONCAT('%',#{name},'%')
+        </if>
+        <if test="status != null">
+            and status = #{status}
+        </if>
+    </select>
+
+    <insert id="insertSysConfig" parameterType="com.miguan.advert.domain.dto.SysConfigDto">
+        INSERT INTO arc_sys_config(type, name, code, value, status, remark, created_at)
+        values(#{dto.type},#{dto.name},#{dto.code},#{dto.value},#{dto.status},#{dto.remark},now())
+    </insert>
+
+    <update id="updateSysConfig" parameterType="com.miguan.advert.domain.dto.SysConfigDto">
+        update arc_sys_config
+        <set>
+            <if test="dto.type != null">
+                type = #{dto.type},
+            </if>
+            <if test="dto.name != null">
+                name = #{dto.name},
+            </if>
+            <if test="dto.code != null">
+                code = #{dto.code},
+            </if>
+            <if test="dto.value != null">
+                value = #{dto.value},
+            </if>
+            <if test="dto.status != null">
+                status = #{dto.status},
+            </if>
+            <if test="dto.remark != null">
+                remark = #{dto.remark},
+            </if>
+            updated_at = now()
+        </set>
+        where id = #{dto.id}
+    </update>
+
+    <delete id="deleteSysConfig" parameterType="java.lang.String">
+        delete from arc_sys_config where code=#{code}
+    </delete>
+</mapper>

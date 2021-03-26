@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.miguan.advert.domain.mapper.AdTypeMapper" >
+
+    <select id="findTypeNameByTypeKey" resultType="java.lang.String" parameterType="java.lang.String">
+        SELECT type_name
+        from ad_type
+        where type_key = #{value} limit 1
+    </select>
+
+</mapper>

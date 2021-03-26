@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.advert.domain.mapper.PositionInfoMapper">
+
+    <resultMap id="AppAdPositionResultMap" type="com.miguan.advert.domain.vo.result.AppAdPositionVo">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="position_type" jdbcType="VARCHAR" property="key" />
+        <result column="mobile_type" jdbcType="INTEGER" property="mobile_type" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="app_name" jdbcType="VARCHAR" property="app_name" />
+        <result column="app_package" jdbcType="VARCHAR" property="app_package" />
+    </resultMap>
+
+    <resultMap id="ConfigInfoResultMap" type="com.miguan.advert.domain.vo.result.PositionDetailInfoVo">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="position_id" jdbcType="INTEGER" property="position_id" />
+        <result column="computer" jdbcType="INTEGER" property="computer" />
+        <result column="computer_name" jdbcType="VARCHAR" property="computer_name" />
+        <result column="first_load_position" jdbcType="VARCHAR" property="first_load_position" />
+        <result column="second_load_position" jdbcType="VARCHAR" property="second_load_position" />
+        <result column="mobile_type" jdbcType="VARCHAR" property="mobile_type" />
+        <result column="app_name" jdbcType="VARCHAR" property="app_name" />
+        <result column="app_package" jdbcType="VARCHAR" property="app_package" />
+        <result column="position_name" jdbcType="VARCHAR" property="position_name" />
+        <result column="state" jdbcType="INTEGER" property="state" />
+        <result column="created_at" jdbcType="VARCHAR" property="created_at" />
+        <result column="updated_at" jdbcType="VARCHAR" property="updated_at" />
+    </resultMap>
+
+    <resultMap id="TypeInfoResultMap" type="com.miguan.advert.domain.vo.result.TypeInfoVo">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="code_id" jdbcType="INTEGER" property="code_id" />
+        <result column="config_id" jdbcType="INTEGER" property="config_id" />
+        <result column="ad_id" jdbcType="VARCHAR" property="ad_id" />
+        <result column="ad_render" jdbcType="VARCHAR" property="ad_render" />
+        <result column="channel_type" jdbcType="INTEGER" property="channel_type" />
+        <result column="channel_ids" jdbcType="VARCHAR" property="channel_ids" />
+        <result column="ladder_price" jdbcType="VARCHAR" property="ladder_price" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="option_value" jdbcType="INTEGER" property="option_value" />
+        <result column="permission" jdbcType="VARCHAR" property="permission" />
+        <result column="plat_name" jdbcType="VARCHAR" property="plat_name" />
+        <result column="sdk_key" jdbcType="VARCHAR" property="sdk_key" />
+        <result column="type_name" jdbcType="VARCHAR" property="type_name" />
+        <result column="version" jdbcType="VARCHAR" property="version" />
+        <result column="computer" jdbcType="INTEGER" property="computer" />
+        <result column="number" jdbcType="INTEGER" property="number" />
+        <result column="created_at" jdbcType="VARCHAR" property="created_at" />
+        <result column="updated_at" jdbcType="VARCHAR" property="updated_at" />
+    </resultMap>
+
+    <resultMap id="PositionCodeResultMap" type="com.miguan.advert.domain.vo.result.PositionInfoVo">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="ad_id" jdbcType="VARCHAR" property="ad_id" />
+        <result column="adv_name" jdbcType="VARCHAR" property="adv_name" />
+        <result column="channel_ids" jdbcType="VARCHAR" property="channel_ids" />
+        <result column="channel_type" jdbcType="INTEGER" property="channel_type" />
+        <result column="ladder" jdbcType="INTEGER" property="ladder" />
+        <result column="ladder_price" jdbcType="VARCHAR" property="ladder_price" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="permission" jdbcType="INTEGER" property="permission" />
+        <result column="plat_key" jdbcType="VARCHAR" property="plat_key" />
+        <result column="plat_name" jdbcType="VARCHAR" property="plat_name" />
+        <result column="put_in" jdbcType="INTEGER" property="put_in" />
+        <result column="type_key" jdbcType="VARCHAR" property="type_key" />
+        <result column="version" jdbcType="VARCHAR" property="version" />
+        <result column="version1" jdbcType="VARCHAR" property="version1" />
+        <result column="version2" jdbcType="VARCHAR" property="version2" />
+    </resultMap>
+
+    <resultMap id="CodeConfigResultMap" type="com.miguan.advert.domain.vo.result.ConfigInfoVo">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="option_value" jdbcType="INTEGER" property="option_value" />
+        <result column="config_id" jdbcType="INTEGER" property="config_id" />
+    </resultMap>
+
+    <select id="getAppAdPositionName" resultMap="AppAdPositionResultMap" parameterType="java.util.HashMap">
+        select p.id, p.position_type, p.mobile_type, p.name, p.app_package, ad.app_name
+        from ad_advert_position p
+        left join ad_app ad on p.app_package = ad.package_name and p.mobile_type = ad.operating_system
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="appPackage != null and appPackage != ''">
+                p.app_package = #{appPackage}
+            </if>
+            <if test="mobileType != null">
+                and p.mobile_type = #{mobileType}
+            </if>
+        </trim>
+    </select>
+
+    <select id="getConfigInfoList" resultMap="ConfigInfoResultMap" parameterType="java.util.HashMap">
+        SELECT distinct
+            test.id,
+            flow.position_id,
+            test.computer,
+            (case test.computer when 1 then '手动配比' when 2 then '手动排序' when 3 then '自动排序' when 4 then '自动排序(多维度)' else '未知' end) computer_name,
+            IFNULL(first_load_position,'-') first_load_position,
+            IFNULL(second_load_position,'-') second_load_position,
+            case p.mobile_type
+            when 1 then 'IOS'
+            when 2 then 'ANDROID'
+            else '小程序'
+            end mobile_type,
+            ad.app_name,
+            p.app_package,
+            p.name position_name,
+            flow.state,
+            flow.created_at,
+            flow.updated_at
+        FROM ad_advert_position p
+        LEFT JOIN ad_advert_flow_config flow ON flow.position_id = p.id
+        LEFT JOIN ad_advert_test_config test on flow.id = test.flow_id
+        left join ad_app ad on p.app_package = ad.package_name and p.mobile_type = ad.operating_system
+        <if test="codeIds != null and codeIds !=''">
+            LEFT JOIN ad_test_code_relation rela on test.id = rela.config_id
+            LEFT JOIN ad_advert_code acode ON acode.id = rela.code_id
+        </if>
+        where flow.type = 1 and flow.test_state = 0
+        <if test="positionIds != null and positionIds !=''">
+            and flow.position_id in (${positionIds})
+        </if>
+        <if test="codeIds != null and codeIds !=''">
+            and acode.ad_id in (${codeIds})
+        </if>
+        order by flow.created_at desc
+    </select>
+
+    <select id="getTypeData" resultMap="TypeInfoResultMap" parameterType="java.util.HashMap">
+        SELECT distinct
+            rela.id,
+            rela.code_id,
+            rela.config_id,
+            acode.ad_id,
+            arender.r_name as ad_render,
+            acode.channel_type,
+            acode.channel_ids,
+            test.computer,
+            rela.number,
+            case acode.ladder_price
+            when 0 then '/'
+            else acode.ladder_price
+            end ladder_price,
+            CONCAT(atype.plat_name,'-',atype.type_name,'-',acode.ad_id ) name,
+            CASE WHEN test.computer = 1
+                THEN rela.matching
+                WHEN test.computer = 2
+                THEN rela.order_num
+                WHEN test.computer = 3
+                THEN rela.order_num
+                ELSE 1
+            END option_value,
+            case acode.permission
+            when 0 then '否'
+            else '是'
+            end permission,
+            atype.plat_name,
+            acode.sdk_key,
+            atype.type_name,
+            CONCAT(version1,'-',version2) version,
+            rela.created_at,
+            rela.updated_at
+        FROM ad_advert_flow_config flow
+        INNER JOIN ad_advert_test_config test on flow.id = test.flow_id
+        INNER JOIN ad_test_code_relation rela on test.id = rela.config_id
+        INNER JOIN ad_advert_code acode ON acode.id = rela.code_id
+        INNER JOIN ad_render arender ON arender.r_key = acode.render_key
+        INNER JOIN ad_type atype ON atype.type_key = acode.type_key
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="ids != null">
+                rela.config_id in (${ids})
+            </if>
+        </trim>
+        order by option_value desc
+    </select>
+
+    <select id="getPosition" resultMap="PositionCodeResultMap" parameterType="java.util.HashMap">
+        SELECT distinct
+            acode.ad_id,
+            atype.type_name as adv_name,
+            acode.channel_ids,
+            acode.channel_type,
+            acode.id,
+            acode.ladder,
+            case acode.ladder_price
+            when '' then '/'
+            when 0 then '/'
+            else CONCAT(acode.ladder_price,'元')
+            end ladder_price,
+            CONCAT(atype.plat_name,'-',atype.type_name,'-',acode.ad_id ) name,
+            acode.permission,
+            atype.plat_key,
+            atype.plat_name,
+            acode.put_in,
+            atype.type_key,
+            CONCAT(acode.version1,'-',acode.version2) version,
+            acode.version1,
+            acode.version2
+        FROM  ad_code_position_relation acodeposition
+        LEFT JOIN ad_advert_code acode ON acode.id = acodeposition.code_id
+        LEFT JOIN ad_type atype ON atype.type_key = acode.type_key
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="positionId != null">
+                acodeposition.position_id = #{positionId}
+            </if>
+        </trim>
+        order by acode.id
+    </select>
+
+    <select id="getCodeConfig" resultMap="CodeConfigResultMap" parameterType="java.util.HashMap">
+        select aconfigcode.code_id as id, aconfigcode.option_value, aconfigcode.config_id
+        from ad_advert_config_code aconfigcode
+        LEFT JOIN ad_advert_config aconfig on aconfigcode.config_id = aconfig.id
+        where aconfig.position_id = #{positionId}
+    </select>
+
+    <delete id="deleteCodeConfig" parameterType="java.util.HashMap">
+        delete from ad_advert_config_code
+        where code_id in (${codeIds})
+        and config_id = #{configId}
+    </delete>
+
+    <insert id="addCodeConfig" parameterType="java.util.List">
+        insert into ad_advert_config_code
+        (config_id,option_value,code_id,created_at,updated_at)
+        values
+        <foreach collection="configInfoVoList" item="configInfoVo" index="index" separator=",">
+            (#{configInfoVo.config_id},#{configInfoVo.option_value},#{configInfoVo.id},now(),now())
+        </foreach>
+    </insert>
+
+    <update id="updateCodeConfig" parameterType="java.util.HashMap">
+        update ad_advert_config_code set
+            updated_at = now(),
+            option_value = #{optionValue}
+        where code_id = #{codeId}
+        and config_id = #{configId}
+    </update>
+
+    <update id="updateConfig" parameterType="java.util.HashMap">
+        update ad_advert_config set
+            updated_at = now(),
+            computer = #{computer}
+        where id = #{configId}
+    </update>
+
+    <select id="getPositionName" resultType="java.lang.String" parameterType="java.lang.Integer">
+        SELECT distinct
+            aap.name
+        FROM  ad_advert_position aap
+        WHERE
+            id in (
+                SELECT position_id from ad_code_position_relation
+                WHERE code_id = #{id}
+            )
+    </select>
+
+    <select id="getPositionById" resultMap="AppAdPositionResultMap" parameterType="java.lang.Integer">
+        SELECT *
+        FROM  ad_advert_position
+        WHERE
+            id = #{id}
+    </select>
+
+</mapper>

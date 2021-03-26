@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.advert.domain.mapper.AccountMapper">
+
+    <resultMap id="AccountInfoResultMap" type="com.miguan.advert.domain.vo.result.AccountInfoVo">
+        <id column="id" jdbcType="INTEGER" property="account_id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="company_name" jdbcType="VARCHAR" property="company_name" />
+    </resultMap>
+
+    <resultMap id="AccountDetailResultMap" type="com.miguan.advert.domain.vo.result.AccountDetailInfoVo">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="app_num" jdbcType="INTEGER" property="app_num" />
+        <result column="company_name" jdbcType="VARCHAR" property="company_name" />
+        <result column="is_package_only" jdbcType="INTEGER" property="is_package_only" />
+        <result column="last_operate_admin" jdbcType="VARCHAR" property="last_operate_admin" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="phone_num" jdbcType="VARCHAR" property="phone_num" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+        <result column="create_time" jdbcType="VARCHAR" property="create_time" />
+        <result column="update_time" jdbcType="VARCHAR" property="update_time" />
+    </resultMap>
+
+    <select id="getAccountList" resultMap="AccountInfoResultMap" parameterType="java.util.HashMap">
+        select id, name,company_name
+        from ad_account
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="name != null and name !=''">
+                and name like #{name}
+            </if>
+            <if test="company_name != null and company_name !=''">
+                and company_name like #{company_name}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </trim>
+    </select>
+
+    <select id="getAccountDetailList" resultMap="AccountDetailResultMap" parameterType="java.util.HashMap">
+        select * from ad_account
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="name != null and name !=''">
+                and name like #{name}
+            </if>
+            <if test="company_name != null and company_name !=''">
+                and company_name like #{company_name}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </trim>
+        order by id desc
+    </select>
+
+    <insert id="addAccountInfo" parameterType="com.miguan.advert.domain.vo.result.AccountDetailInfoVo">
+        insert into ad_account
+        (name,company_name,phone_num,status,last_operate_admin,create_time,update_time)
+        values
+        (#{name},#{company_name},#{phone_num},#{status},#{last_operate_admin},now(),now())
+    </insert>
+
+    <update id="updateAccountInfo" parameterType="com.miguan.advert.domain.vo.result.AccountDetailInfoVo">
+        update ad_account set
+        <if test="company_name != null and company_name != ''">
+            company_name = #{company_name},
+        </if>
+        <if test="phone_num != null and phone_num != ''">
+            phone_num = #{phone_num},
+        </if>
+        <if test="last_operate_admin != null and last_operate_admin != ''">
+            last_operate_admin = #{last_operate_admin},
+        </if>
+        status = #{status}
+        where id = #{id}
+    </update>
+</mapper>

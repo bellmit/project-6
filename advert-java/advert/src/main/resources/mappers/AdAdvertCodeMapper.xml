@@ -1,0 +1,496 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.miguan.advert.domain.mapper.AdAdvertCodeMapper" >
+    <resultMap id="BaseResultMap" type="com.miguan.advert.domain.pojo.AdAdvertCode" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="ad_id" property="ad_id" jdbcType="VARCHAR" />
+        <result column="adv_css" property="adv_css" jdbcType="VARCHAR" />
+        <result column="app_package" property="app_package" jdbcType="VARCHAR" />
+        <result column="channel_type" property="channel_type" jdbcType="INTEGER" />
+        <result column="channel_ids" property="channel_ids" jdbcType="VARCHAR" />
+        <result column="material_key" property="material_key" jdbcType="VARCHAR" />
+        <result column="permission" property="permission" jdbcType="VARCHAR" />
+        <result column="plat_key" property="plat_key" jdbcType="VARCHAR" />
+        <result column="sdk_key" property="sdk_key" jdbcType="VARCHAR" />
+        <result column="type_key" property="type_key" jdbcType="VARCHAR" />
+        <result column="version1" property="version1" jdbcType="VARCHAR" />
+        <result column="version2" property="version2" jdbcType="VARCHAR" />
+        <result column="render_key" property="render_key" jdbcType="VARCHAR" />
+        <result column="ladder_price" property="ladder_price" jdbcType="VARCHAR" />
+        <result column="ladder" property="ladder" jdbcType="INTEGER" />
+        <result column="put_in" property="put_in" jdbcType="INTEGER" />
+        <result column="state" property="state" jdbcType="INTEGER" />
+        <result column="videos_source" property="videos_source" jdbcType="VARCHAR" />
+        <result column="mobile_type" property="mobile_type" jdbcType="INTEGER" />
+        <result column="created_at" property="created_at" jdbcType="TIMESTAMP" />
+        <result column="updated_at" property="updated_at" jdbcType="TIMESTAMP" />
+    </resultMap>
+    <resultMap id="BaseFullResultMap" type="com.miguan.advert.domain.pojo.AdAdvertCode" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="ad_id" property="ad_id" jdbcType="VARCHAR" />
+        <result column="adv_css" property="adv_css" jdbcType="VARCHAR" />
+        <result column="app_package" property="app_package" jdbcType="VARCHAR" />
+        <result column="channel_type" property="channel_type" jdbcType="INTEGER" />
+        <result column="channel_ids" property="channel_ids" jdbcType="VARCHAR" />
+        <result column="material_key" property="material_key" jdbcType="VARCHAR" />
+        <result column="permission" property="permission" jdbcType="VARCHAR" />
+        <result column="plat_key" property="plat_key" jdbcType="VARCHAR" />
+        <result column="sdk_key" property="sdk_key" jdbcType="VARCHAR" />
+        <result column="type_key" property="type_key" jdbcType="VARCHAR" />
+        <result column="version1" property="version1" jdbcType="VARCHAR" />
+        <result column="version2" property="version2" jdbcType="VARCHAR" />
+        <result column="render_key" property="render_key" jdbcType="VARCHAR" />
+        <result column="ladder_price" property="ladder_price" jdbcType="VARCHAR" />
+        <result column="ladder" property="ladder" jdbcType="INTEGER" />
+        <result column="put_in" property="put_in" jdbcType="INTEGER" />
+        <result column="state" property="state" jdbcType="INTEGER" />
+        <result column="videos_source" property="videos_source" jdbcType="VARCHAR" />
+        <result column="mobile_type" property="mobile_type" jdbcType="INTEGER" />
+        <result column="created_at" property="created_at" jdbcType="TIMESTAMP" />
+        <result column="updated_at" property="updated_at" jdbcType="TIMESTAMP" />
+
+        <association column="app_package" property="app_name" select="com.miguan.advert.domain.mapper.AdAppMapper.findAppNameByAppPackage"></association>
+        <association column="plat_key" property="plat_name" select="com.miguan.advert.domain.mapper.AdPlatMapper.findPlatNameByPlatKey"></association>
+        <association column="render_key" property="rander_name" select="com.miguan.advert.domain.mapper.AdRenderMapper.findRNameByRKey"></association>
+        <association column="type_key" property="type_name" select="com.miguan.advert.domain.mapper.AdTypeMapper.findTypeNameByTypeKey"></association>
+        <association column="material_key" property="material_name" select="com.miguan.advert.domain.mapper.AdMaterialMapper.findNameByKey"></association>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, ad_id, adv_css, app_package, channel_type, channel_ids, material_key, permission,
+        plat_key, sdk_key, type_key, version1, version2, render_key, ladder_price, ladder,
+        put_in, state ,videos_source ,mobile_type ,created_at ,updated_at
+    </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+        select
+        <include refid="Base_Column_List" />
+        from ad_advert_code
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <insert id="insert" parameterType="com.miguan.advert.domain.pojo.AdAdvertCode" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+       insert into ad_advert_code (ad_id, adv_css,
+          app_package, channel_type, channel_ids,
+          material_key, permission, plat_key,
+          sdk_key, type_key, version1,
+          version2, render_key, ladder_price,
+          ladder, put_in, state,videos_source,mobile_type,
+          created_at,
+          updated_at)
+        values (#{ad_id,jdbcType=VARCHAR}, #{adv_css,jdbcType=VARCHAR},
+          #{app_package,jdbcType=VARCHAR}, #{channel_type,jdbcType=INTEGER}, #{channel_ids,jdbcType=VARCHAR},
+          #{material_key,jdbcType=VARCHAR}, #{permission,jdbcType=VARCHAR}, #{plat_key,jdbcType=VARCHAR},
+          #{sdk_key,jdbcType=VARCHAR}, #{type_key,jdbcType=VARCHAR}, #{version1,jdbcType=VARCHAR},
+          #{version2,jdbcType=VARCHAR}, #{render_key,jdbcType=VARCHAR}, #{ladder_price,jdbcType=VARCHAR},
+          #{ladder,jdbcType=INTEGER}, #{put_in,jdbcType=INTEGER}, #{state,jdbcType=INTEGER},#{videos_source,jdbcType=VARCHAR},#{mobile_type,jdbcType=INTEGER},
+          now(),
+          now())
+      </insert>
+    <insert id="insertSelective" parameterType="com.miguan.advert.domain.pojo.AdAdvertCode" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into ad_advert_code
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="ad_id != null" >
+                ad_id,
+            </if>
+            <if test="adv_css != null" >
+                adv_css,
+            </if>
+            <if test="app_package != null" >
+                app_package,
+            </if>
+            <if test="channel_type != null" >
+                channel_type,
+            </if>
+            <if test="channel_ids != null" >
+                channel_ids,
+            </if>
+            <if test="material_key != null" >
+                material_key,
+            </if>
+            <if test="permission != null" >
+                permission,
+            </if>
+            <if test="plat_key != null" >
+                plat_key,
+            </if>
+            <if test="sdk_key != null" >
+                sdk_key,
+            </if>
+            <if test="type_key != null" >
+                type_key,
+            </if>
+            <if test="version1 != null" >
+                version1,
+            </if>
+            <if test="version2 != null" >
+                version2,
+            </if>
+            <if test="render_key != null" >
+                render_key,
+            </if>
+            <if test="ladder_price != null" >
+                ladder_price,
+            </if>
+            <if test="ladder != null" >
+                ladder,
+            </if>
+            <if test="put_in != null" >
+                put_in,
+            </if>
+            <if test="state != null" >
+                state,
+            </if>
+            <if test="videos_source != null" >
+                videos_source,
+            </if>
+            <if test="mobile_type != null" >
+                mobile_type,
+            </if>
+            <if test="createdAt != null" >
+                created_at,
+            </if>
+            <if test="updatedAt != null" >
+                updated_at,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="ad_id != null" >
+                #{ad_id,jdbcType=VARCHAR},
+            </if>
+            <if test="adv_css != null" >
+                #{adv_css,jdbcType=VARCHAR},
+            </if>
+            <if test="app_package != null" >
+                #{app_package,jdbcType=VARCHAR},
+            </if>
+            <if test="channel_type != null" >
+                #{channel_type,jdbcType=INTEGER},
+            </if>
+            <if test="channel_ids != null" >
+                #{channel_ids,jdbcType=VARCHAR},
+            </if>
+            <if test="material_key != null" >
+                #{material_key,jdbcType=VARCHAR},
+            </if>
+            <if test="permission != null" >
+                #{permission,jdbcType=VARCHAR},
+            </if>
+            <if test="plat_key != null" >
+                #{plat_key,jdbcType=VARCHAR},
+            </if>
+            <if test="sdk_key != null" >
+                #{sdk_key,jdbcType=VARCHAR},
+            </if>
+            <if test="type_key != null" >
+                #{type_key,jdbcType=VARCHAR},
+            </if>
+            <if test="version1 != null" >
+                #{version1,jdbcType=VARCHAR},
+            </if>
+            <if test="version2 != null" >
+                #{version2,jdbcType=VARCHAR},
+            </if>
+            <if test="render_key != null" >
+                #{render_key,jdbcType=VARCHAR},
+            </if>
+            <if test="ladder_price != null" >
+                #{ladder_price,jdbcType=VARCHAR},
+            </if>
+            <if test="ladder != null" >
+                #{ladder,jdbcType=INTEGER},
+            </if>
+            <if test="put_in != null" >
+                #{put_in,jdbcType=INTEGER},
+            </if>
+            <if test="state != null" >
+                #{state,jdbcType=INTEGER},
+            </if>
+            <if test="videos_source != null" >
+                #{videos_source,jdbcType=VARCHAR},
+            </if>
+            <if test="mobile_type != null" >
+                #{mobile_type,jdbcType=INTEGER},
+            </if>
+            <if test="createdAt != null" >
+                #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedAt != null" >
+                #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.miguan.advert.domain.pojo.AdAdvertCode" >
+        update ad_advert_code
+        <set >
+            <if test="ad_id != null" >
+                ad_id = #{ad_id,jdbcType=VARCHAR},
+            </if>
+            <if test="adv_css != null" >
+                adv_css = #{adv_css,jdbcType=VARCHAR},
+            </if>
+            <if test="app_package != null" >
+                app_package = #{app_package,jdbcType=VARCHAR},
+            </if>
+            <if test="channel_type != null" >
+                channel_type = #{channel_type,jdbcType=INTEGER},
+            </if>
+            <if test="channel_ids != null" >
+                channel_ids = #{channel_ids,jdbcType=VARCHAR},
+            </if>
+            <if test="material_key != null" >
+                material_key = #{material_key,jdbcType=VARCHAR},
+            </if>
+            <if test="permission != null" >
+                permission = #{permission,jdbcType=VARCHAR},
+            </if>
+            <if test="plat_key != null" >
+                plat_key = #{plat_key,jdbcType=VARCHAR},
+            </if>
+            <if test="sdk_key != null" >
+                sdk_key = #{sdk_key,jdbcType=VARCHAR},
+            </if>
+            <if test="type_key != null" >
+                type_key = #{type_key,jdbcType=VARCHAR},
+            </if>
+            <if test="version1 != null" >
+                version1 = #{version1,jdbcType=VARCHAR},
+            </if>
+            <if test="version2 != null" >
+                version2 = #{version2,jdbcType=VARCHAR},
+            </if>
+            <if test="render_key != null" >
+                render_key = #{render_key,jdbcType=VARCHAR},
+            </if>
+            <if test="ladder_price != null" >
+                ladder_price = #{ladder_price,jdbcType=VARCHAR},
+            </if>
+            <if test="ladder != null" >
+                ladder = #{ladder,jdbcType=INTEGER},
+            </if>
+            <if test="put_in != null" >
+                put_in = #{put_in,jdbcType=INTEGER},
+            </if>
+            <if test="state != null" >
+                state = #{state,jdbcType=INTEGER},
+            </if>
+            <if test="videos_source != null" >
+                videos_source = #{videos_source,jdbcType=VARCHAR},
+            </if>
+            <if test="mobile_type != null" >
+                mobile_type = #{mobile_type,jdbcType=INTEGER},
+            </if>
+            <if test="createdAt != null" >
+                created_at = #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedAt != null" >
+                updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.miguan.advert.domain.pojo.AdAdvertCode" >
+        update ad_advert_code
+        set ad_id = #{ad_id,jdbcType=VARCHAR},
+          adv_css = #{adv_css,jdbcType=VARCHAR},
+          app_package = #{app_package,jdbcType=VARCHAR},
+          channel_type = #{channel_type,jdbcType=INTEGER},
+          channel_ids = #{channel_ids,jdbcType=VARCHAR},
+          material_key = #{material_key,jdbcType=INTEGER},
+          permission = #{permission,jdbcType=VARCHAR},
+          plat_key = #{plat_key,jdbcType=VARCHAR},
+          sdk_key = #{sdk_key,jdbcType=VARCHAR},
+          type_key = #{type_key,jdbcType=VARCHAR},
+          version1 = #{version1,jdbcType=VARCHAR},
+          version2 = #{version2,jdbcType=VARCHAR},
+          render_key = #{render_key,jdbcType=VARCHAR},
+          ladder_price = #{ladder_price,jdbcType=VARCHAR},
+          ladder = #{ladder,jdbcType=INTEGER},
+          put_in = #{put_in,jdbcType=INTEGER},
+          state = #{state,jdbcType=INTEGER},
+          videos_source = #{videos_source,jdbcType=VARCHAR},
+          mobile_type = #{mobile_type,jdbcType=INTEGER},
+          created_at = #{createdAt,jdbcType=TIMESTAMP},
+          updated_at = now()
+        where id = #{id,jdbcType=BIGINT}
+      </update>
+
+        <sql id="contion_query">
+            <trim prefix="where" prefixOverrides="and">
+                <if test="ad_id != null" >
+                    adc.ad_id = #{ad_id,jdbcType=VARCHAR}
+                </if>
+                <if test="adv_css != null" >
+                    AND   adc.adv_css = #{adv_css,jdbcType=VARCHAR}
+                </if>
+                <if test="app_package != null" >
+                    AND  adc.app_package = #{app_package,jdbcType=VARCHAR}
+                </if>
+                <if test="channel_type != null" >
+                    AND  adc.channel_type = #{channel_type,jdbcType=INTEGER}
+                </if>
+                <if test="channel_ids != null" >
+                    AND  adc.channel_ids = #{channel_ids,jdbcType=VARCHAR}
+                </if>
+                <if test="material_key != null" >
+                    AND  adc.material_key = #{material_key,jdbcType=VARCHAR}
+                </if>
+                <if test="permission != null" >
+                    AND  adc.permission = #{permission,jdbcType=VARCHAR}
+                </if>
+                <if test="plat_key != null" >
+                    AND  adc.plat_key = #{plat_key,jdbcType=VARCHAR}
+                </if>
+                <if test="sdk_key != null" >
+                    AND  adc.sdk_key = #{sdk_key,jdbcType=VARCHAR}
+                </if>
+                <if test="type_key != null" >
+                    AND  adc.type_key = #{type_key,jdbcType=VARCHAR}
+                </if>
+                <if test="version1 != null" >
+                    AND  adc.version1 = #{version1,jdbcType=VARCHAR}
+                </if>
+                <if test="version2 != null" >
+                    AND   adc.version2 = #{version2,jdbcType=VARCHAR}
+                </if>
+                <if test="render_key != null" >
+                    AND   adc.render_key = #{render_key,jdbcType=VARCHAR}
+                </if>
+                <if test="ladder_price != null" >
+                    AND   adc.ladder_price = #{ladder_price,jdbcType=VARCHAR}
+                </if>
+                <if test="ladder != null" >
+                    AND  adc.ladder = #{ladder,jdbcType=INTEGER}
+                </if>
+                <if test="put_in != null" >
+                    AND   adc.put_in = #{put_in,jdbcType=INTEGER}
+                </if>
+                <if test="state != null" >
+                    AND   adc.state = #{state,jdbcType=INTEGER}
+                </if>
+                <if test="videos_source != null" >
+                    AND  adc.videos_source = #{videos_source,jdbcType=VARCHAR}
+                </if>
+                <if test="mobile_type != null" >
+                    AND   adc.mobile_type = #{mobile_type,jdbcType=INTEGER}
+                </if>
+            </trim>
+        </sql>
+
+    <select id="findByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        SELECT <include refid="Base_Column_List" />
+        from ad_advert_code
+        WHERE id = #{id,jdbcType=BIGINT}
+        limit 1
+    </select>
+
+    <select id="findSelective" resultMap="BaseResultMap" parameterType="com.miguan.advert.domain.pojo.AdAdvertCode">
+        SELECT <include refid="Base_Column_List" />
+        from ad_advert_code pa
+        <include refid="contion_query"/>
+        order by id desc
+    </select>
+
+
+    <select id="findAll" resultMap="BaseResultMap" parameterType="com.miguan.advert.domain.pojo.AdAdvertCode">
+        SELECT <include refid="Base_Column_List" />
+        from ad_advert_code pa
+        order by id desc
+    </select>
+
+    <select id="findByKeyword" resultMap="BaseResultMap" parameterType="com.miguan.advert.domain.pojo.AdAdvertCode">
+        SELECT <include refid="Base_Column_List" />
+        from ad_advert_code pa
+        <trim prefix="where" prefixOverrides="and">
+            <if test="material_key != null" >
+                pa.material_key like  CONCAT('%',#{material_key,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="plat_key != null" >
+                AND   pa.plat_key like CONCAT('%',#{plat_key,jdbcType=VARCHAR},'%')
+            </if>
+        </trim>
+        order by id desc
+    </select>
+
+    <select id="findPage" resultMap="BaseResultMap" parameterType="com.miguan.advert.domain.pojo.AdAdvertCode">
+        SELECT <include refid="Base_Column_List" />
+        from ad_advert_code pa
+        <trim prefix="where" prefixOverrides="and">
+            <if test="material_key != null" >
+                pa.material_key like  CONCAT('%',#{material_key,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="plat_key != null" >
+                AND   pa.plat_key like CONCAT('%',#{plat_key,jdbcType=VARCHAR},'%')
+            </if>
+        </trim>
+        order by id desc
+    </select>
+
+
+    <select id="findQueryPage" resultMap="BaseFullResultMap" parameterType="com.miguan.advert.domain.vo.request.AdAdvertCodeQuery">
+        SELECT <include refid="Base_Column_List" />
+        from ad_advert_code pa
+        <trim prefix="where" prefixOverrides="and">
+            <if test="plat_key_arr != null" >
+                pa.plat_key in
+                <foreach collection="plat_key_arr" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="app_package_arr != null" >
+                and pa.app_package in
+                <foreach collection="app_package_arr" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="ad_id_arr != null" >
+                and pa.ad_id in
+                <foreach collection="ad_id_arr" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="type_key_arr != null" >
+                and pa.type_key in
+                <foreach collection="type_key_arr" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="position_id_strs != null" >
+                and pa.id in
+                (SELECT code_id FROM ad_code_position_relation WHERE position_id in
+                    <foreach collection="position_id_strs" index="index" item="item" open="(" separator="," close=")">
+                        #{item}
+                    </foreach>
+                )
+            </if>
+            <if test="put_in != null" >
+                AND   pa.put_in = #{put_in}
+            </if>
+        </trim>
+        order by id desc
+    </select>
+
+    <select id="findAdCodeAdId" resultType="java.lang.String" parameterType="java.lang.String">
+        SELECT ad_id
+        from ad_advert_code pa
+        where ad_id is not null
+        <if test="adId != null" >
+            and ad_id like CONCAT(#{adId},'%')
+        </if>
+        group by ad_id
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from ad_advert_code
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+
+    <select id="countUsedPlat" resultType="int">
+      select count(1) from ad_plat where use_third=1
+    </select>
+
+</mapper>

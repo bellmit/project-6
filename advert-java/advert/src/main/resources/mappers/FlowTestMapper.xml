@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miguan.advert.domain.mapper.FlowTestMapper">
+
+    <resultMap id="AdvFlowConfMap" type="com.miguan.advert.domain.pojo.AdAdvertFlowConfig">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="app_package" jdbcType="VARCHAR" property="app_package" />
+        <result column="mobile_type" jdbcType="INTEGER" property="mobile_type" />
+        <result column="position_id" jdbcType="VARCHAR" property="position_id" />
+        <result column="ab_flow_id" jdbcType="VARCHAR" property="ab_flow_id" />
+        <result column="type" jdbcType="INTEGER" property="type" />
+        <result column="test_state" jdbcType="INTEGER" property="test_state" />
+        <result column="state" jdbcType="INTEGER" property="state" />
+        <result column="exp_code" jdbcType="VARCHAR" property="exp_code" />
+        <result column="pub_time" jdbcType="VARCHAR" property="pub_time" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+        <result column="open_status" jdbcType="INTEGER" property="open_status" />
+        <result column="created_at" jdbcType="VARCHAR" property="created_at" />
+        <result column="updated_at" jdbcType="VARCHAR" property="updated_at" />
+    </resultMap>
+
+    <resultMap id="CountMap" type="com.miguan.advert.domain.vo.result.FlowCountVo">
+        <id column="position_id" jdbcType="INTEGER" property="position_id" />
+        <result column="num" jdbcType="INTEGER" property="num" />
+    </resultMap>
+
+    <select id="getAdvFlowConfLst" resultMap="AdvFlowConfMap" parameterType="java.lang.String">
+        select * from ad_advert_flow_config
+        <trim prefix="where" prefixOverrides="and|or">
+            and state = 1 and (status is NULL or status != 2)
+            <if test="positionId != null">
+                and position_id = #{positionId}
+            </if>
+            <if test="type != null">
+                and type = #{type}
+            </if>
+            <if test="abFlowId != null">
+                and ab_flow_id = #{abFlowId}
+            </if>
+            <if test="flowId != null">
+                and id = #{flowId}
+            </if>
+        </trim>
+        order by type asc ,id asc
+    </select>
+
+    <select id="findAllCodeByPositionId" resultType="java.lang.String" parameterType="java.lang.Integer">
+        select exp_code from ad_advert_flow_config where position_id = #{positionId} and exp_code is not null
+    </select>
+
+
+    <select id="getAllAdvFlowConfLst" resultMap="CountMap" parameterType="java.lang.String">
+        select position_id, count(1) as num from ad_advert_flow_config
+        where 1=1
+        and position_id in (${positionIds})
+        and state = 1 and test_state = 1
+        group by position_id
+    </select>
+
+
+    <resultMap id="advTestConfMap" type="com.miguan.advert.domain.pojo.AdAdvertTestConfig">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="ab_test_id" jdbcType="VARCHAR" property="ab_test_id" />
+        <result column="flow_id" jdbcType="VARCHAR" property="flow_id" />
+        <result column="computer" jdbcType="INTEGER" property="computer" />
+        <result column="type" jdbcType="INTEGER" property="type" />
+        <result column="state" jdbcType="INTEGER" property="state" />
+        <result column="ab_first_load_position" jdbcType="INTEGER" property="abFirstLoadPosition" />
+        <result column="ab_second_load_position" jdbcType="INTEGER" property="abSecondLoadPosition" />
+        <result column="ab_max_show_num" jdbcType="INTEGER" property="abMaxShowNum" />
+        <result column="ab_custom_rule1" jdbcType="INTEGER" property="abCustomRule1" />
+        <result column="ab_custom_rule2" jdbcType="INTEGER" property="abCustomRule2" />
+        <result column="ab_custom_rule3" jdbcType="INTEGER" property="abCustomRule3" />
+        <result column="ladder_delay_millis" jdbcType="INTEGER" property="ladderDelayMillis" />
+        <result column="common_delay_millis" jdbcType="INTEGER" property="commonDelayMillis" />
+        <result column="created_at" jdbcType="TIMESTAMP" property="created_at" />
+        <result column="updated_at" jdbcType="TIMESTAMP" property="updated_at" />
+    </resultMap>
+
+    <select id="getAdvTestConfLst" resultMap="advTestConfMap" parameterType="java.util.HashMap">
+        select * from ad_advert_test_config
+        where 1 = 1
+        and flow_id = #{flowId}
+        <if test="type != null">
+            and type = #{type}
+        </if>
+        and state = 1
+        order by type asc ,id asc
+    </select>
+
+
+    <select id="getDefaultAdvTestConf" resultMap="advTestConfMap" parameterType="java.lang.Integer">
+        select * from ad_advert_test_config config inner join ad_advert_flow_config ac on config.flow_id = ac.id
+        where ac.position_id = #{positionId}
+        and ac.state = 1 limit 1
+    </select>
+
+
+    <resultMap id="testCodeRelaMap" type="com.miguan.advert.domain.pojo.AdTestCodeRelation">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="config_id" jdbcType="VARCHAR" property="config_id" />
+        <result column="code_id" jdbcType="INTEGER" property="code_id" />
+        <result column="number" jdbcType="INTEGER" property="number" />
+        <result column="matching" jdbcType="INTEGER" property="matching" />
+        <result column="order_num" jdbcType="INTEGER" property="order_num" />
+        <result column="state" jdbcType="INTEGER" property="state" />
+        <result column="created_at" jdbcType="TIMESTAMP" property="created_at" />
+        <result column="updated_at" jdbcType="TIMESTAMP" property="updated_at" />
+    </resultMap>
+
+    <select id="getTestCodeRelaLst" resultMap="testCodeRelaMap" parameterType="java.util.HashMap">
+        select * from ad_test_code_relation
+        where 1 = 1
+        and config_id = #{configId}
+        and state = 1
+        <if test="computer == 1">
+            order by number asc ,matching desc
+        </if>
+        <if test="computer == 2">
+            order by matching desc
+        </if>
+    </select>
+
+
+    <select id="queryDefalutRelation" resultMap="testCodeRelaMap" parameterType="int">
+        SELECT
+            cr.*
+        FROM
+            ad_advert_flow_config fc
+        INNER JOIN ad_advert_test_config tc ON fc.id = tc.flow_id
+        INNER JOIN ad_test_code_relation cr ON cr.config_id = tc.id
+        WHERE fc.test_state = 0
+        AND fc.position_id = #{value}
+        AND cr.state = 1
+    </select>
+
+
+    <resultMap id="advCodeInfoVoMap" type="com.miguan.advert.domain.pojo.AdAdvertCode">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="ad_id" jdbcType="VARCHAR" property="ad_id" />
+        <result column="adv_css" jdbcType="VARCHAR" property="adv_css" />
+        <result column="app_package" jdbcType="VARCHAR" property="app_package" />
+        <result column="channel_type" jdbcType="INTEGER" property="channel_type" />
+        <result column="channel_ids" jdbcType="VARCHAR" property="channel_ids" />
+        <result column="material_key" jdbcType="VARCHAR" property="material_key" />
+        <result column="permission" jdbcType="VARCHAR" property="permission" />
+        <result column="plat_key" jdbcType="VARCHAR" property="plat_key" />
+        <result column="sdk_key" jdbcType="VARCHAR" property="sdk_key" />
+        <result column="type_key" jdbcType="VARCHAR" property="type_key" />
+        <result column="version1" jdbcType="VARCHAR" property="version1" />
+        <result column="version2" jdbcType="VARCHAR" property="version2" />
+        <result column="render_key" jdbcType="VARCHAR" property="render_key" />
+        <result column="ladder_price" jdbcType="VARCHAR" property="ladder_price" />
+        <result column="ladder" jdbcType="INTEGER" property="ladder" />
+        <result column="put_in" jdbcType="INTEGER" property="put_in" />
+        <result column="videos_source" jdbcType="VARCHAR" property="videos_source" />
+        <result column="mobile_type" jdbcType="INTEGER" property="mobile_type" />
+        <result column="state" jdbcType="INTEGER" property="state" />
+        <result column="created_at" jdbcType="TIMESTAMP" property="created_at" />
+        <result column="updated_at" jdbcType="TIMESTAMP" property="updated_at" />
+    </resultMap>
+
+    <select id="getAdvCodeInfoVoLst" resultMap="advCodeInfoVoMap" parameterType="java.util.HashMap">
+        select DISTINCT cd.id, cd.* from ad_advert_code cd
+        LEFT JOIN ad_code_position_relation rela on cd.id = rela.code_id
+        LEFT JOIN ad_advert_position pos on pos.id = rela.position_id
+        where 1 = 1
+        and pos.`status` = 1
+        and rela.position_id = #{positionId}
+        order by cd.id desc
+    </select>
+
+
+
+</mapper>

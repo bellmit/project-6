@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.miguan.advert.domain.mapper.AdPlatMapper" >
+    <resultMap id="BaseResultMap" type="com.miguan.advert.domain.pojo.AdPlat" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="adv_name" property="adv_name" jdbcType="VARCHAR" />
+        <result column="plat_key" property="plat_key" jdbcType="VARCHAR" />
+        <result column="remark" property="remark" jdbcType="VARCHAR" />
+        <result column="created_at" property="created_at" jdbcType="TIMESTAMP" />
+        <result column="updated_at" property="updated_at" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, adv_name, plat_key, remark ,created_at ,updated_at
+    </sql>
+
+    <select id="findByPlatKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT <include refid="Base_Column_List" />
+        from ad_plat ap
+        where ap.plat_key = #{value} limit 1
+    </select>
+
+    <select id="findPlatNameByPlatKey" resultType="java.lang.String" parameterType="java.lang.String">
+        SELECT adv_name
+        from ad_plat ap
+        where ap.plat_key = #{value} limit 1
+    </select>
+
+</mapper>
