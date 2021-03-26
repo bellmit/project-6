@@ -1,0 +1,21 @@
+
+# mongodb
+#spring.data.mongodb.uri=mongodb://192.168.252.121:20000,192.168.252.122:20000,192.168.252.12:20000/demo
+spring:
+  data:
+    mongodb:
+      uri: mongodb://nrec_java:W0VAoSzD8FiXfYT1@192.168.100.10:53333/feature?maxpoolsize=100&maxlifetimems=300
+  datasource:
+    dynamic:
+      primary: bd_video
+      datasource:
+        bd_video:
+          username: mca_java
+          password: sTrM6raDbFp7MOY4
+          url: jdbc:mysql://192.168.100.10:3306/bd_video?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+          driverClassName: com.mysql.jdbc.Driver
+        xy-db:
+          url: jdbc:mysql://192.168.100.10:3306/ballvideo?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+          username: mca_java
+          password: sTrM6raDbFp7MOY4
+          driverClassName: com.mysql.cj.jdbc.Driver

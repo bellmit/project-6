@@ -1,0 +1,30 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://mca_java:4KK1xHdmQ8UT1mNw@192.168.0.206:53333/feature?maxlifetimems=300
+  kafka:
+    bootstrap-servers: 192.168.0.222:19092,192.168.0.223:19092,192.168.0.224:19092
+  datasource:
+    dynamic:
+      primary: bd_video
+      datasource:
+        bd_video:
+          username: mca_java
+          password: jWLxVlIKIAF4nIiu
+          url: jdbc:mysql://192.168.0.237:3306/mca?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+          driverClassName: com.mysql.jdbc.Driver
+        xy-db:
+          url: jdbc:mysql://192.168.0.197:3306/ballvideo?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+          username: mca_java
+          password: jWLxVlIKIAF4nIiu
+#          username: mca_java
+#          password: jWLxVlIKIAF4nIiu
+          driverClassName: com.mysql.cj.jdbc.Driver
+#内容标签接口
+content-label-server:
+  video-label: http://nconf-java.98du.com/api/video-tag/report
+baidu:
+  preset: temp1
+  notification: xlearn
+  accessKey: 1506924832c74ecabf8f62c859ab2cd9
+  secretKey: b726bf9d3b4249938a2c505b38900b22

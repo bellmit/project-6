@@ -1,0 +1,33 @@
+server:
+  port: 8350
+spring:
+  application:
+    name: ballvideo-mca-java
+  profiles:
+    active: local
+  kafka:
+    bootstrap-servers: 192.168.100.10:19092
+cgcg:
+  rest:
+    read-timeout: 300000
+    connect-timeout: 300000
+    connection-request-timeout: 300000
+  swagger:
+    name: ballvideo-mca-java-在线文档
+    desc: Http Online Documentation
+    headers: token
+    contact-url: http://gitlab.miguan.com/bigdata/ballvideo-mca-java.git
+    contact-name: zhangbinglin
+    version: 1.0.0
+  format:
+    response-data: true
+    response-data-ignore:  ##接口返回值不需要在包裹一层data的接口
+      - /api/skypay/payoutQueuePayout
+#内容标签接口
+content-label-server:
+  video-label: http://localdev.nconf-java.98du.com/api/video-tag/report
+baidu:
+  preset: temp1
+  notification: huangjx_test
+  accessKey: 1506924832c74ecabf8f62c859ab2cd9
+  secretKey: b726bf9d3b4249938a2c505b38900b22

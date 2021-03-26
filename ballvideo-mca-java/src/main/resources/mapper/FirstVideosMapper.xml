@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiyou.speedvideo.mapper.FirstVideosMapper">
+
+    <select id="getDownloadList" parameterType="java.util.Map" resultType="com.xiyou.speedvideo.entity.FirstVideos">
+        select  a.id,
+                a.catId,
+                a.title,
+                a.bsyUrl,
+                a.watchCount,
+                a.videoTime
+        from
+        (select
+            v.id,
+            v.cat_id catId,
+            v.title title,
+            v.bsy_url bsyUrl,
+            v.watch_count watchCount,
+            v.video_time videoTime,
+            CAST(substring_index(v.video_time,":",1) as SIGNED) as video_time_m,
+            CAST(substring_index(v.video_time,":",-1) as SIGNED) as video_time_s,
+            CAST(substring_index(v.video_time,":",1) as SIGNED)*60+CAST(substring_index(v.video_time,":",-1) as SIGNED) as videoTimeSeconds
+        from first_videos v
+        where v.state=1
+        <if test="catId!=null">
+            and cat_id = #{catId,jdbcType=INTEGER}
+        </if>
+        <if test="videoIds!=null">
+            and v.id in
+            <foreach item="item" index="index" collection="videoIds" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="excludeList!=null">
+<!--            and v.id not in-->
+<!--            <foreach item="item" index="index" collection="excludeList" open="(" separator="," close=")">-->
+<!--                #{item}-->
+<!--            </foreach>-->
+            and v.mca_flag = 0
+        </if>
+        <if test="watchCount!=null">
+            and v.watch_count &gt; #{watchCount,jdbcType=INTEGER}
+        </if>)a
+        where 1=1
+        <if test="minute!=null">
+            and a.video_time_m &lt; #{minute,jdbcType=INTEGER}
+        </if>
+        <if test="secondStart!=null">
+            and a.videoTimeSeconds &gt; #{secondStart,jdbcType=INTEGER}
+        </if>
+        <if test="secondEnd!=null">
+            and a.videoTimeSeconds &lt;= #{secondEnd,jdbcType=INTEGER}
+        </if>
+        <if test="limit!=null">
+            limit #{limit,jdbcType=INTEGER}
+        </if>
+    </select>
+
+    <select id="getMCAExistList" resultType="java.lang.String">
+        select distinct video_id from first_videos_mca
+    </select>
+
+    <select id="selectMCAByVideoId" resultType="com.xiyou.speedvideo.entity.FirstVideosMca">
+        select
+            video_id videoId,
+            bsy_url bsyUrl,
+            video_time videoTime,
+            state state,
+            local_path localPath,
+            create_at createAt,
+            update_at updateAt
+        from first_videos_mca
+        where video_id = #{videoId,jdbcType=INTEGER}
+    </select>
+
+    <select id="getMCAResult" resultType="com.xiyou.speedvideo.entity.FirstVideosMcaResult">
+        select *
+        from first_videos_mca_result f
+        inner join first_videos_mca m on m.video_id = f.video_id
+        <where>
+            <if test="videoIds!=null">
+                and m.video_id in
+                <foreach item="item" index="index" collection="videoIds" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="speed!=null">
+                and f.speed = #{speed,jdbcType=INTEGER}
+            </if>
+            <if test="catId!=null">
+                and m.cat_id = #{catId,jdbcType=INTEGER}
+            </if>
+        </where>
+    </select>
+
+
+    <insert id="batchInsert2MCA" parameterType="java.util.List">
+        insert into first_videos_mca
+        (video_id,bsy_url,video_time,create_at,state,cat_id)
+        VALUES
+        <foreach collection="infoList" item="p" index="index" separator=",">
+            (#{p.id},#{p.bsyUrl},#{p.videoTime},now(),0,#{p.catId})
+        </foreach>
+    </insert>
+
+    <update id="updateMCAByVideoId" parameterType="com.xiyou.speedvideo.entity.FirstVideosMca" >
+        update first_videos_mca
+        <set>
+            update_at = now(),
+            <if test="state != null">
+                state = #{state,jdbcType=INTEGER},
+            </if>
+            <if test="localPath != null">
+                local_path = #{localPath,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where video_id = #{videoId,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateMCAResultBySource" parameterType="com.xiyou.speedvideo.entity.FirstVideosMcaResult" >
+        update first_videos_mca_result
+        <set>
+            update_at = now(),
+            <if test="state != null">
+                state = #{state,jdbcType=INTEGER},
+            </if>
+            <if test="result != null">
+                result = #{result,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where bsy_url = #{bsyUrl,jdbcType=VARCHAR}
+    </update>
+
+    <select id="findVideoInfo" parameterType="java.util.Map" resultType="com.xiyou.speedvideo.entity.FirstVideos">
+        select id, bsy_url
+        from first_videos v
+        where 1=1
+        <if test="videoList != null">
+            and v.id in <foreach item="item" collection="videoList" open="(" separator="," close=")">#{item}</foreach>
+        </if>
+        <if test="mcaResults != null">
+            and v.bsy_url in <foreach item="item" collection="mcaResults" open="(" separator="," close=")">#{item.bsyUrl}</foreach>
+        </if>
+        <if test="paddleTags != null">
+            and v.bsy_url in <foreach item="item" collection="paddleTags" open="(" separator="," close=")">#{item.url}</foreach>
+        </if>
+    </select>
+
+    <select id="findVideoMcaResult" parameterType="java.util.Map" resultType="com.xiyou.speedvideo.entity.FirstVideosMcaResult">
+        select video_id, result from first_videos_mca_result
+        where state = 3
+        <if test="videoList != null">
+            and (video_id, bsy_url) in (<foreach item="item"  collection="videoList" open="(" separator="," close=")">#{item.videoId},#{item.bsyUrl}</foreach>)
+        </if>
+        <if test="startRow != null">
+            limit #{startRow}, #{pageSize}
+        </if>
+    </select>
+
+    <select id="findVideoMcaHisResult" parameterType="java.util.Map" resultType="com.xiyou.speedvideo.entity.FirstVideosMcaResult">
+        select video_id, result
+        from first_videos_mca_result r
+        where state=3
+        and update_at = (select max(update_at) from first_videos_mca_result r1 where r.video_id=r1.video_id and r1.state=3)
+        <if test="startRow != null">
+            limit #{startRow}, #{pageSize}
+        </if>
+    </select>
+
+    <select id="getMcaVideoId" parameterType="string" resultType="int">
+        select video_id from first_videos_mca_result where bsy_url=#{bsyUrl} order by create_at desc limit 1
+    </select>
+
+    <insert id="insertLabelUploadLog" parameterType="com.xiyou.speedvideo.entity.LabelUpLoadLog">
+        INSERT INTO label_up_load_log(video_id, bsy_url, param, result, created_at)
+        VALUES (#{videoId}, #{bsyUrl}, #{param}, #{result}, now());
+    </insert>
+</mapper>
